@@ -1,0 +1,107 @@
+export const ACTIONS = [
+  "IDLE",
+  "OBSERVE",
+  "WANDER",
+  "PLAY",
+  "SEEK_ATTENTION",
+  "AVOID",
+  "SLEEP",
+];
+
+export const BEHAVIOR_DEFINITIONS = {
+  IDLE: { minDuration: 45, maxDuration: 150, interruptible: true, cooldown: 0 },
+  OBSERVE: { minDuration: 45, maxDuration: 180, interruptible: true, cooldown: 30 },
+  WANDER: { minDuration: 90, maxDuration: 300, interruptible: true, cooldown: 60 },
+  PLAY: { minDuration: 60, maxDuration: 240, interruptible: true, cooldown: 120 },
+  SEEK_ATTENTION: { minDuration: 45, maxDuration: 180, interruptible: true, cooldown: 120 },
+  AVOID: { minDuration: 30, maxDuration: 90, interruptible: false, cooldown: 90 },
+  SLEEP: { minDuration: 600, maxDuration: 1800, interruptible: false, cooldown: 300 },
+};
+
+export class BehaviorScorer {
+  scoreAll({ drives, personality, environment }) {
+    return ACTIONS.map((action) => this.score(action, { drives, personality, environment }));
+  }
+
+  score(action, { drives, personality, environment }) {
+    const night = environment.localTime >= 22 || environment.localTime < 7 ? 1 : 0;
+    const activeUser = environment.userPresent && environment.userIdleDuration < 300 ? 1 : 0;
+    const scores = {
+      IDLE: {
+        baseline: 0.25,
+        lowPressure: (1 - drives.energy) * 0.15,
+        calm: (1 - environment.novelty) * 0.12,
+      },
+      OBSERVE: {
+        curiosity: drives.curiosity * 1.35,
+        novelty: environment.novelty * 0.95,
+        boldness: personality.boldness * 0.35,
+        fatiguePenalty: -drives.energy * 0.45,
+      },
+      WANDER: {
+        curiosity: drives.curiosity * 0.65,
+        stimulation: drives.stimulation * 0.7,
+        independence: personality.independence * 0.55,
+        boldness: personality.boldness * 0.35,
+        fatiguePenalty: -drives.energy * 0.45,
+      },
+      PLAY: {
+        stimulation: drives.stimulation * 1.45,
+        playfulness: personality.playfulness * 0.9,
+        novelty: environment.novelty * 0.3,
+        fatiguePenalty: -drives.energy * 0.35,
+      },
+      SEEK_ATTENTION: {
+        socialPressure: drives.social * 1.55,
+        sociability: personality.sociability * 0.95,
+        userPresent: activeUser * 0.35,
+        interaction: environment.interactionPressure * 0.25,
+        independencePenalty: -personality.independence * 0.35,
+        fatiguePenalty: -drives.energy * 0.35,
+      },
+      AVOID: {
+        interactionPressure: environment.interactionPressure * 1.25,
+        lowBoldness: (1 - personality.boldness) * 0.75,
+        socialPressure: drives.social * 0.2,
+        novelty: environment.novelty * 0.2,
+      },
+      SLEEP: {
+        fatiguePressure: drives.energy * 2.2,
+        sleepiness: personality.sleepiness * 0.85,
+        nightBias: night * 0.5,
+        noveltyPenalty: -environment.novelty * 0.35,
+        userPenalty: -activeUser * 0.15,
+      },
+    };
+
+    if (!scores[action]) {
+      throw new RangeError(`Unknown behavior action: ${action}`);
+    }
+
+    const contributors = scores[action];
+    const score = Object.values(contributors).reduce((sum, value) => sum + value, 0);
+    return { action, score, contributors: { ...contributors } };
+  }
+}
+
+export class BehaviorSelector {
+  constructor({ scorer = new BehaviorScorer(), noiseAmplitude = 0.025 } = {}) {
+    this.scorer = scorer;
+    this.noiseAmplitude = noiseAmplitude;
+  }
+
+  select({ drives, personality, environment, rng }) {
+    const candidates = this.scorer.scoreAll({ drives, personality, environment }).map((candidate) => {
+      const noise = rng.nextRange(-this.noiseAmplitude, this.noiseAmplitude);
+      return {
+        ...candidate,
+        noise,
+        score: candidate.score + noise,
+        contributors: { ...candidate.contributors, noise },
+      };
+    });
+
+    candidates.sort((left, right) => right.score - left.score || left.action.localeCompare(right.action));
+    return { selected: candidates[0], candidates };
+  }
+}

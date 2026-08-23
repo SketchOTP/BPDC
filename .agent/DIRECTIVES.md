@@ -84,3 +84,12 @@
 - Discovery: conditional; inspect the pinned OpenPets source/documentation and consult current primary material only when runtime behavior differs from Phase 0 findings.
 - Stop conditions: host autonomy cannot be disabled/proven non-conflicting; invasive host changes/fork required; host-specific leakage into CreatureCore; persistence cannot retain BPDC snapshot; host cannot run on target Windows; fewer than three intentions can be expressed; license concern appears; or adapter absorbs behavioral logic.
 - Status at issuance: `AUTHORIZED`
+
+### BPDC-P2-001 closure
+
+- Result: `PASS_WITH_CONCERNS`
+- Closed for Codex handoff: 2026-08-23 America/New_York
+- Architect acceptance: `PENDING`
+- Summary: thin adapter, original placeholder, bundled plugin, provenance logging, live Windows/Electron execution, autonomous SLEEP, host-authority configuration, and snapshot restoration were evidenced. Forced WANDER/SLEEP/SEEK_ATTENTION mappings passed the adapter and official harness checks.
+- Concern: ordinary screen capture cannot show the transparent always-on-top window; live autonomous observation directly covered SLEEP, with the other forced mappings covered in the target harness.
+- Outcome ID: `BPDC-P2-001-EMBODIMENT`

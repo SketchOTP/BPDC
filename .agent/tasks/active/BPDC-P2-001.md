@@ -1,6 +1,6 @@
 # BPDC-P2-001 — Desktop Embodiment Gate
 
-Status: ACTIVE_ENTRY_GATE  
+Status: CODEX_HANDOFF_PENDING_ARCHITECT_ACCEPTANCE
 Issued: 2026-08-22  
 Architect: SketchOTP  
 OpenPets pin: `a77d3747caab0337934959980c68f60e0d3c615c`
@@ -17,6 +17,15 @@ Prove the accepted `CreatureCore` can control a real visible OpenPets desktop cr
 - Re-run `node --test` and `node src/cli/experiments.js` before integration edits.
 - Create a local checkpoint commit containing the accepted Phase 1 implementation.
 - Do not push.
+
+## Handoff result
+
+- Result: `PASS_WITH_CONCERNS`
+- Closed for Codex handoff: 2026-08-23 America/New_York
+- Evidence: `BPDC-E013` through `BPDC-E016`.
+- Completed: host-neutral seam, OpenPets adapter/plugin, original placeholder, seven-action translation surface, provenance logs, live Windows/Electron startup, autonomous SLEEP, host-authority configuration, and restart/reload snapshot restoration.
+- Concern: forced WANDER/SLEEP/SEEK_ATTENTION mappings passed the adapter and official harness; live autonomous observation directly covered SLEEP. The transparent always-on-top window was evidenced through host visibility/state and rendered HTML rather than ordinary desktop capture.
+- Stop boundary: no Phase 3 work started. Architect acceptance is required before adding memory, habits, relationships, richer environment sensing, final art, or other excluded features.
 
 ## Required work
 

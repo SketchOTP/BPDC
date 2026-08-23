@@ -1,0 +1,6 @@
+{
+  "id": "bpdc-test-pet",
+  "displayName": "BPDC Test Creature",
+  "description": "An original temporary vector creature for BPDC embodiment validation.",
+  "spritesheetPath": "spritesheet.webp"
+}

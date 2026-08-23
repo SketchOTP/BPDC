@@ -1,0 +1,20 @@
+{
+  "manifestVersion": 3,
+  "id": "bpdc.embodiment",
+  "name": "BPDC Embodiment",
+  "description": "Runs the BPDC CreatureCore through an OpenPets body adapter.",
+  "version": "0.1.0",
+  "runtime": "javascript",
+  "icon": "sparkles",
+  "sdkVersion": "3.0.0",
+  "entry": "index.js",
+  "permissions": [
+    "pet:move",
+    "pet:reaction",
+    "pets:read",
+    "pets:manage",
+    "events",
+    "storage",
+    "commands"
+  ]
+}

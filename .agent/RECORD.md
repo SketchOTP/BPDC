@@ -69,3 +69,13 @@
 - Rationale: The highest-value remaining uncertainty is whether BPDC intent reaches visible desktop behavior without host autonomy overriding it.
 - Affected areas: `src/desktop/`, `integrations/openpets/`, original placeholder assets, runtime evidence, and persistence validation.
 - Supersession: `NONE`
+
+## BPDC-P2-001-HANDOFF
+
+- Date: 2026-08-23
+- Record ID: `BPDC-P2-001-HANDOFF`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: The accepted CreatureCore now controls a real OpenPets desktop body through a thin adapter and bundled plugin, with no core fork or host-specific imports.
+- Rationale: The disposable Windows/Electron run installed the original BPDC placeholder, rendered it, restored the stable creature snapshot, reached autonomous SLEEP, and recorded host state and authority. Target tests covered three forced mappings.
+- Affected areas: desktop adapter, OpenPets integration, original placeholder assets, plugin build, runtime evidence, and persistence boundary.
+- Supersession: `BPDC-PHASE-003` remains the active phase record until Architect acceptance.

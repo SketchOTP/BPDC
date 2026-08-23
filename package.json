@@ -8,9 +8,14 @@
     "test": "node --test",
     "simulate": "node src/cli/simulate.js",
     "experiments": "node src/cli/experiments.js",
-    "check": "npm test"
+    "check": "npm test",
+    "build:openpets": "node scripts/build-openpets-plugin.mjs"
   },
   "bin": {
     "bpdc-sim": "src/cli/simulate.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "esbuild": "^0.28.1"
   }
 }

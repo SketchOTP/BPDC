@@ -51,3 +51,13 @@ No material prior-art investigation has been completed in this bootstrap. The ne
 - Reference-only concepts: exact Petz executable hooks, private memory layouts, original assets, and runtime-specific binary patches.
 - Behavioral paper mechanisms: `ADAPTABLE` constrained randomness, layered simultaneous animation, direct touch/drag interaction, object interest, and perception-first expression; `REFERENCE-ONLY` for design, not copied implementation.
 - Disposition: `REFERENCE`; no Petz/PetzA runtime or copyrighted asset reuse.
+
+## BPDC-EXT-002 — P2 pinned-host authority review
+
+- Date: 2026-08-23
+- Problem: confirm that the adopted OpenPets pin can remain a body/renderer while BPDC owns behavior, timing, and persistence.
+- Source: OpenPets commit `a77d3747caab0337934959980c68f60e0d3c615c`, disposable checkout `C:\Users\sketc\AppData\Local\Temp\bpdc-p2-001-openpets`.
+- Evidence: SDK v3 context, plugin pet registry, roaming controller, default pet controller, plugin loader, desktop documentation, CLI validator, harness, and live Windows/Electron log.
+- Finding: the host tick provides timing and visibility; host behavior selection was not observed. Gravity is an explicit host feature and was disabled by the BPDC adapter. Plugin-declared source is snapshotted, so BPDC ships a self-contained generated entry.
+- Disposition: `WRAP` / `ADOPT`; no fork or upstream modification.
+- Recheck trigger: a required BPDC behavior needs raw geometry, animation completion, high-frequency control, or host capabilities outside the current SDK seam.

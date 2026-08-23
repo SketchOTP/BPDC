@@ -62,3 +62,14 @@
 - Decision: Phase 1 headless CreatureCore is accepted as the first real BPDC capability. Its internal pressures, personality, competing motivations, autonomous selection, persistence, replay, and commitment timing are verified.
 - Remaining unknowns: perceived believability and live Windows/OpenPets integration.
 - Authorization: `BPDC-P2-001` desktop embodiment gate granted.
+
+## BPDC-P2-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P2-001-EMBODIMENT`
+- Closed for Codex handoff: 2026-08-23 America/New_York
+- Acceptance: `PASS_WITH_CONCERNS`; Architect acceptance pending.
+- Summary: accepted CreatureCore now reaches a real OpenPets desktop body through a thin host-neutral adapter and self-contained plugin. The original placeholder was installed and rendered in Windows Electron, autonomous SLEEP reached the host, host gravity was disabled, provenance was logged, and the stable creature snapshot restored across reload/restart.
+- Validation: `node --test` 8/8; bundle build and OpenPets manifest validator passed; official harness exercised WANDER/SLEEP/SEEK_ATTENTION without errors; live Electron host and placeholder installation passed; restart restoration passed.
+- Concerns: normal desktop screenshot cannot capture the transparent always-on-top window; live autonomous observation directly exercised SLEEP, while the three forced mappings are harness/adapter evidence. OpenPets broad-suite pruning concern remains isolated from BPDC.
+- Exclusions preserved: no CreatureCore host imports, no OpenPets fork, no third-party assets, no Phase 3 features.
+- Follow-up directive: Architect decide whether to accept Phase 2 and issue the next bounded directive.

@@ -3,7 +3,7 @@
 ## Lifecycle
 
 - Status: `ADOPTED`
-- Last verified: 2026-08-22 America/New_York
+- Last verified: 2026-08-23 America/New_York
 
 ## Identity
 
@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 2 — Desktop Embodiment Gate
+- Current phase: Phase 2 — Desktop Embodiment Gate; Architect handoff pending
 
 ## Languages and runtimes
 

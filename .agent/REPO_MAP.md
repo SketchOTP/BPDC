@@ -26,3 +26,15 @@ This map covers the governance bootstrap only. It is not an exhaustive applicati
 - `tests/creature-core.test.js` — unit, replay, personality, causality, persistence, and accelerated-trace tests.
 - `package.json` — Node ESM metadata and local scripts; no third-party dependencies.
 - `README.md` — drive semantics and framework boundary.
+
+## BPDC-P2-001 verified embodiment map
+
+- `src/desktop/desktop-adapter.js` — host-neutral translation seam.
+- `integrations/openpets/openpets-adapter.js` — OpenPets-only intent translation and host state/provenance logging.
+- `integrations/openpets/plugin/index.src.js` — BPDC plugin lifecycle, autonomous ticking, storage persistence, forced mapping probes, and CORE/ADAPT/HOST logs.
+- `integrations/openpets/plugin/openpets.plugin.json` — OpenPets SDK v3 manifest.
+- `integrations/openpets/plugin/index.js` — generated self-contained runtime entry.
+- `scripts/build-openpets-plugin.mjs` — reproducible bundle builder.
+- `assets/bpdc-test-pet/` — original temporary 8×9 sprite sheet and pet manifest.
+- `tests/desktop-adapter.test.js` — mapping and behavior-authority boundary tests.
+- `.agent/tasks/active/BPDC-P2-001.md` — current Architect handoff packet.

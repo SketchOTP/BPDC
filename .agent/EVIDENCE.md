@@ -139,3 +139,42 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Command: `node src/cli/simulate.js --seed 1234 --hours 24`
 - Result: `PASSED`; JSON parsed successfully with 606 behavior selections and final simulation time 86400 seconds.
 - Reliability/limitations: CLI output is headless simulation evidence, not desktop integration evidence.
+
+## BPDC-E013 — OpenPets pinned host and adapter boundary
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-001` / `BPDC-P2-001-EMBODIMENT`
+- Evidence level: `E1_OBSERVED`
+- Type: `STATIC_OBSERVATION`
+- Sources: pinned OpenPets checkout, `src/desktop/desktop-adapter.js`, `integrations/openpets/openpets-adapter.js`, and `src/creature-core/`.
+- Result: `BOUNDARY_PRESERVED`; CreatureCore has no OpenPets/Electron/Windows imports, while the adapter owns all host translation. Pinned host source showed a timing tick and host movement/physics controls but no host behavior selector for BPDC.
+- Reliability/limitations: source and API observation do not alone prove user-perceived animation quality.
+
+## BPDC-E014 — Phase 2 adapter, bundle, validator, and harness checks
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-001` / `BPDC-P2-001-EMBODIMENT`
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Commands/checks: `node --test`; local-staged `node scripts/build-openpets-plugin.mjs`; pinned OpenPets CLI `plugin validate`; OpenPets test harness start/forced `WANDER`/`SLEEP`/`SEEK_ATTENTION` commands with `expectNoErrors()`.
+- Result: `PASSED`; 8 BPDC tests passed, generated entry was 22,579 bytes, manifest validation passed, and the harness completed without errors. Adapter tests verified no behavior selection and rejection of unsupported actions.
+- Reliability/limitations: harness and validator are target-focused; not a substitute for a human believability judgment.
+
+## BPDC-E015 — live Windows/Electron BPDC runtime
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-001` / `BPDC-P2-001-EMBODIMENT`
+- Evidence level: `E5_OPERATIONALLY_OBSERVED`
+- Type: `RUNTIME_OBSERVATION`
+- Runtime: pinned OpenPets desktop checkout, Electron 42 on Windows, disposable user data `C:\Users\sketc\AppData\Local\Temp\bpdc-p2-001-openpets-userdata3`, staged local plugin path, and installed pet `bpdc-test-pet`.
+- Result: `PASSED_WITH_CONCERN`; the host installed and rendered the original placeholder, reported it as the default pet, showed it visibly, loaded `index.js`, started `bpdc.embodiment`, selected autonomous `SLEEP`, called the adapter, read host state, disabled native gravity, and logged `hostBehaviorSelection=none observed; host tick only`.
+- Reliability/limitations: the transparent always-on-top pet was not captured by normal desktop screen capture; direct rendered HTML, sprite asset, host visibility/state log, and live plugin log are retained. Autonomous live observation exercised SLEEP; the three forced mappings were target-tested through the official harness.
+
+## BPDC-E016 — restart persistence and runtime reload
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-001` / `BPDC-P2-001-EMBODIMENT`
+- Evidence level: `E5_OPERATIONALLY_OBSERVED`
+- Type: `RUNTIME_OBSERVATION`
+- Result: `PASSED`; the live log recorded `new individual created` followed by `snapshot restored` for stable `creature-42504443` across plugin reload and host restart, using OpenPets plugin storage key `bpdc.creature.snapshot`.
+- Reliability/limitations: the test used a disposable host profile and validates identity/snapshot restoration, not a long-duration unattended Windows run.

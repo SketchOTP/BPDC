@@ -62,3 +62,30 @@
 - Confidence: `VERIFIED`
 - Scope: project governance.
 - Supersedes: `NONE`
+
+## BPDC-L008
+
+- Date: 2026-08-23
+- Fact: OpenPets remains a viable BPDC body when BPDC disables host gravity, treats the host tick as timing only, and sends every visible action through a thin adapter. The host does not choose BPDC behavior in the pinned runtime path.
+- Evidence: `BPDC-E013`, `BPDC-E015`.
+- Confidence: `VERIFIED`
+- Scope: Phase 2 OpenPets integration.
+- Supersedes: `NONE`
+
+## BPDC-L009
+
+- Date: 2026-08-23
+- Fact: OpenPets local plugin loading requires a self-contained declared entry for BPDC's generated runtime; a bundle avoids undeclared imports and preserves the core/adapter source boundary for review.
+- Evidence: `BPDC-E013`, `BPDC-E014`.
+- Confidence: `VERIFIED`
+- Scope: plugin packaging.
+- Supersedes: `NONE`
+
+## BPDC-L010
+
+- Date: 2026-08-23
+- Fact: Transparent always-on-top pet windows may be absent from ordinary Windows desktop screen capture even while OpenPets reports the window visible and the rendered document references the installed sprite sheet. Host logs and rendered HTML are required companion evidence.
+- Evidence: `BPDC-E015`.
+- Confidence: `VERIFIED`
+- Scope: runtime visual verification.
+- Supersedes: `NONE`
