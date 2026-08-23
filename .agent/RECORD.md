@@ -89,3 +89,23 @@
 - Rationale: `SEEK_ATTENTION → waving` at `15:53:12.047Z` was followed by `WANDER → pet.wander(distance=110)` at `15:55:50.759Z` in the same disposable session; host authority remained configured with gravity disabled and no observed host behavior selector.
 - Affected areas: runtime evidence and Authority records only; P2 implementation is unchanged.
 - Supersession: P2-001 concern about live multi-intent embodiment evidence.
+
+## BPDC-P2-002-ACCEPTED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-P2-002-ACCEPTED`
+- Status: `ACCEPTED`
+- Decision: Phase 2 desktop embodiment is closed. The live OpenPets host accepted three materially distinct BPDC intents, one autonomous session selected two distinct behaviors, provenance remained CreatureCore → adapter → host, and host override was not observed.
+- Rationale: The Architect accepted `BPDC-E017` through `BPDC-E021` at `E5_OPERATIONALLY_OBSERVED`; regression remained green at 8/8.
+- Affected areas: Phase 2 milestone and Phase 3 authorization.
+- Supersession: `BPDC-P2-002-HANDOFF` pending-acceptance state.
+
+## BPDC-PHASE-004
+
+- Date: 2026-08-23
+- Record ID: `BPDC-PHASE-004`
+- Status: `ACTIVE`
+- Decision: Implement the bounded relationship-memory slice `BPDC-P3-001` before any habits, environment learning, mood, hunger, evolution, or Phase 4 work.
+- Rationale: The largest remaining believability gap is that interaction history has no lasting behavioral consequence. The smallest testable bridge is a persistent bond scalar plus bounded interaction events that influence existing utility scores.
+- Affected areas: CreatureCore state/persistence/utility diagnostics, host-neutral interaction boundary, OpenPets adapter event translation, bounded experiments, and live restart evidence.
+- Supersession: `NONE`

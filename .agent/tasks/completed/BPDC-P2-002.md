@@ -2,7 +2,7 @@
 
 ## Status
 
-`HANDOFF_PENDING_ARCHITECT`
+`ACCEPTED_AND_COMPLETED`
 
 ## Directive
 
@@ -20,7 +20,7 @@ Required proof:
 
 ## Result
 
-`COMPLETE` for Codex handoff on 2026-08-23 America/New_York. Architect acceptance remains pending.
+`COMPLETE` for Codex handoff on 2026-08-23 America/New_York. Architect accepted the evidence and closed Phase 2 on 2026-08-23 America/New_York.
 
 ## Evidence
 

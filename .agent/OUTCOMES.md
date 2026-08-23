@@ -84,3 +84,21 @@
 - Evidence: `BPDC-E017` through `BPDC-E021`, plus `BPDC-E013` through `BPDC-E016`.
 - Exclusions preserved: no production source changes, no OpenPets fork, no Phase 3 work, no deployment, no GitHub push.
 - Recommendation: accept the Phase 2 embodiment evidence and issue a separate bounded directive before any Phase 3 implementation begins.
+
+## BPDC-P2-002 - ARCHITECT ACCEPTED
+
+- Outcome ID: `BPDC-P2-002-ARCHITECT-ACCEPTED`
+- Accepted: 2026-08-23 America/New_York
+- Acceptance: `MET`
+- Decision: Phase 2 is closed. Live WANDER, SLEEP, and SEEK_ATTENTION, distinct treatments, autonomous multi-intent selection, CreatureCore → adapter → host provenance, and OpenPets non-override are accepted at `E5_OPERATIONALLY_OBSERVED`.
+- Evidence: `BPDC-E017` through `BPDC-E021`; regression `node --test` 8/8; local commit `393c619`.
+- Authorization: `BPDC-P3-001` minimal relationship memory granted.
+
+## BPDC-P3-001 - AUTHORIZED
+
+- Outcome ID: `BPDC-P3-001-AUTHORIZED`
+- Issued: 2026-08-23 America/New_York
+- Acceptance: `PENDING_CODEX_HANDOFF`
+- Summary: The Architect authorized a bounded relationship-memory slice: one persistent bond scalar, bounded interaction history, host-neutral events, deterministic decay and saturation, existing utility-score influence, and live OpenPets interaction/restart evidence.
+- Exclusions: generic memory, habits, environment learning, mood, hunger, evolution, new behaviors, final art, OpenPets fork, and Phase 4.
+- Follow-up directive: `BPDC-P3-001`

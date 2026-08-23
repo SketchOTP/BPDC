@@ -8,13 +8,13 @@
 ## Active state
 
 - Local directive ID: `NONE`
-- External directive ID: `BPDC-P2-002`
-- Objective: Close the remaining live embodiment evidence gap by proving three visible intent mappings and two distinct autonomous CreatureCore selections in real Windows/Electron OpenPets.
-- Current status: `HANDOFF_PENDING_ARCHITECT`
-- Acceptance: `BPDC-P2-002` runtime evidence is complete. Architect acceptance is required before any Phase 3 authorization; no Phase 3 work has started.
-- Current phase: `Phase 2 — Desktop Embodiment Gate`
+- External directive ID: `BPDC-P3-001`
+- Objective: Implement the smallest bounded persistent relationship-memory system in which user interaction changes persistent bond state and measurably changes later autonomous behavior.
+- Current status: `AUTHORIZED_NOT_STARTED`
+- Acceptance: `BPDC-P2-002` was accepted by the Architect. `BPDC-P3-001` is authorized and bounded; implementation has not started.
+- Current phase: `Phase 3 — Minimal Relationship Memory`
 - Expected touched areas: `src/desktop/`, `integrations/openpets/`, `assets/`, `tests/`, package metadata, README, and `.agent/` records. CreatureCore remains host-independent.
-- Immediate next action: Architect review of the BPDC-P2-002 evidence and the explicit Phase 3 boundary.
+- Immediate next action: run the required `node --test` baseline, inspect the existing CreatureCore/DesktopAdapter/OpenPets seams, and implement only the P3-001 bounded bond and interaction-memory path.
 
 ## Temporary task-relevant facts
 
@@ -33,7 +33,9 @@
 - jCodemunch-MCP is unavailable in this session; code indexing is therefore not yet verified.
 - Full OpenPets desktop suite has a reproducible failure in `plugin-service.test.js` under this Windows/Node 24 environment; it remains tracked and is outside BPDC Phase 1.
 - Live Windows/Electron integration: `E5_OPERATIONALLY_OBSERVED` in disposable Electron profiles; forced WANDER, SLEEP, and SEEK_ATTENTION reached the real host, and one uninterrupted autonomous session selected SEEK_ATTENTION then WANDER.
+- Phase 2 acceptance: Architect accepted `BPDC-P2-002` on 2026-08-23; Phase 2 is closed.
+- Phase 3 boundary: one normalized persistent `bond` value, bounded structured interaction history, deterministic decay/saturation, existing utility integration, and one real OpenPets interaction path. Habits, generic memory, environment learning, mood, hunger, evolution, and Phase 4 are out of scope.
 
 ## Pending decisions
 
-- Architect acceptance of the Phase 2 evidence. The P2-002 runtime closure now includes live forced mappings, direct desktop captures for the three distinguishable reactions, and autonomous live provenance for SEEK_ATTENTION followed by WANDER. The autonomous run used a disposable persisted-drive fixture and did not alter production source.
+- P3-001 implementation and evidence remain pending. The Phase 2 acceptance decision is closed and recorded in Notion and local Authority records.

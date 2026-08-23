@@ -114,3 +114,25 @@
 - Concern: autonomous fixture state was prepared in disposable OpenPets plugin storage to reach the second commitment within a bounded runtime window. No production source or committed behavior logic was changed.
 - Outcome ID: `BPDC-P2-002-EMBODIMENT-CLOSURE`
 - Supersession: `BPDC-P2-001` runtime-evidence concern only; P2 implementation remains unchanged.
+
+## BPDC-P2-002 Architect acceptance
+
+- Accepted: 2026-08-23 America/New_York
+- Decision: Phase 2 is closed. WANDER, SLEEP, and SEEK_ATTENTION reached the live Windows/Electron OpenPets runtime with distinct outcomes; autonomous multi-intent provenance and host non-override were established at `E5_OPERATIONALLY_OBSERVED`.
+- Evidence: `BPDC-E017` through `BPDC-E021`; `node --test` 8/8; local commit `393c619`.
+- Authorization: `BPDC-P3-001` granted.
+- Boundary: implement only minimal persistent relationship memory; do not begin habits, generic memory, environment learning, mood, hunger, evolution, LLM, or Phase 4 work.
+
+## BPDC-P3-001
+
+- Issued: 2026-08-23 America/New_York
+- Issuer: User / project architect via attached Architect review
+- External directive: `BPDC-P3-001`
+- Objective: Implement the smallest bounded persistent relationship-memory system in which normalized user interaction updates a persistent scalar bond and measurably changes later autonomous behavior.
+- Scope: one normalized `bond` value; bounded structured interaction history; host-neutral interaction events; real OpenPets positive interaction through the adapter; headless negative-history path if needed; deterministic decay/forgetting; saturating learning; existing `SEEK_ATTENTION` and `AVOID` utility integration; diagnostics; persistence; experiments; live restart evidence; dependency-boundary proof.
+- Exclusions: generic semantic memory, embeddings, vector databases, LLM memory, habits, location/app/time routines, environmental learning, mood, hunger, feeding, health, inventory, evolution, development, battles, new autonomous behaviors, final artwork, OpenPets fork, and Phase 4.
+- Acceptance: all 16 criteria in the Architect directive, including Phase 1/2 regression, framework independence, bounded persistent relationship state/history, causal positive and negative effects, visible utility contributions, decay, saturation, deterministic save/reload, live OpenPets interaction and restart continuity, and no scope leakage.
+- Required validation: `node --test`, existing deterministic experiments, relationship causality/persistence/forgetting/spam experiments, live OpenPets interaction/restart path, dependency-boundary scan, and `git diff --check`.
+- Discovery: not required for Codex at issuance; Architect prior-art review is complete. Conditional research is permitted only for a specific unresolved implementation mechanism.
+- Stop conditions: scalar bond is insufficient, general memory architecture becomes necessary, interaction boundary leaks host concepts, deterministic continuation breaks, negative UX requires an invented harmful gesture, or habits/environment/general memory enter scope.
+- Status at issuance: `AUTHORIZED`

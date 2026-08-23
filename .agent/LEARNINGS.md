@@ -98,3 +98,21 @@
 - Confidence: `VERIFIED`
 - Scope: runtime evidence and test setup.
 - Supersedes: `NONE`
+
+## BPDC-L012
+
+- Date: 2026-08-23
+- Fact: Phase 2 is operationally closed: the pinned Windows/Electron OpenPets runtime can render three distinct BPDC intents, accept multiple autonomous CreatureCore selections, and remain a body-only host when native gravity is disabled and host behavior selection is absent.
+- Evidence: `BPDC-E017` through `BPDC-E021`; Architect acceptance `BPDC-P2-002`.
+- Confidence: `VERIFIED`
+- Scope: Phase 2 embodiment gate.
+- Supersedes: `NONE`
+
+## BPDC-L013
+
+- Date: 2026-08-23
+- Fact: The next smallest useful believability increment is bounded relationship history: one slowly changing persistent bond plus a small structured event buffer, with no generic memory architecture or habits.
+- Evidence: Architect directive `BPDC-P3-001` and Notion canonical page.
+- Confidence: `SUPPORTED_HYPOTHESIS`
+- Scope: Phase 3 relationship-memory implementation.
+- Supersedes: `NONE`
