@@ -1,0 +1,242 @@
+import { SimulationClock } from "./clock.js";
+import {
+  clamp01,
+  createEnvironment,
+  createInitialDrives,
+  createPersonality,
+  validateDrives,
+  validatePersonality,
+} from "./models.js";
+import { BEHAVIOR_DEFINITIONS, BehaviorScorer, BehaviorSelector } from "./behavior.js";
+import { SeededRng, normalizeSeed } from "./seeded-rng.js";
+import { deserializeSnapshot, SNAPSHOT_SCHEMA_VERSION, serializeSnapshot } from "./persistence.js";
+import { BehaviorIntent } from "./intent.js";
+
+export class CreatureCore {
+  constructor({
+    creatureId,
+    createdAt = 0,
+    simulationTimestamp = createdAt,
+    personality,
+    drives = createInitialDrives(),
+    rngState,
+    currentBehavior = null,
+    selector = new BehaviorSelector(),
+    scorer = new BehaviorScorer(),
+  }) {
+    this.creatureId = String(creatureId);
+    this.createdAt = assertNonNegative(createdAt, "createdAt");
+    this.clock = new SimulationClock(assertNonNegative(simulationTimestamp, "simulationTimestamp"));
+    this.personality = validatePersonality(personality);
+    this.drives = validateDrives(drives);
+    this.rng = new SeededRng(rngState ?? 1);
+    this.currentBehavior = currentBehavior ? clone(currentBehavior) : null;
+    this.selector = selector;
+    this.scorer = scorer;
+    this.lastEnvironment = createEnvironment();
+  }
+
+  static create({ seed = 1, creatureId, createdAt = 0 } = {}) {
+    const normalizedSeed = normalizeSeed(seed);
+    return new CreatureCore({
+      creatureId: creatureId ?? `creature-${normalizedSeed.toString(16).padStart(8, "0")}`,
+      createdAt,
+      simulationTimestamp: createdAt,
+      personality: createPersonality(normalizedSeed),
+      rngState: normalizedSeed ^ 0xa5a5a5a5,
+    });
+  }
+
+  advance(seconds, environmentInput = this.lastEnvironment) {
+    assertNonNegative(seconds, "seconds");
+    const events = [];
+    let remaining = seconds;
+
+    if (!this.currentBehavior) {
+      const environment = resolveEnvironment(environmentInput, this.clock.now());
+      events.push(this.commitBehavior(environment));
+    }
+
+    while (remaining > 0) {
+      const now = this.clock.now();
+      const environment = resolveEnvironment(environmentInput, now);
+      this.lastEnvironment = environment;
+      const end = this.currentBehavior?.endsAt ?? now;
+      const segment = Math.min(remaining, Math.max(0, end - now));
+
+      if (segment > 0) {
+        this.evolveDrives(segment, environment);
+        this.clock.advance(segment);
+        remaining -= segment;
+      }
+
+      if (this.currentBehavior && this.clock.now() >= this.currentBehavior.endsAt - 1e-9) {
+        this.currentBehavior = null;
+        if (remaining > 0) {
+          const nextEnvironment = resolveEnvironment(environmentInput, this.clock.now());
+          events.push(this.commitBehavior(nextEnvironment));
+        }
+      } else if (segment === 0) {
+        throw new Error("CreatureCore could not advance; behavior timing is invalid.");
+      }
+    }
+
+    return events;
+  }
+
+  evaluate(environmentInput = this.lastEnvironment) {
+    const environment = resolveEnvironment(environmentInput, this.clock.now());
+    const candidates = this.scorer.scoreAll({
+      drives: this.drives,
+      personality: this.personality,
+      environment,
+    });
+    return {
+      simulationTime: this.clock.now(),
+      candidates,
+      selectedAction: this.currentBehavior?.action ?? null,
+    };
+  }
+
+  diagnosticSnapshot(environmentInput = this.lastEnvironment) {
+    const evaluation = this.evaluate(environmentInput);
+    return {
+      creatureId: this.creatureId,
+      simulationTime: this.clock.now(),
+      personality: clone(this.personality),
+      drives: clone(this.drives),
+      currentBehavior: clone(this.currentBehavior),
+      behaviorDurationRemaining: this.currentBehavior
+        ? Math.max(0, this.currentBehavior.endsAt - this.clock.now())
+        : 0,
+      candidates: evaluation.candidates,
+      rngState: this.rng.getState(),
+    };
+  }
+
+  toSnapshot() {
+    const behaviorTiming = this.currentBehavior
+      ? {
+          startedAt: this.currentBehavior.startedAt,
+          endsAt: this.currentBehavior.endsAt,
+          duration: this.currentBehavior.duration,
+          durationRemaining: Math.max(0, this.currentBehavior.endsAt - this.clock.now()),
+        }
+      : null;
+
+    return {
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      creatureId: this.creatureId,
+      createdAt: this.createdAt,
+      simulationTimestamp: this.clock.now(),
+      rngState: this.rng.getState(),
+      personality: clone(this.personality),
+      internalState: clone(this.drives),
+      currentBehavior: clone(this.currentBehavior),
+      behaviorTiming,
+    };
+  }
+
+  serialize() {
+    return serializeSnapshot(this.toSnapshot());
+  }
+
+  static fromSnapshot(snapshotOrSerialized) {
+    const snapshot = deserializeSnapshot(snapshotOrSerialized);
+    return new CreatureCore({
+      creatureId: snapshot.creatureId,
+      createdAt: snapshot.createdAt,
+      simulationTimestamp: snapshot.simulationTimestamp,
+      personality: snapshot.personality,
+      drives: snapshot.internalState,
+      rngState: snapshot.rngState,
+      currentBehavior: snapshot.currentBehavior,
+    });
+  }
+
+  commitBehavior(environment) {
+    const selection = this.selector.select({
+      drives: this.drives,
+      personality: this.personality,
+      environment,
+      rng: this.rng,
+    });
+    const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
+    const duration = this.rng.nextRange(definition.minDuration, definition.maxDuration);
+    const startedAt = this.clock.now();
+    const currentBehavior = {
+      action: selection.selected.action,
+      startedAt,
+      endsAt: startedAt + duration,
+      duration,
+      interruptible: definition.interruptible,
+      cooldown: definition.cooldown,
+      reason: summarizeReason(selection.selected.contributors),
+      score: selection.selected.score,
+      scoreBreakdown: {
+        selected: selection.selected,
+        candidates: selection.candidates,
+      },
+    };
+    this.currentBehavior = currentBehavior;
+    return new BehaviorIntent({
+      time: startedAt,
+      action: currentBehavior.action,
+      duration: currentBehavior.duration,
+      reason: currentBehavior.reason,
+      score: currentBehavior.score,
+      scoreBreakdown: clone(currentBehavior.scoreBreakdown),
+      interruptible: currentBehavior.interruptible,
+    });
+  }
+
+  evolveDrives(seconds, environment) {
+    const hours = seconds / 3600;
+    const action = this.currentBehavior?.action;
+    const sleeping = action === "SLEEP";
+    const playing = action === "PLAY";
+    const observing = action === "OBSERVE" || action === "WANDER";
+    const userRelief = environment.userPresent ? 0.012 : 0;
+
+    this.drives.energy = clamp01(this.drives.energy + (sleeping ? -0.09 : 0.022) * hours);
+    this.drives.social = clamp01(
+      this.drives.social + ((environment.userPresent ? -0.009 : 0.018) - userRelief) * hours,
+    );
+    this.drives.curiosity = clamp01(
+      this.drives.curiosity + (observing ? -0.045 : 0.008 + environment.novelty * 0.01) * hours,
+    );
+    this.drives.stimulation = clamp01(
+      this.drives.stimulation +
+        (playing ? -0.1 : observing ? -0.02 : 0.016 + environment.novelty * 0.01) * hours,
+    );
+
+    if (environment.interactionPressure > 0 && action === "SEEK_ATTENTION") {
+      this.drives.social = clamp01(this.drives.social - environment.interactionPressure * 0.06 * hours);
+    }
+  }
+}
+
+function resolveEnvironment(environmentInput, timestamp) {
+  const value = typeof environmentInput === "function" ? environmentInput(timestamp) : environmentInput;
+  return createEnvironment(value);
+}
+
+function summarizeReason(contributors) {
+  return Object.entries(contributors)
+    .filter(([, value]) => Math.abs(value) >= 0.08)
+    .sort((left, right) => Math.abs(right[1]) - Math.abs(left[1]))
+    .slice(0, 3)
+    .map(([name, value]) => `${name}=${value.toFixed(3)}`)
+    .join(", ");
+}
+
+function clone(value) {
+  return value === null || value === undefined ? value : JSON.parse(JSON.stringify(value));
+}
+
+function assertNonNegative(value, name) {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new RangeError(`${name} must be a finite non-negative number.`);
+  }
+  return value;
+}

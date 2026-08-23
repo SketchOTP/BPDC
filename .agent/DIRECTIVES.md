@@ -1,0 +1,86 @@
+# Project Directive Ledger
+
+## AUTHORITY-BOOTSTRAP-BPDC-001
+
+- Issued: 2026-08-22 America/New_York
+- Issuer: User / project architect
+- External directive: NONE
+- Objective: review the BPDC Notion authority and install Authority 3.0 for this new repository.
+- Scope: root router, `.authority/`, `.agent/`, `.agents/`, and structural verification.
+- Exclusions: application implementation, Phase 0 candidate evaluation, deployment, commit, push, and unrelated external changes.
+- Acceptance: installed governance reflects verified BPDC facts and preserves the Phase 0 boundary.
+- Risk class: `NORMAL`
+- Relationship: `new`
+- Related directive: `NONE`
+- Status at issuance: `ISSUED`
+
+## BPDC-P0-001
+
+- Issued: 2026-08-22 America/New_York
+- Issuer: User / project architect via attached handoff
+- External directive: `BPDC-P0-001`
+- Objective: Determine the smallest legally clean desktop foundation capable of hosting BPDC's independently testable persistent creature simulation.
+- Scope: OpenPets deep evaluation and disposable proof, bounded VPet fallback evaluation, Petz/PetzA behavioral investigation, licensing, evidence, decision matrix, and Authority-state update.
+- Exclusions: CreatureCore, needs, memory, utility AI, habits, evolution, LLM integration, battle systems, inventory, final art, vendoring/committing external source, Phase 1, push, and deployment.
+- Acceptance: Exact upstream commits, traced OpenPets seam, executed proof or demonstrated blocker, credible VPet fallback, extracted Petz mechanisms, foundation decision, host modifications, proposed BPDC boundary, validation records, and Architect handoff.
+- Risk class: `NORMAL`
+- Relationship: `new`
+- Related directive: `AUTHORITY-BOOTSTRAP-BPDC-001`
+- Status at issuance: `ISSUED`
+
+### BPDC-P0-001 closure
+
+- Result: `PASS_WITH_CONCERNS`
+- Closed for Codex handoff: 2026-08-22 America/New_York
+- Architect acceptance: `PENDING`
+- Concern: full OpenPets desktop suite failed in `plugin-service.test.js` while focused SDK, official-plugin, motion, and display checks passed.
+
+## BPDC-P1-001
+
+- Issued: 2026-08-22 America/New_York
+- Issuer: User / project architect via attached Architect review
+- External directive: `BPDC-P1-001`
+- Objective: Implement the smallest framework-independent headless CreatureCore proving autonomous state-caused behavior, stable personality differences, and deterministic persistent identity.
+- Scope: Four normalized drives, six stable personality traits, plain environment snapshots, seven behaviors, inspectable utility scoring, constrained seeded randomness, injectable time, behavioral commitment, versioned JSON snapshots, headless runner, and required experiments.
+- Exclusions: OpenPets, Electron, WPF, Windows APIs, cursor/window tracking, graphics, animation, feeding, inventory, memory, habits, emotional model, evolution, LLM, cloud, and Phase 2 desktop work.
+- Acceptance: Framework independence, deterministic seeded replay, persistence continuity, causal needs, measurable personality divergence, accelerated simulation, passing tests, and no OpenPets dependency in CreatureCore.
+- Risk class: `NORMAL`
+- Relationship: `new`
+- Related directive: `BPDC-P0-001`
+- Status at issuance: `ACCEPTED`
+
+### BPDC-P1-001 closure
+
+- Result: `PASS`
+- Closed for Codex handoff: 2026-08-22 America/New_York
+- Architect acceptance: `PENDING`
+- Summary: Framework-independent CreatureCore implemented with four pressure drives, six persisted personality traits, seven utility-selected behaviors, seeded randomness, injectable simulation time, commitment timing, inspectable score breakdowns, versioned snapshots, and a headless experiment runner.
+- Concern: live Windows/Electron integration remains unknown and is explicitly deferred to the future desktop gate.
+- Outcome ID: `BPDC-P1-001-CREATURE-CORE`
+
+### BPDC-P0-001 Architect acceptance record
+
+- Accepted: 2026-08-22 America/New_York
+- Decision: OpenPets adapter/plugin accepted as the primary desktop foundation; VPet fallback-only; Petz/PetzA reference-only.
+- Phase 1 authorization: `GRANTED` for a framework-independent headless CreatureCore.
+- Deferred gate: live Windows/Electron validation remains `UNKNOWN` and is required before desktop integration depends on the host.
+
+## BPDC-P1-001 Architect acceptance
+
+- Accepted: 2026-08-22
+- Decision: Phase 1 established the first real BPDC capability: a persistent deterministic individual with internal pressures, personality, competing motivations, and autonomous behavior selection.
+- Evidence: CreatureCore architecture, deterministic replay, save/reload continuity, personality divergence, drive causality, and behavior commitment were verified; perceived believability and live Windows/OpenPets integration remain unknown.
+- Authorization: `BPDC-P2-001` desktop embodiment gate granted.
+
+## BPDC-P2-001
+
+- Issued: 2026-08-22
+- Issuer: User / project architect via attached Architect review
+- External directive: `BPDC-P2-001`
+- Objective: Prove that accepted CreatureCore can control a real visible OpenPets desktop creature on Windows through a thin adapter while remaining independent of OpenPets.
+- Scope: local Phase 1 checkpoint; host-neutral DesktopAdapter; OpenPets-specific adapter/plugin; original placeholder pet; minimal intent mapping; host-autonomy test; provenance logging; live Windows/Electron execution; autonomous run; BPDC-owned persistence through host restart; dependency boundary scan.
+- Exclusions: memory, habits, relationship learning, affinity, hunger, feeding, inventory, cursor/environment observation, window geometry, application awareness, multi-monitor behavior, evolution, growth, battles, LLM, speech, final art, large animation libraries, OpenPets core fork, VPet fallback, and Phase 3 work.
+- Acceptance: all 16 criteria in the Architect directive, including live host launch/rendering, three visible intent mappings, autonomous operation, host-authority proof, restart persistence, no fork, original assets, isolated pruning issue, and no Phase 3 work.
+- Discovery: conditional; inspect the pinned OpenPets source/documentation and consult current primary material only when runtime behavior differs from Phase 0 findings.
+- Stop conditions: host autonomy cannot be disabled/proven non-conflicting; invasive host changes/fork required; host-specific leakage into CreatureCore; persistence cannot retain BPDC snapshot; host cannot run on target Windows; fewer than three intentions can be expressed; license concern appears; or adapter absorbs behavioral logic.
+- Status at issuance: `AUTHORIZED`

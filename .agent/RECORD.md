@@ -1,0 +1,71 @@
+# Project Decision and Milestone Record
+
+## BPDC-GOV-001
+
+- Date: 2026-08-22
+- Record ID: `BPDC-GOV-001`
+- Status: `ACTIVE`
+- Decision: Adopt the Authority 3.0 installation model for BPDC using the stable 2026.08.15 / schema 2.2.0 governance baseline.
+- Rationale: The Notion installation package defines the Architect → Codex → evidence → Architect loop, while the preserved Authority record identifies 2.2.0 as the stable production baseline.
+- Affected areas: root router, `.agent/`, `.agents/`, `.authority/`
+- Supersession: `NONE`
+
+## BPDC-P0-001-ACCEPTED
+
+- Date: 2026-08-22
+- Record ID: `BPDC-P0-001-ACCEPTED`
+- Status: `ACCEPTED`
+- Decision: OpenPets is accepted as BPDC's primary desktop foundation through an adapter/plugin, without a core fork. The pruning concern is tracked and does not block Phase 1 unless it affects BPDC lifecycle/state integrity.
+- Rationale: Architect review accepted the Phase 0 evidence and authorized the framework-independent headless CreatureCore directive.
+- Affected areas: foundation decision and Phase 1 authorization.
+- Supersession: `BPDC-PHASE-001` pending acceptance state.
+
+## BPDC-PHASE-002
+
+- Date: 2026-08-22
+- Record ID: `BPDC-PHASE-002`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Implement the first headless CreatureCore as framework-independent ECMAScript modules; keep OpenPets behind a future DesktopAdapter.
+- Rationale: The accepted P1 directive requires proof of internal motivation, individual differences, and deterministic persistence before desktop integration. The implementation and A–D experiments pass without desktop dependencies.
+- Affected areas: `src/creature-core/`, `src/cli/`, `tests/`, package metadata, and project evidence.
+- Supersession: `NONE`
+
+## BPDC-PHASE-000
+
+- Date: 2026-08-22
+- Record ID: `BPDC-PHASE-000`
+- Status: `ACTIVE`
+- Decision: Keep the project at Phase 0 — Foundation Evaluation until external desktop-pet candidates and the architectural seam are evidenced.
+- Rationale: This is the explicit first assignment in the canonical BPDC Notion directive.
+- Affected areas: project plan and future directives.
+- Supersession: `NONE`
+
+## BPDC-PHASE-001
+
+- Date: 2026-08-22
+- Record ID: `BPDC-PHASE-001`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Codex recommends OpenPets adapter/plugin as BPDC's initial body/renderer foundation; VPet remains fallback; Petz/PetzA is reference-only.
+- Rationale: OpenPets passed the required disposable movement/reaction/timer/state/restore/headless proof and exposes a cleanest separation between BPDC-owned state and host rendering, while VPet couples plugins to WPF/game state and PetzA is not a host.
+- Affected areas: Phase 0 foundation decision and future `CreatureCore → BehaviorIntent → DesktopAdapter` implementation.
+- Supersession: `NONE`
+
+## BPDC-P1-001-ACCEPTED
+
+- Date: 2026-08-22
+- Record ID: `BPDC-P1-001-ACCEPTED`
+- Status: `ACCEPTED`
+- Decision: The Architect accepted the framework-independent CreatureCore and authorized the desktop embodiment gate `BPDC-P2-001`.
+- Rationale: Phase 1 verified deterministic replay, persistence continuity, personality-dependent divergence, drive-dependent causality, autonomous selection, and behavior commitment. Believability and live host execution remain unknown.
+- Affected areas: Phase 2 integration authorization.
+- Supersession: `BPDC-PHASE-002` pending acceptance state.
+
+## BPDC-PHASE-003
+
+- Date: 2026-08-22
+- Record ID: `BPDC-PHASE-003`
+- Status: `ACTIVE`
+- Decision: Test CreatureCore embodiment through a thin host-neutral adapter and pinned OpenPets plugin; OpenPets remains the body and BPDC remains the brain.
+- Rationale: The highest-value remaining uncertainty is whether BPDC intent reaches visible desktop behavior without host autonomy overriding it.
+- Affected areas: `src/desktop/`, `integrations/openpets/`, original placeholder assets, runtime evidence, and persistence validation.
+- Supersession: `NONE`

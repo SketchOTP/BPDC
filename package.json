@@ -1,0 +1,16 @@
+{
+  "name": "bpdc",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework-independent headless behavioral core for BPDC.",
+  "scripts": {
+    "test": "node --test",
+    "simulate": "node src/cli/simulate.js",
+    "experiments": "node src/cli/experiments.js",
+    "check": "npm test"
+  },
+  "bin": {
+    "bpdc-sim": "src/cli/simulate.js"
+  }
+}

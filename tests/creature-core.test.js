@@ -1,0 +1,129 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { BehaviorIntent, CreatureCore, createEnvironment } from "../src/creature-core/index.js";
+
+const SHARED_ENVIRONMENT = () =>
+  createEnvironment({
+    localTime: 12,
+    userPresent: true,
+    userIdleDuration: 60,
+    novelty: 0.45,
+    interactionPressure: 0.1,
+  });
+
+function runHours(core, hours, environment = SHARED_ENVIRONMENT) {
+  const events = [];
+  for (let remaining = hours * 3600; remaining > 0; remaining -= 300) {
+    events.push(...core.advance(Math.min(300, remaining), environment));
+  }
+  return events;
+}
+
+function behaviorCounts(events) {
+  return Object.fromEntries(
+    ["IDLE", "OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "SLEEP"].map((action) => [
+      action,
+      events.filter((event) => event.action === action).length,
+    ]),
+  );
+}
+
+test("seven behaviors and machine-readable score diagnostics are exposed", () => {
+  const core = CreatureCore.create({ seed: 1234 });
+  const events = core.advance(0, SHARED_ENVIRONMENT);
+  const diagnostic = core.diagnosticSnapshot(SHARED_ENVIRONMENT);
+
+  assert.equal(events.length, 1);
+  assert.ok(events[0] instanceof BehaviorIntent);
+  assert.deepEqual(
+    diagnostic.candidates.map((candidate) => candidate.action),
+    ["IDLE", "OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "SLEEP"],
+  );
+  assert.ok(Object.keys(events[0].scoreBreakdown.selected.contributors).length > 0);
+  assert.equal(events[0].scoreBreakdown.candidates.length, 7);
+});
+
+test("same seed and inputs produce identical replay", () => {
+  const first = CreatureCore.create({ seed: 1234 });
+  const second = CreatureCore.create({ seed: 1234 });
+  assert.deepEqual(runHours(first, 24), runHours(second, 24));
+  assert.deepEqual(first.toSnapshot(), second.toSnapshot());
+});
+
+test("ten personality seeds produce differentiated 24-hour distributions", () => {
+  const results = [];
+  for (let seed = 1; seed <= 10; seed += 1) {
+    const core = CreatureCore.create({ seed });
+    results.push({ seed, personality: core.personality, counts: behaviorCounts(runHours(core, 24)) });
+  }
+
+  const signatures = new Set(results.map(({ counts }) => JSON.stringify(counts)));
+  assert.ok(signatures.size >= 3, `expected at least three distributions, got ${signatures.size}`);
+
+  const mostSociable = results.reduce((best, result) =>
+    result.personality.sociability > best.personality.sociability ? result : best,
+  );
+  const leastSociable = results.reduce((best, result) =>
+    result.personality.sociability < best.personality.sociability ? result : best,
+  );
+  assert.ok(mostSociable.counts.SEEK_ATTENTION >= leastSociable.counts.SEEK_ATTENTION);
+});
+
+test("extreme drives causally select sleep, attention, and play", () => {
+  const sleepy = CreatureCore.create({ seed: 21 });
+  sleepy.drives = { energy: 1, social: 0.05, curiosity: 0.05, stimulation: 0.05 };
+  assert.equal(sleepy.advance(0, createEnvironment({ localTime: 2 }))[0].action, "SLEEP");
+
+  const attention = CreatureCore.create({ seed: 22 });
+  attention.drives = { energy: 0.05, social: 1, curiosity: 0.05, stimulation: 0.05 };
+  attention.personality = {
+    curiosity: 0.2, sociability: 1, playfulness: 0.2, boldness: 0.2, independence: 0.1, sleepiness: 0.2,
+  };
+  assert.equal(
+    attention.advance(0, createEnvironment({ localTime: 12, userPresent: true }))[0].action,
+    "SEEK_ATTENTION",
+  );
+
+  const playful = CreatureCore.create({ seed: 23 });
+  playful.drives = { energy: 0.05, social: 0.05, curiosity: 0.2, stimulation: 1 };
+  playful.personality = {
+    curiosity: 0.3, sociability: 0.2, playfulness: 1, boldness: 0.5, independence: 0.5, sleepiness: 0.1,
+  };
+  assert.equal(playful.advance(0, SHARED_ENVIRONMENT)[0].action, "PLAY");
+});
+
+test("save and reload preserve identity, timing, and continuation", () => {
+  const uninterrupted = CreatureCore.create({ seed: 77, createdAt: 100 });
+  const split = CreatureCore.create({ seed: 77, createdAt: 100 });
+  const firstTrace = runHours(uninterrupted, 12, timedEnvironment);
+  assert.deepEqual(runHours(split, 12, timedEnvironment), firstTrace);
+
+  const reloaded = CreatureCore.fromSnapshot(JSON.parse(split.serialize()));
+  const uninterruptedSecond = runHours(uninterrupted, 12, timedEnvironment);
+  const reloadedSecond = runHours(reloaded, 12, timedEnvironment);
+
+  assert.deepEqual(reloadedSecond, uninterruptedSecond);
+  assert.deepEqual(reloaded.toSnapshot(), uninterrupted.toSnapshot());
+  assert.equal(reloaded.personality.sociability, split.personality.sociability);
+});
+
+test("accelerated 24-hour run emits enough structured trace for inspection", () => {
+  const core = CreatureCore.create({ seed: 9001 });
+  const trace = runHours(core, 24, timedEnvironment);
+  assert.ok(trace.length >= 10);
+  assert.ok(trace.every((event) => Number.isFinite(event.time)));
+  assert.ok(trace.every((event) => event.scoreBreakdown.candidates.length === 7));
+  assert.equal(core.toSnapshot().simulationTimestamp, 24 * 3600);
+});
+
+function timedEnvironment(timestamp) {
+  const localTime = (timestamp % 86400) / 3600;
+  const userPresent = localTime >= 8 && localTime < 22;
+  return createEnvironment({
+    localTime,
+    userPresent,
+    userIdleDuration: userPresent ? 120 : 3600,
+    novelty: ((Math.floor(timestamp / 3600) * 7) % 10) / 10,
+    interactionPressure: userPresent ? 0.12 : 0.02,
+  });
+}

@@ -1,0 +1,141 @@
+# Project Evidence Catalog
+
+## Evidence ladder
+
+- `E0_CLAIMED` — assertion only; not acceptance evidence.
+- `E1_OBSERVED` — directly inspected static fact or source.
+- `E2_REPRODUCED` — behavior/problem reproduced.
+- `E3_TARGET_TESTED` — focused deterministic target check passes.
+- `E4_REGRESSION_PROTECTED` — target check plus meaningful broader/pre-existing protection.
+- `E5_OPERATIONALLY_OBSERVED` — observed in the authorized real or production-like environment.
+
+New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime evidence.
+
+## BPDC-E001 — governance bootstrap basis
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `AUTHORITY-BOOTSTRAP-BPDC-001` / `BPDC-AUTHORITY-BOOTSTRAP-001`
+- Evidence level: `E1_OBSERVED`
+- Type: `STATIC_OBSERVATION`
+- Sources: BPDC Notion page; Authority 3.0 Notion page; GitHub `SketchOTP/BPDC` metadata; local workspace inspection.
+- Result: `OBSERVED`
+- Reliability/limitations: no application source exists yet; Phase 0 candidates were named by Notion but not independently evaluated.
+- Reproduction command/method: Notion fetch, GitHub repository metadata fetch, local read-only directory/Git inspection.
+
+## BPDC-E002 — OpenPets traced integration seam
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P0-001` / pending Architect acceptance
+- Evidence level: `E1_OBSERVED`
+- Type: `STATIC_OBSERVATION`
+- Sources: OpenPets commit `a77d3747caab0337934959980c68f60e0d3c615c`; SDK documentation and types; desktop plugin bridge, pet API/registry, motion, display, quota, and official virtual-pet plugin sources.
+- Result: `OBSERVED`
+- Finding: OpenPets provides plugin-owned persistent JSON storage, schedules, curated events, direct movement, reactions, declared sprite animation, state reads, click/drag interaction, and host-owned display containment while keeping plugins out of the render/window boundary.
+- Reliability/limitations: static source observation; live Electron/Windows runtime was not run.
+
+## BPDC-E003 — disposable OpenPets proof
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P0-001` / pending Architect acceptance
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Scratch proof: `C:\Users\sketc\AppData\Local\Temp\bpdc-p0-001-proof\proof.mjs`
+- Command: `node C:\Users\sketc\AppData\Local\Temp\bpdc-p0-001-proof\proof.mjs`
+- Result: `PASSED`
+- Output: `BPDC_OPENPETS_PROOF=PASS`; movement, reaction, timer, custom state, restore, event, and headless checks all passed.
+- Reliability/limitations: disposable SDK harness only; it does not prove a live desktop runtime.
+
+## BPDC-E004 — OpenPets SDK and official plugin checks
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P0-001` / pending Architect acceptance
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Commands: `pnpm --filter @open-pets/plugin-sdk build`; `pnpm --filter @open-pets/plugin-sdk test`; `node plugins/official/openpets.virtual-pet/test.js`.
+- Result: `PASSED`; SDK build, SDK contract tests, and official virtual-pet checks completed successfully.
+- Reliability/limitations: upstream checkout was disposable and pinned to the recorded commit.
+
+## BPDC-E005 — OpenPets motion/display focused checks
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P0-001` / pending Architect acceptance
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Command: direct execution of the built display, confinement, motion-engine, gravity, and roaming-controller test targets after `pnpm --filter @open-pets/desktop test:build`.
+- Result: `PASSED`; final marker `TARGETED_MOTION_DISPLAY=PASS`.
+- Reliability/limitations: focused desktop test targets only; no live Electron/Windows window validation.
+
+## BPDC-E006 — broad OpenPets desktop suite concern
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P0-001` / pending Architect acceptance
+- Evidence level: `E2_REPRODUCED`
+- Type: `REGRESSION_OBSERVATION`
+- Command: `pnpm --filter @open-pets/desktop test`
+- Result: `FAILED_WITH_CONCERN` at `tests/plugin-service.test.js`: local-plugin pruning expected the stale `old-sample` record to be removed but observed it still present. A malformed temporary plugin-state JSON case logged and recovered to defaults and passed.
+- Reliability/limitations: no upstream repair was attempted; the failure is not characterized as BPDC-caused.
+
+## BPDC-E007 — VPet fallback review
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P0-001` / pending Architect acceptance
+- Evidence level: `E1_OBSERVED`
+- Type: `STATIC_OBSERVATION`
+- Sources: VPet commit `b6f7b00363529bafe3e7fc14bf51e17640941691`; README; secondary-development documentation; plugin interfaces; main logic, controller, save-state, and demo plugin sources.
+- Result: `REFERENCE_FALLBACK`
+- Finding: credible Windows/WPF desktop pet host with animation, interaction, plugin, and save seams, but gameplay/save/render coupling is stronger and default animation assets carry separate terms.
+- Reliability/limitations: VPet build and runtime were not run; the demo's foreground-window observation is excluded from BPDC's privacy boundary.
+
+## BPDC-E008 — Petz/PetzA behavioral reference review
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P0-001` / pending Architect acceptance
+- Evidence level: `E1_OBSERVED`
+- Type: `STATIC_OBSERVATION`
+- Sources: PetzA commit `6c36688bcd1839e4f2a5fd4d91bcd187297c1abc`; petz-file-formats commit `cd1634b9e908078fb831ae833975d1219da30e36`; MIT Catz behavioral paper.
+- Result: `REFERENCE_ONLY`
+- Finding: reusable behavioral ideas include drives/biorhythms, target location, identity/profiles, constrained randomness, layered animation/timing, and direct interaction; PetzA's executable hooks and assets are version-specific and outside the BPDC foundation.
+- Reliability/limitations: historical/reference material only; no runtime reuse or asset copying authorized.
+
+## BPDC-E009 — framework-independent CreatureCore implementation
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P1-001` / `BPDC-P1-001-CREATURE-CORE`
+- Evidence level: `E1_OBSERVED`
+- Type: `IMPLEMENTATION_OBSERVATION`
+- Sources: `src/creature-core/`, `src/cli/`, `package.json`, and `README.md`.
+- Result: `IMPLEMENTED`
+- Finding: the core has four normalized pressure drives, six persisted traits, seven behaviors, injectable clock, seeded RNG, commitment timing, machine-readable score contributors, and versioned JSON snapshots. No desktop or OpenPets import exists.
+- Reliability/limitations: static source observation; runtime behavior is covered by E010 and E011.
+
+## BPDC-E010 — unit and behavioral test suite
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P1-001` / `BPDC-P1-001-CREATURE-CORE`
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Command: `node --test`
+- Result: `PASSED`; 6 tests passed, 0 failed.
+- Coverage: seven behaviors and diagnostics, deterministic replay, ten-seed personality divergence, extreme-drive causality, save/reload continuation, and accelerated trace structure.
+- Reliability/limitations: Node 24 test environment; no desktop runtime.
+
+## BPDC-E011 — required Phase 1 experiments
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P1-001` / `BPDC-P1-001-CREATURE-CORE`
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `EXPERIMENTAL_REPRODUCTION`
+- Command: `node src/cli/experiments.js`
+- Result: `PASSED`; replay, personality divergence, drive causality, and save/reload continuity all passed.
+- Measured findings: 10 distinct behavior distributions from 10 personality seeds under identical 24-hour conditions; the 24-hour trace runner emitted 590 behavior selections for seed 9001; persistence final timestamp was 86400 seconds.
+- Reliability/limitations: accelerated deterministic simulation only; no claim about perceived believability or live desktop behavior.
+
+## BPDC-E012 — headless JSON trace runner
+
+- Created: 2026-08-22 America/New_York
+- Directive/outcome: `BPDC-P1-001` / `BPDC-P1-001-CREATURE-CORE`
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Command: `node src/cli/simulate.js --seed 1234 --hours 24`
+- Result: `PASSED`; JSON parsed successfully with 606 behavior selections and final simulation time 86400 seconds.
+- Reliability/limitations: CLI output is headless simulation evidence, not desktop integration evidence.
