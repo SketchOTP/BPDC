@@ -160,3 +160,15 @@
 - Stop conditions: dirty worktree, missing accepted tip, remote divergence/non-ancestry, tracked secrets/private runtime data, unexpected generated files, licensing concern, test regression, or any requirement for force push.
 - Discovery: not required; repository durability checkpoint only.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-SYNC-002
+
+- Issued: 2026-08-23 America/New_York
+- Issuer: User / project architect via attached Architect review
+- External directive: `BPDC-SYNC-002`
+- Objective: Preserve both unrelated Git roots with one explicit merge and synchronize canonical GitHub `main` without rewriting either history or changing application behavior.
+- Scope: Authority-only checkpoint, safety ref, isolated reconciliation branch, fresh remote verification, bootstrap-tree inspection, expected bootstrap conflict resolution, full validation, normal non-force push, local/remote equality verification, and Authority/Notion recording.
+- Exclusions: no CreatureCore, relationship, OpenPets, Phase 4, rebase, squash, reset, force push, bootstrap deletion, cherry-pick of the project, repository recreation, release, or deployment.
+- Stop conditions: unexplained application dirty state, remote movement, material license conflict, non-bootstrap conflict, application delta, regression, secret/private data discovery, push rejection, or force-push requirement.
+- Discovery: not required; repository durability checkpoint only.
+- Status at issuance: `AUTHORIZED`

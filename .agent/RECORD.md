@@ -138,3 +138,16 @@
 - Rationale: The directive requires a normal fast-forward push and explicitly forbids merge, rebase, reset, and force push when remote history diverges.
 - Validation: clean worktree before inspection, 13/13 tests, diff check pass, safety scan pass; push not attempted.
 - Supersession: `NONE`; awaiting Architect reconciliation decision.
+
+## BPDC-SYNC-002-RECONCILED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-SYNC-002-RECONCILED`
+- Status: `PASSED`
+- Decision: Preserve both unrelated roots with one explicit merge and publish the accepted Phase 1–3 state to GitHub `main`.
+- Evidence: safety ref `safety/pre-github-root-reconcile`; isolated branch `sync/github-root-reconcile`; merge commit `34aef6f965a10624b5db0eb06691cab60af89b1c` with parents `5780122059755516b99da56366d33e6c5d5f2432` and `c1eaf44196fb2c58e92e61fa1059e2e283304cf1`.
+- Application invariant: only `.gitignore` and `LICENSE` changed in the reconciliation merge; no delta under `src/`, `tests/`, or `integrations/`.
+- Validation: 13/13 tests, relationship experiments, manifest validation, local-staged build, diff check, safety scan, ancestry checks, and GitHub commit verification passed.
+- Publication: normal non-force push succeeded; local `main` equals GitHub `main` at the reconciliation SHA.
+- Supersession: `BPDC-SYNC-001-REMOTE-ANCESTRY-BLOCKED` is superseded by `BPDC-SYNC-002-RECONCILED`.
+- Boundary: Phase 4 remains unauthorized.

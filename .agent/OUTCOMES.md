@@ -134,3 +134,16 @@
 - Validation: `node --test` PASSED 13/13; `git diff --check` PASSED; tracked-file safety scan found no obvious secret/key/env filename or token pattern.
 - Push: NOT RUN. No merge, rebase, reset, force push, or application change was performed.
 - Required decision: Architect must choose the safe reconciliation strategy before synchronization continues.
+
+## BPDC-SYNC-002 - PASSED
+
+- Outcome ID: `BPDC-SYNC-002-RECONCILIATION-PUBLISHED`
+- Closed: 2026-08-23 America/New_York
+- Acceptance: `MET`
+- Summary: Authority-only changes were checkpointed at `5780122059755516b99da56366d33e6c5d5f2432`; safety ref `safety/pre-github-root-reconcile` and isolated branch `sync/github-root-reconcile` were created.
+- Reconciliation: remote bootstrap `c1eaf44196fb2c58e92e61fa1059e2e283304cf1` was joined to accepted local history with one explicit `--allow-unrelated-histories` merge. The only conflict was `.gitignore`; remote MIT `LICENSE` added cleanly. Reconciliation commit `34aef6f965a10624b5db0eb06691cab60af89b1c` has parents `5780122059755516b99da56366d33e6c5d5f2432` and `c1eaf44196fb2c58e92e61fa1059e2e283304cf1`.
+- Application invariant: staged delta under `src/`, `tests/`, and `integrations/` was empty; no product code or Phase 4 capability changed.
+- Validation: `node --test` PASSED 13/13; relationship experiments PASSED; OpenPets manifest validation PASSED; local-staged plugin build PASSED at 30,052 bytes; staged diff check PASSED; safety scan PASSED; both ancestry checks PASSED.
+- Publication: immediate refetch showed no remote movement; normal non-force push succeeded. GitHub and local `main` both resolve to `34aef6f965a10624b5db0eb06691cab60af89b1c`.
+- Supersession: `BPDC-SYNC-001` blocker is superseded by this completed reconciliation.
+- Boundary: Phase 4 remains unauthorized.

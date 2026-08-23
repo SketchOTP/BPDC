@@ -134,3 +134,12 @@
 - Confidence: `VERIFIED`
 - Scope: repository synchronization and history safety.
 - Supersedes: `NONE`
+
+## BPDC-L016
+
+- Date: 2026-08-23
+- Fact: Independently initialized Git roots can be preserved safely with one explicit `--allow-unrelated-histories` merge when the remote contains only bootstrap material and the merge is inspected before commit.
+- Evidence: `BPDC-SYNC-002-RECONCILIATION-PUBLISHED`; merge commit `34aef6f...` has both roots as parents, application delta was empty, and normal push verified local/GitHub equality.
+- Confidence: `VERIFIED`
+- Scope: BPDC repository durability and Authority synchronization.
+- Supersedes: `NONE`

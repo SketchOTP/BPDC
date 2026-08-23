@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-SYNC-001`
-- External directive ID: `BPDC-SYNC-001`
-- Objective: Synchronize the accepted Phase 1–3 local state to GitHub through a safe normal push without changing application behavior.
-- Current status: `BLOCKED_PENDING_ARCHITECT_REVIEW`
-- Acceptance: `BPDC-P3-003` was accepted by the Architect and Phase 3 is closed. The required remote ancestry proof for `BPDC-SYNC-001` failed because `origin/main` is a separate Git root.
-- Current phase: `Phase 3 — Minimal Relationship Memory` closed; repository safety checkpoint pending.
-- Expected touched areas: `.agent/` records only until the Git-history reconciliation decision is made. No application source changes are authorized.
-- Immediate next action: Architect decide how to reconcile the unrelated remote bootstrap root with accepted local history. Do not merge, rebase, reset, force-push, or begin Phase 4.
+- Local directive ID: `BPDC-SYNC-002`
+- External directive ID: `BPDC-SYNC-002`
+- Objective: Preserve both Git roots in one explicit reconciliation merge and synchronize the accepted Phase 1–3 state to GitHub `main`.
+- Current status: `COMPLETE_FOR_ARCHITECT_HANDOFF`
+- Acceptance: `BPDC-SYNC-002` passed. Reconciliation commit `34aef6f` contains both roots, GitHub `main` and local `main` are equal, and no application behavior changed.
+- Current phase: `Phase 3 — Minimal Relationship Memory` closed; repository safety checkpoint complete.
+- Expected touched areas: no further application changes authorized by this checkpoint. Phase 4 remains unauthorized.
+- Immediate next action: Architect decide whether to authorize the next product phase. Do not begin Phase 4 without explicit acceptance/authorization.
 
 ## Temporary task-relevant facts
 
@@ -38,4 +38,4 @@
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` is blocked because remote ancestry is not fast-forwardable. Phase 4 remains unauthorized and GitHub push was not attempted.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Phase 4 remains unauthorized.
