@@ -73,3 +73,14 @@
 - Concerns: normal desktop screenshot cannot capture the transparent always-on-top window; live autonomous observation directly exercised SLEEP, while the three forced mappings are harness/adapter evidence. OpenPets broad-suite pruning concern remains isolated from BPDC.
 - Exclusions preserved: no CreatureCore host imports, no OpenPets fork, no third-party assets, no Phase 3 features.
 - Follow-up directive: Architect decide whether to accept Phase 2 and issue the next bounded directive.
+
+### BPDC-P2-002 - CODEX RESULT
+
+- Outcome ID: `BPDC-P2-002-EMBODIMENT-CLOSURE`
+- Closed for Codex handoff: 2026-08-23 America/New_York
+- Acceptance: `COMPLETE`; Architect acceptance pending.
+- Summary: the remaining live evidence gap is closed. Real Windows/Electron OpenPets accepted WANDER, SLEEP, and SEEK_ATTENTION through the production adapter, with direct desktop captures showing distinct treatments. A single autonomous session selected SEEK_ATTENTION and then WANDER from the same CreatureCore instance; both selections reached the host with `CORE`, `ADAPT`, and `HOST` provenance.
+- Validation: live native-host probes passed; autonomous multi-intent session passed; host authority log passed; existing BPDC tests, bundle build, manifest validation, and persistence checks remain passed.
+- Evidence: `BPDC-E017` through `BPDC-E021`, plus `BPDC-E013` through `BPDC-E016`.
+- Exclusions preserved: no production source changes, no OpenPets fork, no Phase 3 work, no deployment, no GitHub push.
+- Recommendation: accept the Phase 2 embodiment evidence and issue a separate bounded directive before any Phase 3 implementation begins.

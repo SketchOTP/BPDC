@@ -79,3 +79,13 @@
 - Rationale: The disposable Windows/Electron run installed the original BPDC placeholder, rendered it, restored the stable creature snapshot, reached autonomous SLEEP, and recorded host state and authority. Target tests covered three forced mappings.
 - Affected areas: desktop adapter, OpenPets integration, original placeholder assets, plugin build, runtime evidence, and persistence boundary.
 - Supersession: `BPDC-PHASE-003` remains the active phase record until Architect acceptance.
+
+## BPDC-P2-002-HANDOFF
+
+- Date: 2026-08-23
+- Record ID: `BPDC-P2-002-HANDOFF`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: The remaining Phase 2 embodiment evidence gap is closed for Codex. The real Windows/Electron OpenPets host accepted all three required visible mappings, and one autonomous live session selected two distinct CreatureCore behaviors that reached the host through the adapter.
+- Rationale: `SEEK_ATTENTION → waving` at `15:53:12.047Z` was followed by `WANDER → pet.wander(distance=110)` at `15:55:50.759Z` in the same disposable session; host authority remained configured with gravity disabled and no observed host behavior selector.
+- Affected areas: runtime evidence and Authority records only; P2 implementation is unchanged.
+- Supersession: P2-001 concern about live multi-intent embodiment evidence.

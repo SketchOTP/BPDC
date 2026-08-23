@@ -178,3 +178,53 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Type: `RUNTIME_OBSERVATION`
 - Result: `PASSED`; the live log recorded `new individual created` followed by `snapshot restored` for stable `creature-42504443` across plugin reload and host restart, using OpenPets plugin storage key `bpdc.creature.snapshot`.
 - Reliability/limitations: the test used a disposable host profile and validates identity/snapshot restoration, not a long-duration unattended Windows run.
+
+## BPDC-E017 — live WANDER mapping in Windows/Electron OpenPets
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-002` / `BPDC-P2-002-EMBODIMENT-CLOSURE`
+- Evidence level: `E5_OPERATIONALLY_OBSERVED`
+- Type: `RUNTIME_OBSERVATION`
+- Runtime: pinned OpenPets Electron 42 on Windows, disposable user data `C:\Users\sketc\AppData\Local\Temp\bpdc-p2-001-openpets-userdata3`, native host menu command `BPDC probe: wander`.
+- Result: `PASSED`; the real host accepted `pet.wander(distance=110)` at `2026-08-23T15:32:31.494Z`, with `visible=true` and host position/state returned. Direct desktop capture: `C:\Users\sketc\AppData\Local\Temp\bpdc-p2-002-live-wander.png`.
+- Reliability/limitations: this probe validates the live adapter-to-host mapping; it is not autonomous selection evidence.
+
+## BPDC-E018 — live SLEEP mapping in Windows/Electron OpenPets
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-002` / `BPDC-P2-002-EMBODIMENT-CLOSURE`
+- Evidence level: `E5_OPERATIONALLY_OBSERVED`
+- Type: `RUNTIME_OBSERVATION`
+- Runtime: same pinned OpenPets Windows/Electron profile and native host menu command `BPDC probe: sleep`.
+- Result: `PASSED`; the real host accepted `pet.react(waiting)` at `2026-08-23T15:34:16.610Z`, rendered reaction state `waiting`, and returned `visible=true`. Direct desktop capture: `C:\Users\sketc\AppData\Local\Temp\bpdc-p2-002-live-sleep.png`, visibly showing the sleeping body/`Z Z` treatment.
+- Reliability/limitations: this probe validates the live adapter-to-host mapping; it is not autonomous selection evidence.
+
+## BPDC-E019 — live SEEK_ATTENTION mapping in Windows/Electron OpenPets
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-002` / `BPDC-P2-002-EMBODIMENT-CLOSURE`
+- Evidence level: `E5_OPERATIONALLY_OBSERVED`
+- Type: `RUNTIME_OBSERVATION`
+- Runtime: same pinned OpenPets Windows/Electron profile and native host menu command `BPDC probe: attention`.
+- Result: `PASSED`; the real host accepted `pet.react(waving)` at `2026-08-23T15:34:02.878Z`, rendered reaction state `waving`, and returned `visible=true`. Direct desktop capture: `C:\Users\sketc\AppData\Local\Temp\bpdc-p2-002-live-attention.png`, visibly showing the attention/waving treatment.
+- Reliability/limitations: this probe validates the live adapter-to-host mapping; it is not autonomous selection evidence.
+
+## BPDC-E020 — autonomous multi-intent live session
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-002` / `BPDC-P2-002-EMBODIMENT-CLOSURE`
+- Evidence level: `E5_OPERATIONALLY_OBSERVED`
+- Type: `RUNTIME_OBSERVATION`
+- Runtime: pinned OpenPets Electron 42 on Windows, disposable user data `C:\Users\sketc\AppData\Local\Temp\bpdc-p2-002-autonomous-distinct-userdata`, staged unchanged P2 plugin, creature `creature-42504443`.
+- Result: `PASSED`; without probe commands, the same restored CreatureCore selected `SEEK_ATTENTION` at `2026-08-23T15:53:12.047Z`, the adapter called `pet.react(waving)` and the host accepted it, then after the `158.683` second commitment expired CreatureCore selected `WANDER` at `2026-08-23T15:55:50.756Z` and the host accepted `pet.wander(distance=110)` at `2026-08-23T15:55:50.759Z`. The live log records `CORE → ADAPT → HOST` for both selections. Direct desktop capture after the second transition: `C:\Users\sketc\AppData\Local\Temp\bpdc-p2-002-live-autonomous-wander.png`.
+- Fixture disclosure: only the disposable persisted `internalState` was prepared (`energy=0`, `social=0.3`, `curiosity=0.2`, `stimulation=0.1`) so the runtime would reach the requested multi-intent boundary promptly; behavior selection, timing, adaptation, and host execution remained production code paths.
+- Reliability/limitations: one live session proves two distinct autonomous selections, not long-term behavioral believability or later memory/relationship features.
+
+## BPDC-E021 — OpenPets non-override confirmation during P2-002
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P2-002` / `BPDC-P2-002-EMBODIMENT-CLOSURE`
+- Evidence level: `E5_OPERATIONALLY_OBSERVED`
+- Type: `RUNTIME_OBSERVATION`
+- Result: `PASSED`; the autonomous log records `nativeGravity=false` and `hostBehaviorSelection="none observed; host tick only"`, while each BPDC-selected action is followed by the corresponding adapter/host acceptance and host visibility/state.
+- Reliability/limitations: this is bounded to the pinned OpenPets runtime and the disposable session; it does not claim all future OpenPets versions behave identically.

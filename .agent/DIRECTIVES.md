@@ -93,3 +93,24 @@
 - Summary: thin adapter, original placeholder, bundled plugin, provenance logging, live Windows/Electron execution, autonomous SLEEP, host-authority configuration, and snapshot restoration were evidenced. Forced WANDER/SLEEP/SEEK_ATTENTION mappings passed the adapter and official harness checks.
 - Concern: ordinary screen capture cannot show the transparent always-on-top window; live autonomous observation directly covered SLEEP, with the other forced mappings covered in the target harness.
 - Outcome ID: `BPDC-P2-001-EMBODIMENT`
+
+## BPDC-P2-002
+
+- Issued: 2026-08-23 America/New_York
+- Issuer: User / project architect via attached Architect status
+- External directive: `BPDC-P2-002`
+- Objective: Close the remaining Phase 2 runtime evidence gap only: live WANDER, SLEEP, and SEEK_ATTENTION in real Windows/Electron OpenPets; materially distinguishable results; CreatureCore → adapter → host provenance; one autonomous session with at least two distinct CreatureCore-selected behaviors; and confirmation that OpenPets does not independently override BPDC.
+- Scope: disposable live runtime validation and append-only evidence/decision records.
+- Exclusions: no Phase 2 implementation redo, no Phase 3 work, no memory/relationship/habit features, no OpenPets fork, no production-source behavior changes, no deployment, and no GitHub push.
+- Acceptance: all seven runtime requirements in the directive are met by BPDC-E017 through BPDC-E021, with existing P2-001 implementation and persistence evidence retained.
+- Status at issuance: `AUTHORIZED`
+
+### BPDC-P2-002 closure
+
+- Result: `COMPLETE`
+- Closed for Codex handoff: 2026-08-23 America/New_York
+- Architect acceptance: `PENDING`
+- Summary: live native-host probes accepted WANDER, SLEEP, and SEEK_ATTENTION with visibly distinct desktop treatments; one uninterrupted autonomous session selected SEEK_ATTENTION then WANDER and carried both through the adapter to the real OpenPets host; host override was not observed.
+- Concern: autonomous fixture state was prepared in disposable OpenPets plugin storage to reach the second commitment within a bounded runtime window. No production source or committed behavior logic was changed.
+- Outcome ID: `BPDC-P2-002-EMBODIMENT-CLOSURE`
+- Supersession: `BPDC-P2-001` runtime-evidence concern only; P2 implementation remains unchanged.

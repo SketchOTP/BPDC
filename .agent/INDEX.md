@@ -11,9 +11,9 @@
 ## Current pointers
 
 - Current stage: Phase 2 — Desktop Embodiment Gate
-- Active directive: BPDC-P2-001
-- Active task packet: `.agent/tasks/active/BPDC-P2-001.md` (handoff pending Architect acceptance)
-- Last Codex outcome: BPDC-P2-001 (PASS_WITH_CONCERNS; Architect acceptance pending)
+- Active directive: BPDC-P2-002
+- Active task packet: `.agent/tasks/active/BPDC-P2-002.md` (handoff pending Architect acceptance)
+- Last Codex outcome: BPDC-P2-002 (COMPLETE; Architect acceptance pending)
 - Last state sync: 2026-08-23 America/New_York
 
 ## Mandatory kernel

@@ -89,3 +89,12 @@
 - Confidence: `VERIFIED`
 - Scope: runtime visual verification.
 - Supersedes: `NONE`
+
+## BPDC-L011
+
+- Date: 2026-08-23
+- Fact: Native OpenPets context-menu commands can be invoked in the real Windows host and provide a narrow live mapping check; they do not replace autonomous provenance. For bounded autonomous evidence, a disposable persisted-drive fixture can shorten the first commitment while leaving CreatureCore selection, timing, adapter translation, and host execution on unchanged production paths.
+- Evidence: `BPDC-E017` through `BPDC-E021`.
+- Confidence: `VERIFIED`
+- Scope: runtime evidence and test setup.
+- Supersedes: `NONE`
