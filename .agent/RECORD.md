@@ -119,3 +119,22 @@
 - Rationale: `BPDC-E022` provides the missing operational link between user action and later creature motivation. Bond changes remain bounded and the utility difference is explicit without strengthening relationship weights or editing the live snapshot.
 - Affected areas: Phase 3 evidence and Authority state; no new architecture.
 - Supersession: `BPDC-PHASE-004` remains the active Phase 3 milestone pending Architect acceptance.
+
+## BPDC-P3-003-ACCEPTED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-P3-003-ACCEPTED`
+- Status: `ACCEPTED`
+- Decision: Architect accepted Phase 3. The live relationship-memory chain is operationally established at E5.
+- Authorization: repository safety checkpoint `BPDC-SYNC-001`.
+- Supersession: `BPDC-P3-003-LIVE-GATE` pending-acceptance state.
+
+## BPDC-SYNC-001-REMOTE-ANCESTRY-BLOCKED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-SYNC-001-REMOTE-ANCESTRY-BLOCKED`
+- Status: `BLOCKED_PENDING_ARCHITECT_REVIEW`
+- Decision: Do not push. The fetched `origin/main` bootstrap root `c1eaf441...` is not an ancestor of local accepted tip `1ef3937...`; no merge base exists.
+- Rationale: The directive requires a normal fast-forward push and explicitly forbids merge, rebase, reset, and force push when remote history diverges.
+- Validation: clean worktree before inspection, 13/13 tests, diff check pass, safety scan pass; push not attempted.
+- Supersession: `NONE`; awaiting Architect reconciliation decision.

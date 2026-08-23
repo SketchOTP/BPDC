@@ -2,7 +2,7 @@
 
 ## Status
 
-`COMPLETE_FOR_CODEX_HANDOFF`
+`ACCEPTED_AND_COMPLETED`
 
 ## Directive
 
@@ -38,6 +38,10 @@ No relationship redesign, new memory dimensions, habits, environment learning, m
 - OpenPets manifest validation: `PASSED`.
 - CreatureCore dependency boundary: `PASSED`.
 - `git diff --check`: `PASSED` with line-ending warnings only.
+
+## Architect acceptance
+
+Architect accepted Phase 3 on 2026-08-23. The live relationship-memory chain is closed at `E5_OPERATIONALLY_OBSERVED`.
 
 ## Phase boundary
 

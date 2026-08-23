@@ -125,3 +125,12 @@
 - Confidence: `VERIFIED`
 - Scope: pinned OpenPets runtime and current Phase 3 implementation.
 - Supersedes: `NONE`
+
+## BPDC-L015
+
+- Date: 2026-08-23
+- Fact: The accepted local BPDC history and GitHub `origin/main` are separate Git roots: local Phase 1 begins at `dc489465...`, while the remote remains bootstrap root `c1eaf441...`; `git merge-base --is-ancestor origin/main HEAD` therefore fails and a normal fast-forward push is unavailable.
+- Evidence: `BPDC-SYNC-001-REMOTE-ANCESTRY-BLOCKED`; `git rev-list --left-right --count origin/main...HEAD` reported `1 5` and no merge base.
+- Confidence: `VERIFIED`
+- Scope: repository synchronization and history safety.
+- Supersedes: `NONE`

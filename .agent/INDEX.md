@@ -10,10 +10,10 @@
 
 ## Current pointers
 
-- Current stage: Phase 3 — Minimal Relationship Memory
-- Active directive: BPDC-P3-003
-- Active task packet: `.agent/tasks/active/BPDC-P3-003.md`
-- Last Codex outcome: BPDC-P3-003 (complete for Architect handoff; acceptance pending)
+- Current stage: Phase 3 closed — repository safety checkpoint blocked
+- Active directive: BPDC-SYNC-001
+- Active task packet: `.agent/tasks/active/BPDC-SYNC-001.md`
+- Last Codex outcome: BPDC-SYNC-001 (blocked on remote ancestry; Architect decision required)
 - Last state sync: 2026-08-23 America/New_York
 
 ## Mandatory kernel

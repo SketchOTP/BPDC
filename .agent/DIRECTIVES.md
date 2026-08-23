@@ -148,3 +148,15 @@
 - Acceptance: current Phase 3 implementation remains intact and the live evidence chain is operationally observed without manual relationship-state editing.
 - Discovery: not required; this is evidence closure and workspace recovery.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-SYNC-001
+
+- Issued: 2026-08-23 America/New_York
+- Issuer: User / project architect via attached Architect review
+- External directive: `BPDC-SYNC-001`
+- Objective: Safely synchronize accepted local Phase 1–3 state through commit `1ef3937` to canonical GitHub `main` without changing application behavior.
+- Scope: clean-tree verification, local history inspection, remote fetch, ancestry proof, public-safety scan, regression, normal non-force push, remote verification, and Authority/Notion recording.
+- Exclusions: no CreatureCore, relationship, OpenPets, Phase 4, history rewrite, rebase, reset, force push, release, deployment, or deletion of Authority records.
+- Stop conditions: dirty worktree, missing accepted tip, remote divergence/non-ancestry, tracked secrets/private runtime data, unexpected generated files, licensing concern, test regression, or any requirement for force push.
+- Discovery: not required; repository durability checkpoint only.
+- Status at issuance: `AUTHORIZED`

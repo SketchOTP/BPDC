@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P3-003`
-- External directive ID: `BPDC-P3-003`
-- Objective: Recover the authoritative workspace and close the real click → persisted relationship → restart → utility-effect evidence gate for Phase 3.
-- Current status: `COMPLETE_FOR_ARCHITECT_HANDOFF`
-- Acceptance: `BPDC-P2-002` was accepted by the Architect. `BPDC-P3-001` implementation and deterministic evidence are complete; `BPDC-P3-003` live evidence is captured and awaits Architect acceptance.
-- Current phase: `Phase 3 — Minimal Relationship Memory`
-- Expected touched areas: `src/desktop/`, `integrations/openpets/`, `assets/`, `tests/`, package metadata, README, and `.agent/` records. CreatureCore remains host-independent.
-- Immediate next action: Architect review of `BPDC-P3-003`; do not begin Phase 4 until acceptance.
+- Local directive ID: `BPDC-SYNC-001`
+- External directive ID: `BPDC-SYNC-001`
+- Objective: Synchronize the accepted Phase 1–3 local state to GitHub through a safe normal push without changing application behavior.
+- Current status: `BLOCKED_PENDING_ARCHITECT_REVIEW`
+- Acceptance: `BPDC-P3-003` was accepted by the Architect and Phase 3 is closed. The required remote ancestry proof for `BPDC-SYNC-001` failed because `origin/main` is a separate Git root.
+- Current phase: `Phase 3 — Minimal Relationship Memory` closed; repository safety checkpoint pending.
+- Expected touched areas: `.agent/` records only until the Git-history reconciliation decision is made. No application source changes are authorized.
+- Immediate next action: Architect decide how to reconcile the unrelated remote bootstrap root with accepted local history. Do not merge, rebase, reset, force-push, or begin Phase 4.
 
 ## Temporary task-relevant facts
 
@@ -34,8 +34,8 @@
 - Full OpenPets desktop suite has a reproducible failure in `plugin-service.test.js` under this Windows/Node 24 environment; it remains tracked and is outside BPDC Phase 1.
 - Live Windows/Electron integration: `E5_OPERATIONALLY_OBSERVED` in disposable Electron profiles; forced WANDER, SLEEP, and SEEK_ATTENTION reached the real host, and one uninterrupted autonomous session selected SEEK_ATTENTION then WANDER.
 - Phase 2 acceptance: Architect accepted `BPDC-P2-002` on 2026-08-23; Phase 2 is closed.
-- Phase 3 boundary: one normalized persistent `bond` value, bounded structured interaction history, deterministic decay/saturation, existing utility integration, and one real OpenPets interaction path. Habits, generic memory, environment learning, mood, hunger, evolution, and Phase 4 are out of scope.
+- Phase 3 boundary: one normalized persistent `bond` value, bounded structured interaction history, deterministic decay/saturation, existing utility integration, and one real OpenPets interaction path. Phase 3 is accepted. Habits, generic memory, environment learning, mood, hunger, evolution, and Phase 4 remain out of scope.
 
 ## Pending decisions
 
-- P3-003 live evidence is complete for Architect handoff. Phase 4 remains unauthorized. GitHub push remains separately unauthorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` is blocked because remote ancestry is not fast-forwardable. Phase 4 remains unauthorized and GitHub push was not attempted.

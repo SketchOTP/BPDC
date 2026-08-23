@@ -114,3 +114,23 @@
 - Evidence level: `E5_OPERATIONALLY_OBSERVED` for the live click/persistence/restart chain; deterministic implementation evidence remains `E3_TARGET_TESTED`.
 - Exclusions preserved: no relationship redesign, no Phase 4 work, no OpenPets core changes, and no GitHub push.
 - Follow-up directive: Architect acceptance decision for Phase 3.
+
+## BPDC-P3-003 - ARCHITECT ACCEPTED
+
+- Outcome ID: `BPDC-P3-003-ARCHITECT-ACCEPTED`
+- Accepted: 2026-08-23 America/New_York
+- Acceptance: `MET`
+- Decision: Phase 3 is closed at `E5_OPERATIONALLY_OBSERVED` for the live click → relationship mutation → persistence → restart → utility chain.
+- Authorization: `BPDC-SYNC-001` repository durability checkpoint granted.
+- Boundary: Phase 4 remains unauthorized until the accepted local state is safely synchronized.
+
+## BPDC-SYNC-001 - BLOCKED
+
+- Outcome ID: `BPDC-SYNC-001-REMOTE-ANCESTRY-BLOCKED`
+- Closed for Codex handoff: 2026-08-23 America/New_York
+- Acceptance: `BLOCKED_PENDING_ARCHITECT_REVIEW`
+- Summary: Local worktree was clean at accepted tip `1ef39377dbae0aa243e74383413cb86fabc3fb7d`; fetched remote `origin/main` at `c1eaf44196fb2c58e92e61fa1059e2e283304cf1`.
+- Ancestry: `git merge-base --is-ancestor origin/main HEAD` failed because the remote bootstrap root and local accepted history have no merge base. The local chain begins at `dc489465...`; the remote is a separate root `c1eaf441...`.
+- Validation: `node --test` PASSED 13/13; `git diff --check` PASSED; tracked-file safety scan found no obvious secret/key/env filename or token pattern.
+- Push: NOT RUN. No merge, rebase, reset, force push, or application change was performed.
+- Required decision: Architect must choose the safe reconciliation strategy before synchronization continues.
