@@ -228,3 +228,17 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Type: `RUNTIME_OBSERVATION`
 - Result: `PASSED`; the autonomous log records `nativeGravity=false` and `hostBehaviorSelection="none observed; host tick only"`, while each BPDC-selected action is followed by the corresponding adapter/host acceptance and host visibility/state.
 - Reliability/limitations: this is bounded to the pinned OpenPets runtime and the disposable session; it does not claim all future OpenPets versions behave identically.
+
+## BPDC-E022 — live relationship click, persistence, restart, and utility effect
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P3-003` / `BPDC-P3-003-RELATIONSHIP-LIVE-GATE`
+- Evidence level: `E5_OPERATIONALLY_OBSERVED`
+- Type: `RUNTIME_OBSERVATION`
+- Runtime: pinned OpenPets Electron 42 on Windows, disposable plugin root `C:\Users\sketc\AppData\Local\Temp\bpdc-p3-003-openpets-dev`, disposable user data `C:\Users\sketc\AppData\Local\Temp\bpdc-p3-003-live-userdata`.
+- Baseline: `creature-42504443`, snapshot schema `2`, bond `0.5`, empty interaction history, and `SEEK_ATTENTION` bond/recentBond contributors `0/0`.
+- Click provenance: the host log recorded `pet:clicked` at `2026-08-23T23:10:21.209Z`; the plugin then recorded `CORE positive interaction recorded` at `2026-08-23T23:10:21.210Z` with host-neutral `POSITIVE_CONTACT`, valence `1`, and intensity `0.4`.
+- Mutation/persistence: the normal plugin-storage snapshot recorded the same creature ID, schema `2`, one bounded event, and bond `0.5099997657179275` immediately after the click; later values differ only by modeled relationship decay.
+- Restart: the host was stopped and relaunched with the same disposable profile; logs recorded `snapshot restored` with `creature-42504443`, and the stored history returned unchanged.
+- Utility effect: after restart, restored `SEEK_ATTENTION` scored `0.5404200243808092` versus neutral-history `0.45271098450000985`, delta `0.08770903988079931`; restored contributors were bond `0.007997591419477335` and recentBond `0.07971144846132208`.
+- Reliability/limitations: the evidence is bounded to the pinned OpenPets runtime and disposable profile; no claim is made about future OpenPets versions. The transparent pet window is visually observable through Computer Use, while authoritative provenance and persistence are log/snapshot evidence.

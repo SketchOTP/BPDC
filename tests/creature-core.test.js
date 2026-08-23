@@ -116,6 +116,62 @@ test("accelerated 24-hour run emits enough structured trace for inspection", () 
   assert.equal(core.toSnapshot().simulationTimestamp, 24 * 3600);
 });
 
+test("relationship history changes existing SEEK_ATTENTION and AVOID utility", () => {
+  const environment = createEnvironment({ localTime: 12, userPresent: true, userIdleDuration: 60, interactionPressure: 0.3 });
+  const positive = CreatureCore.create({ seed: 501 });
+  const negative = CreatureCore.create({ seed: 501 });
+  for (let index = 0; index < 4; index += 1) {
+    positive.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.8 });
+    negative.recordInteraction({ kind: "NEGATIVE_CONTACT", intensity: 0.8 });
+  }
+
+  const score = (core, action) => core.evaluate(environment).candidates.find((candidate) => candidate.action === action);
+  assert.ok(score(positive, "SEEK_ATTENTION").contributors.bond > 0);
+  assert.ok(score(negative, "SEEK_ATTENTION").contributors.bond < 0);
+  assert.ok(score(positive, "AVOID").score < score(negative, "AVOID").score);
+  assert.ok(score(positive, "SEEK_ATTENTION").score > score(negative, "SEEK_ATTENTION").score);
+});
+
+test("interaction memory is bounded and save/reload preserves deterministic continuation", () => {
+  const uninterrupted = CreatureCore.create({ seed: 502 });
+  const split = CreatureCore.create({ seed: 502 });
+  for (let index = 0; index < 12; index += 1) {
+    uninterrupted.recordInteraction({ kind: index % 2 ? "POSITIVE_CONTACT" : "NEGATIVE_CONTACT", intensity: 0.5 });
+    split.recordInteraction({ kind: index % 2 ? "POSITIVE_CONTACT" : "NEGATIVE_CONTACT", intensity: 0.5 });
+  }
+  assert.equal(split.relationship.events.length, 8);
+  runHours(uninterrupted, 2, timedEnvironment);
+  runHours(split, 2, timedEnvironment);
+  const reloaded = CreatureCore.fromSnapshot(JSON.parse(split.serialize()));
+  const uninterruptedTrace = runHours(uninterrupted, 2, timedEnvironment);
+  const reloadedTrace = runHours(reloaded, 2, timedEnvironment);
+  assert.deepEqual(reloadedTrace, uninterruptedTrace);
+  assert.deepEqual(reloaded.toSnapshot(), uninterrupted.toSnapshot());
+});
+
+test("recent interaction influence decays predictably", () => {
+  const core = CreatureCore.create({ seed: 503 });
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 });
+  const immediate = core.relationshipSnapshot();
+  core.advance(6 * 3600, createEnvironment({ localTime: 12 }));
+  const later = core.relationshipSnapshot();
+  core.advance(24 * 3600, createEnvironment({ localTime: 12 }));
+  const muchLater = core.relationshipSnapshot();
+  assert.ok(immediate.recentInfluence > later.recentInfluence);
+  assert.ok(later.recentInfluence > muchLater.recentInfluence);
+  assert.ok(muchLater.events.length === 0);
+  assert.ok(later.bond > 0.5);
+});
+
+test("repeated interaction saturates instead of dominating bond immediately", () => {
+  const core = CreatureCore.create({ seed: 504 });
+  for (let index = 0; index < 20; index += 1) {
+    core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 });
+  }
+  assert.ok(core.relationship.bond > 0.5);
+  assert.ok(core.relationship.bond < 0.9);
+});
+
 function timedEnvironment(timestamp) {
   const localTime = (timestamp % 86400) / 3600;
   const userPresent = localTime >= 8 && localTime < 22;

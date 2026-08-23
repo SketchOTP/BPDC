@@ -53,6 +53,15 @@ export class OpenPetsAdapter {
     return this.ctx.pet.getState();
   }
 
+  subscribeInteraction(handler) {
+    if (!this.ctx.events?.on) return () => {};
+    return this.ctx.events.on("pet:clicked", () => handler({
+      kind: "POSITIVE_CONTACT",
+      valence: 1,
+      intensity: 0.4,
+    }));
+  }
+
   async shutdown() {
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
   }

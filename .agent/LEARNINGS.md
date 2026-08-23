@@ -116,3 +116,12 @@
 - Confidence: `SUPPORTED_HYPOTHESIS`
 - Scope: Phase 3 relationship-memory implementation.
 - Supersedes: `NONE`
+
+## BPDC-L014
+
+- Date: 2026-08-23
+- Fact: In the pinned OpenPets Windows/Electron runtime, a real visible pet click emits `pet:clicked`, reaches the BPDC adapter/Core path as a host-neutral `POSITIVE_CONTACT`, persists the bounded relationship event and bond, and restores through host restart with a measurable `SEEK_ATTENTION` utility contribution.
+- Evidence: `BPDC-E022`; live log correlation at `2026-08-23T23:10:21.209Z` / `2026-08-23T23:10:21.210Z`; post-restart utility delta `0.08770903988079931`.
+- Confidence: `VERIFIED`
+- Scope: pinned OpenPets runtime and current Phase 3 implementation.
+- Supersedes: `NONE`

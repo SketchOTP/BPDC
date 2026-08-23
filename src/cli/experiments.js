@@ -6,13 +6,20 @@ const personality = runPersonalityExperiment();
 const causality = runCausalityExperiment();
 const persistence = runPersistenceExperiment();
 const trace24h = runTraceExperiment();
+const relationship = runRelationshipCausalityExperiment();
+const relationshipPersistence = runRelationshipPersistenceExperiment();
+const forgetting = runForgettingExperiment();
+const saturation = runSaturationExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P1-001",
-  status: [replay, personality, causality, persistence].every((result) => result.status === "PASS")
+  directive: "BPDC-P3-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation]
+    .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
-  experiments: { replay, personality, causality, persistence },
+  experiments: {
+    replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation,
+  },
   trace24h,
 }, null, 2));
 
@@ -100,6 +107,70 @@ function runTraceExperiment() {
     behaviorCounts: countBehaviors(trace),
     finalDrives: core.drives,
     finalBehavior: core.currentBehavior?.action ?? null,
+  };
+}
+
+function runRelationshipCausalityExperiment() {
+  const environment = createEnvironment({ localTime: 12, userPresent: true, userIdleDuration: 60, interactionPressure: 0.3 });
+  const positive = CreatureCore.create({ seed: 601 });
+  const neutral = CreatureCore.create({ seed: 601 });
+  const negative = CreatureCore.create({ seed: 601 });
+  for (let index = 0; index < 4; index += 1) {
+    positive.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.8 });
+    negative.recordInteraction({ kind: "NEGATIVE_CONTACT", intensity: 0.8 });
+  }
+  const get = (core, action) => core.evaluate(environment).candidates.find((candidate) => candidate.action === action);
+  const seekDelta = get(positive, "SEEK_ATTENTION").score - get(negative, "SEEK_ATTENTION").score;
+  const avoidDelta = get(negative, "AVOID").score - get(positive, "AVOID").score;
+  return {
+    status: seekDelta > 0.1 && avoidDelta > 0.1 && neutral.relationship.bond === 0.5 ? "PASS" : "FAIL",
+    seekDelta,
+    avoidDelta,
+    bonds: [positive.relationship.bond, neutral.relationship.bond, negative.relationship.bond],
+  };
+}
+
+function runRelationshipPersistenceExperiment() {
+  const uninterrupted = CreatureCore.create({ seed: 602 });
+  const split = CreatureCore.create({ seed: 602 });
+  for (let index = 0; index < 3; index += 1) {
+    uninterrupted.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.7 });
+    split.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.7 });
+  }
+  runHours(uninterrupted, 2, timedEnvironment);
+  runHours(split, 2, timedEnvironment);
+  const reloaded = CreatureCore.fromSnapshot(JSON.parse(split.serialize()));
+  const first = runHours(uninterrupted, 3, timedEnvironment);
+  const second = runHours(reloaded, 3, timedEnvironment);
+  return {
+    status: JSON.stringify(first) === JSON.stringify(second)
+      && JSON.stringify(uninterrupted.toSnapshot()) === JSON.stringify(reloaded.toSnapshot()) ? "PASS" : "FAIL",
+    bond: reloaded.relationship.bond,
+    events: reloaded.relationship.events.length,
+  };
+}
+
+function runForgettingExperiment() {
+  const core = CreatureCore.create({ seed: 603 });
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 });
+  const immediate = core.relationshipSnapshot().recentInfluence;
+  core.advance(6 * 3600, createEnvironment({ localTime: 12 }));
+  const later = core.relationshipSnapshot().recentInfluence;
+  core.advance(24 * 3600, createEnvironment({ localTime: 12 }));
+  const muchLater = core.relationshipSnapshot();
+  return {
+    status: immediate > later && later > muchLater.recentInfluence && muchLater.events.length === 0 ? "PASS" : "FAIL",
+    immediate, later, muchLater: muchLater.recentInfluence, bond: muchLater.bond,
+  };
+}
+
+function runSaturationExperiment() {
+  const core = CreatureCore.create({ seed: 604 });
+  for (let index = 0; index < 20; index += 1) core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 });
+  return {
+    status: core.relationship.bond > 0.5 && core.relationship.bond < 0.9 ? "PASS" : "FAIL",
+    bondAfter20Positive: core.relationship.bond,
+    retainedEvents: core.relationship.events.length,
   };
 }
 

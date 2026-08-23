@@ -12,9 +12,11 @@ const coreFiles = [
   "clock.js",
   "creature-core.js",
   "index.js",
+  "interaction.js",
   "intent.js",
   "models.js",
   "persistence.js",
+  "relationship.js",
   "seeded-rng.js",
 ];
 

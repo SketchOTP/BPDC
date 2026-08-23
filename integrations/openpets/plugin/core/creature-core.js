@@ -11,6 +11,14 @@ import { BEHAVIOR_DEFINITIONS, BehaviorScorer, BehaviorSelector } from "./behavi
 import { SeededRng, normalizeSeed } from "./seeded-rng.js";
 import { deserializeSnapshot, SNAPSHOT_SCHEMA_VERSION, serializeSnapshot } from "./persistence.js";
 import { BehaviorIntent } from "./intent.js";
+import { normalizeInteractionEvent } from "./interaction.js";
+import {
+  BOND_LEARNING_RATE,
+  createInitialRelationship,
+  decayRelationship,
+  relationshipForScoring,
+  validateRelationship,
+} from "./relationship.js";
 
 export class CreatureCore {
   constructor({
@@ -21,6 +29,7 @@ export class CreatureCore {
     drives = createInitialDrives(),
     rngState,
     currentBehavior = null,
+    relationship,
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer(),
   }) {
@@ -31,6 +40,7 @@ export class CreatureCore {
     this.drives = validateDrives(drives);
     this.rng = new SeededRng(rngState ?? 1);
     this.currentBehavior = currentBehavior ? clone(currentBehavior) : null;
+    this.relationship = validateRelationship(relationship, this.clock.now());
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -49,6 +59,7 @@ export class CreatureCore {
 
   advance(seconds, environmentInput = this.lastEnvironment) {
     assertNonNegative(seconds, "seconds");
+    this.decayRelationship();
     const events = [];
     let remaining = seconds;
 
@@ -67,6 +78,7 @@ export class CreatureCore {
       if (segment > 0) {
         this.evolveDrives(segment, environment);
         this.clock.advance(segment);
+        this.decayRelationship();
         remaining -= segment;
       }
 
@@ -90,6 +102,7 @@ export class CreatureCore {
       drives: this.drives,
       personality: this.personality,
       environment,
+      relationship: this.relationshipForScoring(),
     });
     return {
       simulationTime: this.clock.now(),
@@ -110,6 +123,7 @@ export class CreatureCore {
         ? Math.max(0, this.currentBehavior.endsAt - this.clock.now())
         : 0,
       candidates: evaluation.candidates,
+      relationship: this.relationshipSnapshot(),
       rngState: this.rng.getState(),
     };
   }
@@ -132,6 +146,7 @@ export class CreatureCore {
       rngState: this.rng.getState(),
       personality: clone(this.personality),
       internalState: clone(this.drives),
+      relationship: this.relationshipSnapshot(),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming,
     };
@@ -151,6 +166,7 @@ export class CreatureCore {
       drives: snapshot.internalState,
       rngState: snapshot.rngState,
       currentBehavior: snapshot.currentBehavior,
+      relationship: snapshot.relationship,
     });
   }
 
@@ -159,6 +175,7 @@ export class CreatureCore {
       drives: this.drives,
       personality: this.personality,
       environment,
+      relationship: this.relationshipForScoring(),
       rng: this.rng,
     });
     const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
@@ -188,6 +205,41 @@ export class CreatureCore {
       scoreBreakdown: clone(currentBehavior.scoreBreakdown),
       interruptible: currentBehavior.interruptible,
     });
+  }
+
+  recordInteraction(event) {
+    this.decayRelationship();
+    const interaction = normalizeInteractionEvent(event, this.clock.now());
+    const bounded = {
+      timestamp: this.clock.now(),
+      kind: interaction.kind,
+      valence: interaction.valence,
+      intensity: interaction.intensity,
+    };
+    this.relationship.events.push(bounded);
+    this.relationship.events = this.relationship.events.slice(-8);
+    const direction = interaction.valence >= 0 ? 1 - this.relationship.bond : this.relationship.bond;
+    this.relationship.bond = clamp01(
+      this.relationship.bond + interaction.valence * interaction.intensity * BOND_LEARNING_RATE * direction,
+    );
+    this.relationship.lastUpdatedAt = this.clock.now();
+    return clone(bounded);
+  }
+
+  relationshipSnapshot() {
+    this.decayRelationship();
+    return {
+      ...clone(this.relationship),
+      recentInfluence: this.relationshipForScoring().recentInfluence,
+    };
+  }
+
+  relationshipForScoring() {
+    return relationshipForScoring(this.relationship, this.clock.now());
+  }
+
+  decayRelationship() {
+    decayRelationship(this.relationship, this.clock.now());
   }
 
   evolveDrives(seconds, environment) {

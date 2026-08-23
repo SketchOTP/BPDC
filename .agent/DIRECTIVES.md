@@ -136,3 +136,15 @@
 - Discovery: not required for Codex at issuance; Architect prior-art review is complete. Conditional research is permitted only for a specific unresolved implementation mechanism.
 - Stop conditions: scalar bond is insufficient, general memory architecture becomes necessary, interaction boundary leaks host concepts, deterministic continuation breaks, negative UX requires an invented harmful gesture, or habits/environment/general memory enter scope.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-P3-003
+
+- Issued: 2026-08-23 America/New_York
+- Issuer: User / project architect via attached reconciliation
+- External directive: `BPDC-P3-003`
+- Objective: Recover the authoritative workspace and resume the exact Phase 3 physical click → relationship mutation → persistence → restart → utility evidence gate.
+- Scope: workspace recovery, regression and packaging validation, one isolated real OpenPets click, persisted relationship capture, host shutdown/restart, restored identity/history/bond capture, and post-restart utility comparison.
+- Exclusions: no relationship redesign, no new memory dimensions, habits, environment learning, mood, hunger, evolution, LLM work, OpenPets core changes, Phase 4, deployment, or GitHub push.
+- Acceptance: current Phase 3 implementation remains intact and the live evidence chain is operationally observed without manual relationship-state editing.
+- Discovery: not required; this is evidence closure and workspace recovery.
+- Status at issuance: `AUTHORIZED`

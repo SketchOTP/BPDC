@@ -109,3 +109,13 @@
 - Rationale: The largest remaining believability gap is that interaction history has no lasting behavioral consequence. The smallest testable bridge is a persistent bond scalar plus bounded interaction events that influence existing utility scores.
 - Affected areas: CreatureCore state/persistence/utility diagnostics, host-neutral interaction boundary, OpenPets adapter event translation, bounded experiments, and live restart evidence.
 - Supersession: `NONE`
+
+## BPDC-P3-003-LIVE-GATE
+
+- Date: 2026-08-23
+- Record ID: `BPDC-P3-003-LIVE-GATE`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Codex completed the workspace-recovery and live relationship evidence gate. A real click entered the OpenPets `pet:clicked` path, produced a host-neutral interaction, mutated and persisted the bounded relationship state, survived restart, and changed later utility scoring.
+- Rationale: `BPDC-E022` provides the missing operational link between user action and later creature motivation. Bond changes remain bounded and the utility difference is explicit without strengthening relationship weights or editing the live snapshot.
+- Affected areas: Phase 3 evidence and Authority state; no new architecture.
+- Supersession: `BPDC-PHASE-004` remains the active Phase 3 milestone pending Architect acceptance.

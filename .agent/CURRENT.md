@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `NONE`
-- External directive ID: `BPDC-P3-001`
-- Objective: Implement the smallest bounded persistent relationship-memory system in which user interaction changes persistent bond state and measurably changes later autonomous behavior.
-- Current status: `AUTHORIZED_NOT_STARTED`
-- Acceptance: `BPDC-P2-002` was accepted by the Architect. `BPDC-P3-001` is authorized and bounded; implementation has not started.
+- Local directive ID: `BPDC-P3-003`
+- External directive ID: `BPDC-P3-003`
+- Objective: Recover the authoritative workspace and close the real click → persisted relationship → restart → utility-effect evidence gate for Phase 3.
+- Current status: `COMPLETE_FOR_ARCHITECT_HANDOFF`
+- Acceptance: `BPDC-P2-002` was accepted by the Architect. `BPDC-P3-001` implementation and deterministic evidence are complete; `BPDC-P3-003` live evidence is captured and awaits Architect acceptance.
 - Current phase: `Phase 3 — Minimal Relationship Memory`
 - Expected touched areas: `src/desktop/`, `integrations/openpets/`, `assets/`, `tests/`, package metadata, README, and `.agent/` records. CreatureCore remains host-independent.
-- Immediate next action: run the required `node --test` baseline, inspect the existing CreatureCore/DesktopAdapter/OpenPets seams, and implement only the P3-001 bounded bond and interaction-memory path.
+- Immediate next action: Architect review of `BPDC-P3-003`; do not begin Phase 4 until acceptance.
 
 ## Temporary task-relevant facts
 
@@ -38,4 +38,4 @@
 
 ## Pending decisions
 
-- P3-001 implementation and evidence remain pending. The Phase 2 acceptance decision is closed and recorded in Notion and local Authority records.
+- P3-003 live evidence is complete for Architect handoff. Phase 4 remains unauthorized. GitHub push remains separately unauthorized.

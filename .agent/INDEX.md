@@ -11,9 +11,9 @@
 ## Current pointers
 
 - Current stage: Phase 3 — Minimal Relationship Memory
-- Active directive: BPDC-P3-001
-- Active task packet: `.agent/tasks/active/BPDC-P3-001.md`
-- Last Codex outcome: BPDC-P2-002 (ACCEPTED by Architect)
+- Active directive: BPDC-P3-003
+- Active task packet: `.agent/tasks/active/BPDC-P3-003.md`
+- Last Codex outcome: BPDC-P3-003 (complete for Architect handoff; acceptance pending)
 - Last state sync: 2026-08-23 America/New_York
 
 ## Mandatory kernel

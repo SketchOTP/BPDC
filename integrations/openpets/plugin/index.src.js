@@ -71,9 +71,21 @@ export function register(OpenPetsPlugin) {
       const runtime = {
         adapter,
         unsubscribe: () => {},
+        unsubscribeInteraction: () => {},
         tickChain: Promise.resolve(),
         persist,
       };
+      runtime.unsubscribeInteraction = adapter.subscribeInteraction((event) => {
+        runtime.tickChain = runtime.tickChain.then(async () => {
+          const recorded = core.recordInteraction(event);
+          log(ctx, "CORE", new Date().toISOString(), "positive interaction recorded", {
+            creatureId: core.creatureId,
+            interaction: recorded,
+            relationship: core.relationshipSnapshot(),
+          });
+          await persist(true);
+        }).catch((error) => log(ctx, "ERROR", new Date().toISOString(), "interaction handling failed", { message: String(error?.message ?? error) }));
+      });
       runtime.unsubscribe = ctx.pet.onTick((dtMs) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
           const seconds = Math.max(0, Math.min(5, dtMs / 1_000));
@@ -104,6 +116,7 @@ export function register(OpenPetsPlugin) {
       activeRuntime = null;
       if (!runtime) return;
       runtime.unsubscribe();
+      runtime.unsubscribeInteraction();
       await runtime.tickChain;
       await runtime.persist(true);
       await runtime.adapter.shutdown();

@@ -2,7 +2,7 @@
 
 ## Status
 
-`AUTHORIZED_NOT_STARTED`
+`CONTINUE_PENDING_LIVE_GATE`
 
 ## Entry state
 
@@ -48,3 +48,7 @@ Stop and return to the Architect if one scalar is insufficient, a general memory
 ## Required handoff
 
 Return `CODEX RESULT — BPDC-P3-001` using the Authority result contract, including the relationship model, interaction schema/boundary, utility integration, decay/saturation, all experiments, live evidence, regression status, evidence classification, records/Notion state, and confirmation that work stopped before Phase 4.
+
+## Architect closure note
+
+Implementation and deterministic evidence are retained. The remaining live evidence was continued under `BPDC-P3-002` and then resumed by `BPDC-P3-003` after the execution-environment block.

@@ -102,3 +102,15 @@
 - Summary: The Architect authorized a bounded relationship-memory slice: one persistent bond scalar, bounded interaction history, host-neutral events, deterministic decay and saturation, existing utility-score influence, and live OpenPets interaction/restart evidence.
 - Exclusions: generic memory, habits, environment learning, mood, hunger, evolution, new behaviors, final art, OpenPets fork, and Phase 4.
 - Follow-up directive: `BPDC-P3-001`
+
+## BPDC-P3-003 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P3-003-RELATIONSHIP-LIVE-GATE`
+- Closed for Codex handoff: 2026-08-23 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Summary: Recovered the responsive authoritative worktree, preserved the existing Phase 3 implementation, and operationally observed a real OpenPets click entering the adapter/Core path, mutating relationship state, persisting to the normal snapshot, surviving host shutdown/restart, and contributing measurably to post-restart utility.
+- Live evidence: baseline `creature-42504443`, schema `2`, bond `0.5`, empty history; `pet:clicked` at `2026-08-23T23:10:21.209Z`; one `POSITIVE_CONTACT` event with valence `1` and intensity `0.4`; bond increased to `0.5099997657179275` before modeled elapsed-time decay; restart restored the same creature ID and event; post-restart `SEEK_ATTENTION` score exceeded neutral by `0.08770903988079931`.
+- Validation: `node --test` 13/13; relationship experiments passed; local-staged plugin build passed at 30,052 bytes; OpenPets manifest validation passed; CreatureCore host-boundary scan passed; `git diff --check` passed with line-ending warnings only.
+- Evidence level: `E5_OPERATIONALLY_OBSERVED` for the live click/persistence/restart chain; deterministic implementation evidence remains `E3_TARGET_TESTED`.
+- Exclusions preserved: no relationship redesign, no Phase 4 work, no OpenPets core changes, and no GitHub push.
+- Follow-up directive: Architect acceptance decision for Phase 3.

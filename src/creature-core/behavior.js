@@ -19,11 +19,11 @@ export const BEHAVIOR_DEFINITIONS = {
 };
 
 export class BehaviorScorer {
-  scoreAll({ drives, personality, environment }) {
-    return ACTIONS.map((action) => this.score(action, { drives, personality, environment }));
+  scoreAll({ drives, personality, environment, relationship }) {
+    return ACTIONS.map((action) => this.score(action, { drives, personality, environment, relationship }));
   }
 
-  score(action, { drives, personality, environment }) {
+  score(action, { drives, personality, environment, relationship = { bond: 0.5, recentInfluence: 0 } }) {
     const night = environment.localTime >= 22 || environment.localTime < 7 ? 1 : 0;
     const activeUser = environment.userPresent && environment.userIdleDuration < 300 ? 1 : 0;
     const scores = {
@@ -54,6 +54,8 @@ export class BehaviorScorer {
       SEEK_ATTENTION: {
         socialPressure: drives.social * 1.55,
         sociability: personality.sociability * 0.95,
+        bond: (relationship.bond - 0.5) * 0.8,
+        recentBond: relationship.recentInfluence * 0.2,
         userPresent: activeUser * 0.35,
         interaction: environment.interactionPressure * 0.25,
         independencePenalty: -personality.independence * 0.35,
@@ -63,6 +65,8 @@ export class BehaviorScorer {
         interactionPressure: environment.interactionPressure * 1.25,
         lowBoldness: (1 - personality.boldness) * 0.75,
         socialPressure: drives.social * 0.2,
+        bond: (0.5 - relationship.bond) * 0.8,
+        recentBond: -relationship.recentInfluence * 0.2,
         novelty: environment.novelty * 0.2,
       },
       SLEEP: {
@@ -90,8 +94,8 @@ export class BehaviorSelector {
     this.noiseAmplitude = noiseAmplitude;
   }
 
-  select({ drives, personality, environment, rng }) {
-    const candidates = this.scorer.scoreAll({ drives, personality, environment }).map((candidate) => {
+  select({ drives, personality, environment, relationship, rng }) {
+    const candidates = this.scorer.scoreAll({ drives, personality, environment, relationship }).map((candidate) => {
       const noise = rng.nextRange(-this.noiseAmplitude, this.noiseAmplitude);
       return {
         ...candidate,

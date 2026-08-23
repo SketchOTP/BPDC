@@ -151,10 +151,10 @@ var BEHAVIOR_DEFINITIONS = {
   SLEEP: { minDuration: 600, maxDuration: 1800, interruptible: false, cooldown: 300 }
 };
 var BehaviorScorer = class {
-  scoreAll({ drives, personality, environment }) {
-    return ACTIONS.map((action) => this.score(action, { drives, personality, environment }));
+  scoreAll({ drives, personality, environment, relationship }) {
+    return ACTIONS.map((action) => this.score(action, { drives, personality, environment, relationship }));
   }
-  score(action, { drives, personality, environment }) {
+  score(action, { drives, personality, environment, relationship = { bond: 0.5, recentInfluence: 0 } }) {
     const night = environment.localTime >= 22 || environment.localTime < 7 ? 1 : 0;
     const activeUser = environment.userPresent && environment.userIdleDuration < 300 ? 1 : 0;
     const scores = {
@@ -185,6 +185,8 @@ var BehaviorScorer = class {
       SEEK_ATTENTION: {
         socialPressure: drives.social * 1.55,
         sociability: personality.sociability * 0.95,
+        bond: (relationship.bond - 0.5) * 0.8,
+        recentBond: relationship.recentInfluence * 0.2,
         userPresent: activeUser * 0.35,
         interaction: environment.interactionPressure * 0.25,
         independencePenalty: -personality.independence * 0.35,
@@ -194,6 +196,8 @@ var BehaviorScorer = class {
         interactionPressure: environment.interactionPressure * 1.25,
         lowBoldness: (1 - personality.boldness) * 0.75,
         socialPressure: drives.social * 0.2,
+        bond: (0.5 - relationship.bond) * 0.8,
+        recentBond: -relationship.recentInfluence * 0.2,
         novelty: environment.novelty * 0.2
       },
       SLEEP: {
@@ -217,8 +221,8 @@ var BehaviorSelector = class {
     this.scorer = scorer;
     this.noiseAmplitude = noiseAmplitude;
   }
-  select({ drives, personality, environment, rng }) {
-    const candidates = this.scorer.scoreAll({ drives, personality, environment }).map((candidate) => {
+  select({ drives, personality, environment, relationship, rng }) {
+    const candidates = this.scorer.scoreAll({ drives, personality, environment, relationship }).map((candidate) => {
       const noise = rng.nextRange(-this.noiseAmplitude, this.noiseAmplitude);
       return {
         ...candidate,
@@ -232,13 +236,91 @@ var BehaviorSelector = class {
   }
 };
 
+// integrations/openpets/plugin/core/relationship.js
+var RELATIONSHIP_SCHEMA_VERSION = 1;
+var DEFAULT_BOND = 0.5;
+var MAX_INTERACTION_EVENTS = 8;
+var BOND_LEARNING_RATE = 0.05;
+var BOND_HALF_LIFE_SECONDS = 72 * 3600;
+var RECENT_EVENT_HALF_LIFE_SECONDS = 6 * 3600;
+var EVENT_RETENTION_SECONDS = 24 * 3600;
+function createInitialRelationship(timestamp = 0) {
+  return {
+    schemaVersion: RELATIONSHIP_SCHEMA_VERSION,
+    bond: DEFAULT_BOND,
+    events: [],
+    lastUpdatedAt: timestamp
+  };
+}
+function validateRelationship(value, timestamp = 0) {
+  const relationship = value ?? createInitialRelationship(timestamp);
+  if (!Number.isFinite(relationship.bond)) throw new TypeError("Relationship bond is required.");
+  if (!Number.isFinite(relationship.lastUpdatedAt) || relationship.lastUpdatedAt < 0) {
+    throw new RangeError("Relationship lastUpdatedAt must be finite and non-negative.");
+  }
+  const events = Array.isArray(relationship.events) ? relationship.events : [];
+  return {
+    schemaVersion: RELATIONSHIP_SCHEMA_VERSION,
+    bond: clamp01(relationship.bond),
+    events: events.slice(-MAX_INTERACTION_EVENTS).map((event) => ({
+      timestamp: nonNegative2(event.timestamp, "interaction timestamp"),
+      kind: String(event.kind),
+      valence: clamp(event.valence, -1, 1, "interaction valence"),
+      intensity: clamp(event.intensity, 0, 1, "interaction intensity")
+    })),
+    lastUpdatedAt: relationship.lastUpdatedAt
+  };
+}
+function decayRelationship(relationship, timestamp) {
+  if (timestamp < relationship.lastUpdatedAt) return relationship;
+  const elapsed = timestamp - relationship.lastUpdatedAt;
+  if (elapsed > 0) {
+    const retention = 2 ** (-elapsed / BOND_HALF_LIFE_SECONDS);
+    relationship.bond = clamp01(DEFAULT_BOND + (relationship.bond - DEFAULT_BOND) * retention);
+  }
+  relationship.events = relationship.events.filter((event) => timestamp - event.timestamp <= EVENT_RETENTION_SECONDS).slice(-MAX_INTERACTION_EVENTS);
+  relationship.lastUpdatedAt = timestamp;
+  return relationship;
+}
+function recentInfluence(relationship, timestamp) {
+  const totals = relationship.events.reduce((result, event) => {
+    const age = Math.max(0, timestamp - event.timestamp);
+    const weight = 2 ** (-age / RECENT_EVENT_HALF_LIFE_SECONDS);
+    result.value += event.valence * event.intensity * weight;
+    return result;
+  }, { value: 0 });
+  if (relationship.events.length === 0) return 0;
+  return Math.max(-1, Math.min(1, totals.value / relationship.events.length));
+}
+function relationshipForScoring(relationship, timestamp) {
+  return {
+    bond: relationship.bond,
+    recentInfluence: recentInfluence(relationship, timestamp)
+  };
+}
+function clamp(value, min, max, name) {
+  if (!Number.isFinite(value) || value < min || value > max) throw new RangeError(`${name} is out of range.`);
+  return Math.max(min, Math.min(max, value));
+}
+function nonNegative2(value, name) {
+  if (!Number.isFinite(value) || value < 0) throw new RangeError(`${name} must be finite and non-negative.`);
+  return value;
+}
+
 // integrations/openpets/plugin/core/persistence.js
-var SNAPSHOT_SCHEMA_VERSION = 1;
+var SNAPSHOT_SCHEMA_VERSION = 2;
 function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
 }
 function deserializeSnapshot(serialized) {
   const snapshot = typeof serialized === "string" ? JSON.parse(serialized) : serialized;
+  if (snapshot?.schemaVersion === 1) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      relationship: createInitialRelationship(snapshot.simulationTimestamp ?? 0)
+    };
+  }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {
     throw new Error(`Unsupported CreatureSnapshot schema: ${snapshot?.schemaVersion}`);
   }
@@ -258,6 +340,43 @@ var BehaviorIntent = class {
   }
 };
 
+// integrations/openpets/plugin/core/interaction.js
+var INTERACTION_KINDS = ["POSITIVE_CONTACT", "NEGATIVE_CONTACT"];
+var InteractionEvent = class {
+  constructor({ kind, valence = defaultValence(kind), intensity = 0.4, timestamp = 0 }) {
+    if (!INTERACTION_KINDS.includes(kind)) {
+      throw new RangeError(`Unknown interaction kind: ${kind}`);
+    }
+    if (!Number.isFinite(valence) || valence < -1 || valence > 1) {
+      throw new RangeError("Interaction valence must be in the range -1..1.");
+    }
+    if (!Number.isFinite(intensity) || intensity < 0 || intensity > 1) {
+      throw new RangeError("Interaction intensity must be in the range 0..1.");
+    }
+    if (!Number.isFinite(timestamp) || timestamp < 0) {
+      throw new RangeError("Interaction timestamp must be finite and non-negative.");
+    }
+    this.kind = kind;
+    this.valence = valence;
+    this.intensity = intensity;
+    this.timestamp = timestamp;
+  }
+};
+function normalizeInteractionEvent(event, timestamp = 0) {
+  if (!event || typeof event !== "object") throw new TypeError("InteractionEvent is required.");
+  return new InteractionEvent({
+    kind: event.kind,
+    valence: event.valence,
+    intensity: event.intensity,
+    timestamp: event.timestamp ?? timestamp
+  });
+}
+function defaultValence(kind) {
+  if (kind === "POSITIVE_CONTACT") return 1;
+  if (kind === "NEGATIVE_CONTACT") return -1;
+  return 0;
+}
+
 // integrations/openpets/plugin/core/creature-core.js
 var CreatureCore = class _CreatureCore {
   constructor({
@@ -268,6 +387,7 @@ var CreatureCore = class _CreatureCore {
     drives = createInitialDrives(),
     rngState,
     currentBehavior = null,
+    relationship,
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer()
   }) {
@@ -278,6 +398,7 @@ var CreatureCore = class _CreatureCore {
     this.drives = validateDrives(drives);
     this.rng = new SeededRng(rngState ?? 1);
     this.currentBehavior = currentBehavior ? clone(currentBehavior) : null;
+    this.relationship = validateRelationship(relationship, this.clock.now());
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -294,6 +415,7 @@ var CreatureCore = class _CreatureCore {
   }
   advance(seconds, environmentInput = this.lastEnvironment) {
     assertNonNegative(seconds, "seconds");
+    this.decayRelationship();
     const events = [];
     let remaining = seconds;
     if (!this.currentBehavior) {
@@ -309,6 +431,7 @@ var CreatureCore = class _CreatureCore {
       if (segment > 0) {
         this.evolveDrives(segment, environment);
         this.clock.advance(segment);
+        this.decayRelationship();
         remaining -= segment;
       }
       if (this.currentBehavior && this.clock.now() >= this.currentBehavior.endsAt - 1e-9) {
@@ -328,7 +451,8 @@ var CreatureCore = class _CreatureCore {
     const candidates = this.scorer.scoreAll({
       drives: this.drives,
       personality: this.personality,
-      environment
+      environment,
+      relationship: this.relationshipForScoring()
     });
     return {
       simulationTime: this.clock.now(),
@@ -346,6 +470,7 @@ var CreatureCore = class _CreatureCore {
       currentBehavior: clone(this.currentBehavior),
       behaviorDurationRemaining: this.currentBehavior ? Math.max(0, this.currentBehavior.endsAt - this.clock.now()) : 0,
       candidates: evaluation.candidates,
+      relationship: this.relationshipSnapshot(),
       rngState: this.rng.getState()
     };
   }
@@ -364,6 +489,7 @@ var CreatureCore = class _CreatureCore {
       rngState: this.rng.getState(),
       personality: clone(this.personality),
       internalState: clone(this.drives),
+      relationship: this.relationshipSnapshot(),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming
     };
@@ -380,7 +506,8 @@ var CreatureCore = class _CreatureCore {
       personality: snapshot.personality,
       drives: snapshot.internalState,
       rngState: snapshot.rngState,
-      currentBehavior: snapshot.currentBehavior
+      currentBehavior: snapshot.currentBehavior,
+      relationship: snapshot.relationship
     });
   }
   commitBehavior(environment) {
@@ -388,6 +515,7 @@ var CreatureCore = class _CreatureCore {
       drives: this.drives,
       personality: this.personality,
       environment,
+      relationship: this.relationshipForScoring(),
       rng: this.rng
     });
     const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
@@ -417,6 +545,37 @@ var CreatureCore = class _CreatureCore {
       scoreBreakdown: clone(currentBehavior.scoreBreakdown),
       interruptible: currentBehavior.interruptible
     });
+  }
+  recordInteraction(event) {
+    this.decayRelationship();
+    const interaction = normalizeInteractionEvent(event, this.clock.now());
+    const bounded = {
+      timestamp: this.clock.now(),
+      kind: interaction.kind,
+      valence: interaction.valence,
+      intensity: interaction.intensity
+    };
+    this.relationship.events.push(bounded);
+    this.relationship.events = this.relationship.events.slice(-8);
+    const direction = interaction.valence >= 0 ? 1 - this.relationship.bond : this.relationship.bond;
+    this.relationship.bond = clamp01(
+      this.relationship.bond + interaction.valence * interaction.intensity * BOND_LEARNING_RATE * direction
+    );
+    this.relationship.lastUpdatedAt = this.clock.now();
+    return clone(bounded);
+  }
+  relationshipSnapshot() {
+    this.decayRelationship();
+    return {
+      ...clone(this.relationship),
+      recentInfluence: this.relationshipForScoring().recentInfluence
+    };
+  }
+  relationshipForScoring() {
+    return relationshipForScoring(this.relationship, this.clock.now());
+  }
+  decayRelationship() {
+    decayRelationship(this.relationship, this.clock.now());
   }
   evolveDrives(seconds, environment) {
     const hours = seconds / 3600;
@@ -508,6 +667,15 @@ var OpenPetsAdapter = class {
   async getExecutionState() {
     return this.ctx.pet.getState();
   }
+  subscribeInteraction(handler) {
+    if (!this.ctx.events?.on) return () => {
+    };
+    return this.ctx.events.on("pet:clicked", () => handler({
+      kind: "POSITIVE_CONTACT",
+      valence: 1,
+      intensity: 0.4
+    }));
+  }
   async shutdown() {
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
   }
@@ -587,9 +755,22 @@ function register(OpenPetsPlugin) {
         adapter,
         unsubscribe: () => {
         },
+        unsubscribeInteraction: () => {
+        },
         tickChain: Promise.resolve(),
         persist
       };
+      runtime.unsubscribeInteraction = adapter.subscribeInteraction((event) => {
+        runtime.tickChain = runtime.tickChain.then(async () => {
+          const recorded = core.recordInteraction(event);
+          log(ctx, "CORE", (/* @__PURE__ */ new Date()).toISOString(), "positive interaction recorded", {
+            creatureId: core.creatureId,
+            interaction: recorded,
+            relationship: core.relationshipSnapshot()
+          });
+          await persist(true);
+        }).catch((error) => log(ctx, "ERROR", (/* @__PURE__ */ new Date()).toISOString(), "interaction handling failed", { message: String(error?.message ?? error) }));
+      });
       runtime.unsubscribe = ctx.pet.onTick((dtMs) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
           const seconds = Math.max(0, Math.min(5, dtMs / 1e3));
@@ -619,6 +800,7 @@ function register(OpenPetsPlugin) {
       activeRuntime = null;
       if (!runtime) return;
       runtime.unsubscribe();
+      runtime.unsubscribeInteraction();
       await runtime.tickChain;
       await runtime.persist(true);
       await runtime.adapter.shutdown();
