@@ -14,7 +14,7 @@
 - Active directive: BPDC-SYNC-005 (completed; await next Architect directive)
 - Active task packet: `.agent/tasks/active/BPDC-SYNC-005.md`
 - Last Codex outcome: BPDC-SYNC-005 (Phase 8 publication complete)
-- Last state sync: 2026-08-24 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == origin/main == 7e85eba25b9a9934ec74a53d7a94555d89ff6c85`; worktree clean.
+- Last state sync: 2026-08-24 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == origin/main`; worktree clean.
 
 ## Mandatory kernel
 
