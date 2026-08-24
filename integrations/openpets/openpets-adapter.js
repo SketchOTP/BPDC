@@ -29,11 +29,17 @@ function clampDurationMs(seconds) {
 
 /** OpenPets is the body adapter. It translates, never selects, behavior. */
 export class OpenPetsAdapter {
-  constructor(ctx, { log = () => {}, setTimeoutFn = globalThis.setTimeout, clearTimeoutFn = globalThis.clearTimeout } = {}) {
+  constructor(ctx, {
+    log = () => {},
+    setTimeoutFn = globalThis.setTimeout,
+    clearTimeoutFn = globalThis.clearTimeout,
+    spatialTracker = null,
+  } = {}) {
     this.ctx = ctx;
     this.log = log;
     this.setTimeoutFn = setTimeoutFn;
     this.clearTimeoutFn = clearTimeoutFn;
+    this.spatialTracker = spatialTracker;
     this.interactionExpressionTimer = null;
     this.interactionExpressionGeneration = 0;
   }
@@ -65,6 +71,19 @@ export class OpenPetsAdapter {
     if (intent.action === "WANDER") {
       await this.ctx.pet.wander({ distance: 110, durationMs });
       command = "pet.wander(distance=110)";
+    } else if (intent.action === "SLEEP" && intent.habitatTarget === "REST_SITE") {
+      const target = this.spatialTracker?.resolveTarget?.();
+      if (target) {
+        await this.ctx.pet.moveTo(target);
+        command = "pet.moveTo(REST_SITE)";
+      }
+      if (!target) {
+        await this.ctx.pet.react(REACTION_BY_ACTION[intent.action], { showMessage: false });
+        command = "pet.react(waiting)";
+      } else {
+        await this.ctx.pet.react(REACTION_BY_ACTION[intent.action], { showMessage: false });
+        command += " then pet.react(waiting)";
+      }
     } else {
       const reaction = REACTION_BY_ACTION[intent.action] ?? "idle";
       await this.ctx.pet.react(reaction, { showMessage: false });
@@ -134,6 +153,23 @@ export class OpenPetsAdapter {
       this.ctx.events.on("idle:exit", () => handler({ kind: "ACTIVE" })),
       this.ctx.events.on("screen:locked", () => handler({ kind: "LOCKED" })),
       this.ctx.events.on("screen:unlocked", () => handler({ kind: "ACTIVE" })),
+    ];
+    return () => subscriptions.forEach((unsubscribe) => unsubscribe?.());
+  }
+
+  subscribeSpatial(handler) {
+    if (!this.ctx.events?.on) return () => {};
+    const onDragEnd = async (payload = {}) => {
+      const state = payload.position ? payload : await this.getExecutionState();
+      return handler({
+        kind: "USER_PLACED",
+        source: "pet:dragEnd",
+        position: state.position,
+      });
+    };
+    const subscriptions = [
+      this.ctx.events.on("pet:dragEnd", onDragEnd),
+      this.ctx.events.on("display:changed", () => handler({ kind: "DISPLAY_CHANGED", source: "display:changed" })),
     ];
     return () => subscriptions.forEach((unsubscribe) => unsubscribe?.());
   }

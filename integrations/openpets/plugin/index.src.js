@@ -1,6 +1,7 @@
-import { CreatureCore, BehaviorIntent, createEnvironment } from "./core/index.js";
+import { CreatureCore, BehaviorIntent, REST_SITE_AFFINITY_THRESHOLD, createEnvironment } from "./core/index.js";
 import { OpenPetsAdapter } from "./openpets-adapter.js";
 import { PresenceTracker } from "../presence-tracker.js";
+import { RestSiteTracker } from "../rest-site-tracker.js";
 import { restoreAndReconcile } from "../elapsed-reconciliation.js";
 import { serializePersistenceEnvelope } from "../persistence-envelope.js";
 
@@ -31,6 +32,14 @@ function forcedIntent(action) {
   });
 }
 
+export function targetSleepIntent(intent, core, restSiteTracker) {
+  if (intent?.action !== "SLEEP" || core.spatialSnapshot().restSiteAffinity < REST_SITE_AFFINITY_THRESHOLD) {
+    return intent;
+  }
+  if (!restSiteTracker.resolveTarget()) return intent;
+  return new BehaviorIntent({ ...intent, habitatTarget: "REST_SITE" });
+}
+
 export function register(OpenPetsPlugin) {
   OpenPetsPlugin.register({
     async start(ctx) {
@@ -52,6 +61,8 @@ export function register(OpenPetsPlugin) {
         coreFactory: CreatureCore.fromSnapshot,
       });
       const core = restored.core ?? CreatureCore.create({ seed: 0x42504443 });
+      const restSiteTracker = RestSiteTracker.fromSnapshot(restored.spatialState);
+      adapter.spatialTracker = restSiteTracker;
       log(ctx, "CORE", new Date().toISOString(), saved ? "snapshot restored" : "new individual created", {
         creatureId: core.creatureId,
         snapshot: Boolean(saved),
@@ -71,17 +82,19 @@ export function register(OpenPetsPlugin) {
         const now = Date.now();
         if (!force && now - lastPersistAt < 1_000) return saveChain;
         lastPersistAt = now;
-        const envelope = serializePersistenceEnvelope(core.serialize(), now);
+        const envelope = serializePersistenceEnvelope(core.serialize(), now, restSiteTracker.toSnapshot());
         saveChain = saveChain.then(() => ctx.storage.set(SNAPSHOT_KEY, envelope));
         return saveChain;
       };
 
       const executeIntent = async (intent, source = "AUTONOMOUS") => {
+        const bodyIntent = targetSleepIntent(intent, core, restSiteTracker);
         log(ctx, "CORE", new Date().toISOString(), `${source} selected ${intent.action}`, {
           creatureId: core.creatureId, utility: intent.score, durationSeconds: intent.duration,
           reason: intent.reason, scoreBreakdown: intent.scoreBreakdown,
+          habitatTarget: bodyIntent.habitatTarget,
         });
-        await adapter.execute(intent);
+        await adapter.execute(bodyIntent);
         await persist(true);
       };
 
@@ -96,6 +109,7 @@ export function register(OpenPetsPlugin) {
         unsubscribePresence: () => {},
         tickChain: Promise.resolve(),
         persist,
+        unsubscribeSpatial: () => {},
       };
       runtime.unsubscribePresence = adapter.subscribePresence((signal) => {
         const snapshot = presence.apply(signal);
@@ -133,6 +147,32 @@ export function register(OpenPetsPlugin) {
           await persist(true);
         }).catch((error) => log(ctx, "ERROR", new Date().toISOString(), "interaction handling failed", { message: String(error?.message ?? error) }));
       });
+      runtime.unsubscribeSpatial = adapter.subscribeSpatial((observation) => {
+        runtime.tickChain = runtime.tickChain.then(async () => {
+          if (observation.kind === "DISPLAY_CHANGED") {
+            restSiteTracker.invalidate();
+            const spatial = core.resetRestSitePreference();
+            log(ctx, "SPATIAL", new Date().toISOString(), "display changed; REST_SITE invalidated", { spatial });
+            await persist(true);
+            return;
+          }
+
+          const before = core.spatialSnapshot();
+          const trackerResult = restSiteTracker.observePlacement(observation.position);
+          const spatial = trackerResult.kind === "REST_SITE_RELOCATED"
+            ? core.resetRestSitePreference()
+            : core.observeSpatial(trackerResult);
+          log(ctx, "SPATIAL", new Date().toISOString(), "user placement observed", {
+            source: observation.source,
+            position: observation.position,
+            tracker: trackerResult,
+            affinityBefore: before.restSiteAffinity,
+            affinityAfter: spatial.restSiteAffinity,
+            site: restSiteTracker.resolveTarget(),
+          });
+          await persist(true);
+        }).catch((error) => log(ctx, "ERROR", new Date().toISOString(), "spatial observation handling failed", { message: String(error?.message ?? error) }));
+      });
       runtime.unsubscribe = ctx.pet.onTick((dtMs) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
           const seconds = Math.max(0, Math.min(5, dtMs / 1_000));
@@ -169,6 +209,7 @@ export function register(OpenPetsPlugin) {
       runtime.unsubscribe();
       runtime.unsubscribePresence();
       runtime.unsubscribeInteraction();
+      runtime.unsubscribeSpatial();
       await runtime.tickChain;
       await runtime.persist(true);
       await runtime.adapter.shutdown();

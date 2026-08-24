@@ -44,3 +44,15 @@ export {
   createInitialRelationship,
   recentInfluence,
 } from "./relationship.js";
+export {
+  REST_SITE_AFFINITY_HALF_LIFE_SECONDS,
+  REST_SITE_AFFINITY_LEARNING_RATE,
+  REST_SITE_AFFINITY_THRESHOLD,
+  SPATIAL_OBSERVATION_KINDS,
+  SPATIAL_SCHEMA_VERSION,
+  createInitialSpatial,
+  decaySpatial,
+  reinforceRestSite,
+  resetRestSite,
+  validateSpatial,
+} from "./spatial.js";

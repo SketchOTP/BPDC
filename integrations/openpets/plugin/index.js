@@ -371,8 +371,60 @@ function assertLocalTime(localTime) {
   }
 }
 
+// integrations/openpets/plugin/core/spatial.js
+var SPATIAL_SCHEMA_VERSION = 1;
+var REST_SITE_AFFINITY_LEARNING_RATE = 0.12;
+var REST_SITE_AFFINITY_HALF_LIFE_SECONDS = 14 * 24 * 3600;
+var REST_SITE_AFFINITY_THRESHOLD = 0.6;
+function createInitialSpatial(timestamp = 0) {
+  return {
+    schemaVersion: SPATIAL_SCHEMA_VERSION,
+    restSiteAffinity: 0,
+    lastUpdatedAt: timestamp
+  };
+}
+function validateSpatial(value, timestamp = 0) {
+  const spatial = value ?? createInitialSpatial(timestamp);
+  if (!Number.isFinite(spatial.restSiteAffinity)) {
+    throw new TypeError("Spatial restSiteAffinity must be finite.");
+  }
+  if (!Number.isFinite(spatial.lastUpdatedAt) || spatial.lastUpdatedAt < 0) {
+    throw new RangeError("Spatial lastUpdatedAt must be finite and non-negative.");
+  }
+  return {
+    schemaVersion: SPATIAL_SCHEMA_VERSION,
+    restSiteAffinity: clamp01(spatial.restSiteAffinity),
+    lastUpdatedAt: spatial.lastUpdatedAt
+  };
+}
+function decaySpatial(spatial, timestamp) {
+  if (timestamp < spatial.lastUpdatedAt) return spatial;
+  const elapsed = timestamp - spatial.lastUpdatedAt;
+  if (elapsed > 0) {
+    spatial.restSiteAffinity = clamp01(
+      spatial.restSiteAffinity * 2 ** (-elapsed / REST_SITE_AFFINITY_HALF_LIFE_SECONDS)
+    );
+  }
+  spatial.lastUpdatedAt = timestamp;
+  return spatial;
+}
+function reinforceRestSite(spatial, strength, timestamp) {
+  decaySpatial(spatial, timestamp);
+  const learning = REST_SITE_AFFINITY_LEARNING_RATE * clamp01(strength);
+  spatial.restSiteAffinity = clamp01(
+    spatial.restSiteAffinity + learning * (1 - spatial.restSiteAffinity)
+  );
+  return spatial.restSiteAffinity;
+}
+function resetRestSite(spatial, timestamp) {
+  decaySpatial(spatial, timestamp);
+  spatial.restSiteAffinity = 0;
+  spatial.lastUpdatedAt = timestamp;
+  return spatial;
+}
+
 // integrations/openpets/plugin/core/persistence.js
-var SNAPSHOT_SCHEMA_VERSION = 3;
+var SNAPSHOT_SCHEMA_VERSION = 4;
 function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
 }
@@ -383,14 +435,23 @@ function deserializeSnapshot(serialized) {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       relationship: createInitialRelationship(snapshot.simulationTimestamp ?? 0),
-      habit: createInitialHabit(snapshot.simulationTimestamp ?? 0)
+      habit: createInitialHabit(snapshot.simulationTimestamp ?? 0),
+      spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0)
     };
   }
   if (snapshot?.schemaVersion === 2) {
     return {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
-      habit: createInitialHabit(snapshot.simulationTimestamp ?? 0)
+      habit: createInitialHabit(snapshot.simulationTimestamp ?? 0),
+      spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0)
+    };
+  }
+  if (snapshot?.schemaVersion === 3) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0)
     };
   }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {
@@ -401,7 +462,7 @@ function deserializeSnapshot(serialized) {
 
 // integrations/openpets/plugin/core/intent.js
 var BehaviorIntent = class {
-  constructor({ action, time, duration, reason, score, scoreBreakdown, interruptible }) {
+  constructor({ action, time, duration, reason, score, scoreBreakdown, interruptible, habitatTarget = null }) {
     this.action = action;
     this.time = time;
     this.duration = duration;
@@ -409,6 +470,7 @@ var BehaviorIntent = class {
     this.score = score;
     this.scoreBreakdown = scoreBreakdown;
     this.interruptible = interruptible;
+    this.habitatTarget = habitatTarget;
   }
 };
 var INTERACTION_RESPONSE_KINDS = [
@@ -479,6 +541,7 @@ var CreatureCore = class _CreatureCore {
     currentBehavior = null,
     relationship,
     habit,
+    spatial = createInitialSpatial(simulationTimestamp),
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer()
   }) {
@@ -491,6 +554,7 @@ var CreatureCore = class _CreatureCore {
     this.currentBehavior = currentBehavior ? clone(currentBehavior) : null;
     this.relationship = validateRelationship(relationship, this.clock.now());
     this.habit = validateHabit(habit, this.clock.now());
+    this.spatial = validateSpatial(spatial, this.clock.now());
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -587,6 +651,7 @@ var CreatureCore = class _CreatureCore {
       candidates: evaluation.candidates,
       relationship: this.relationshipSnapshot(),
       habit: this.habitSnapshot(environment),
+      spatial: this.spatialSnapshot(),
       rngState: this.rng.getState()
     };
   }
@@ -607,6 +672,7 @@ var CreatureCore = class _CreatureCore {
       internalState: clone(this.drives),
       relationship: this.relationshipSnapshot(),
       habit: this.habitStateSnapshot(),
+      spatial: this.spatialStateSnapshot(),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming
     };
@@ -625,7 +691,8 @@ var CreatureCore = class _CreatureCore {
       rngState: snapshot.rngState,
       currentBehavior: snapshot.currentBehavior,
       relationship: snapshot.relationship,
-      habit: snapshot.habit
+      habit: snapshot.habit,
+      spatial: snapshot.spatial
     });
   }
   commitBehavior(environment) {
@@ -729,6 +796,9 @@ var CreatureCore = class _CreatureCore {
   decayHabit() {
     decayHabit(this.habit, this.clock.now());
   }
+  decaySpatial() {
+    decaySpatial(this.spatial, this.clock.now());
+  }
   habitForScoring(environment = this.lastEnvironment) {
     return {
       timeHabit: timeHabitForScoring(this.habit, environment.localTime, this.clock.now())
@@ -752,6 +822,29 @@ var CreatureCore = class _CreatureCore {
       attentionByHour: clone(this.habit.attentionByHour),
       lastUpdatedAt: this.habit.lastUpdatedAt
     };
+  }
+  observeSpatial(observation2) {
+    this.decaySpatial();
+    if (observation2?.kind !== "REST_SITE_PLACEMENT") {
+      throw new RangeError(`Unsupported spatial observation: ${observation2?.kind}`);
+    }
+    reinforceRestSite(this.spatial, observation2.strength ?? 0, this.clock.now());
+    return this.spatialSnapshot();
+  }
+  resetRestSitePreference() {
+    resetRestSite(this.spatial, this.clock.now());
+    return this.spatialSnapshot();
+  }
+  spatialSnapshot() {
+    this.decaySpatial();
+    return {
+      ...clone(this.spatial),
+      restSiteTarget: this.spatial.restSiteAffinity >= REST_SITE_AFFINITY_THRESHOLD ? "REST_SITE" : null
+    };
+  }
+  spatialStateSnapshot() {
+    this.decaySpatial();
+    return clone(this.spatial);
   }
   evolveDrives(seconds, environment) {
     const hours = seconds / 3600;
@@ -830,12 +923,18 @@ function clampDurationMs(seconds) {
   return Math.max(250, Math.min(1500, Math.round(seconds * 1e3)));
 }
 var OpenPetsAdapter = class {
-  constructor(ctx, { log: log2 = () => {
-  }, setTimeoutFn = globalThis.setTimeout, clearTimeoutFn = globalThis.clearTimeout } = {}) {
+  constructor(ctx, {
+    log: log2 = () => {
+    },
+    setTimeoutFn = globalThis.setTimeout,
+    clearTimeoutFn = globalThis.clearTimeout,
+    spatialTracker = null
+  } = {}) {
     this.ctx = ctx;
     this.log = log2;
     this.setTimeoutFn = setTimeoutFn;
     this.clearTimeoutFn = clearTimeoutFn;
+    this.spatialTracker = spatialTracker;
     this.interactionExpressionTimer = null;
     this.interactionExpressionGeneration = 0;
   }
@@ -861,6 +960,19 @@ var OpenPetsAdapter = class {
     if (intent.action === "WANDER") {
       await this.ctx.pet.wander({ distance: 110, durationMs });
       command = "pet.wander(distance=110)";
+    } else if (intent.action === "SLEEP" && intent.habitatTarget === "REST_SITE") {
+      const target = this.spatialTracker?.resolveTarget?.();
+      if (target) {
+        await this.ctx.pet.moveTo(target);
+        command = "pet.moveTo(REST_SITE)";
+      }
+      if (!target) {
+        await this.ctx.pet.react(REACTION_BY_ACTION[intent.action], { showMessage: false });
+        command = "pet.react(waiting)";
+      } else {
+        await this.ctx.pet.react(REACTION_BY_ACTION[intent.action], { showMessage: false });
+        command += " then pet.react(waiting)";
+      }
     } else {
       const reaction = REACTION_BY_ACTION[intent.action] ?? "idle";
       await this.ctx.pet.react(reaction, { showMessage: false });
@@ -925,6 +1037,23 @@ var OpenPetsAdapter = class {
       this.ctx.events.on("idle:exit", () => handler({ kind: "ACTIVE" })),
       this.ctx.events.on("screen:locked", () => handler({ kind: "LOCKED" })),
       this.ctx.events.on("screen:unlocked", () => handler({ kind: "ACTIVE" }))
+    ];
+    return () => subscriptions.forEach((unsubscribe) => unsubscribe?.());
+  }
+  subscribeSpatial(handler) {
+    if (!this.ctx.events?.on) return () => {
+    };
+    const onDragEnd = async (payload = {}) => {
+      const state = payload.position ? payload : await this.getExecutionState();
+      return handler({
+        kind: "USER_PLACED",
+        source: "pet:dragEnd",
+        position: state.position
+      });
+    };
+    const subscriptions = [
+      this.ctx.events.on("pet:dragEnd", onDragEnd),
+      this.ctx.events.on("display:changed", () => handler({ kind: "DISPLAY_CHANGED", source: "display:changed" }))
     ];
     return () => subscriptions.forEach((unsubscribe) => unsubscribe?.());
   }
@@ -1003,9 +1132,122 @@ function nonNegativeFinite(value, name) {
   return value;
 }
 
+// integrations/openpets/rest-site-tracker.js
+var REST_SITE_TRACKER_SCHEMA_VERSION = 1;
+var REST_SITE_PLACEMENT_RADIUS = 96;
+var REST_SITE_SMOOTHING = 0.25;
+var REST_SITE_RELOCATION_PLACEMENTS = 3;
+var RestSiteTracker = class _RestSiteTracker {
+  constructor({
+    candidate = null,
+    pendingRelocation = null,
+    relocationCount = 0,
+    radius = REST_SITE_PLACEMENT_RADIUS,
+    smoothing = REST_SITE_SMOOTHING
+  } = {}) {
+    this.radius = assertPositive(radius, "radius");
+    this.smoothing = assertRange(smoothing, 0, 1, "smoothing");
+    this.candidate = normalizePointOrNull(candidate);
+    this.pendingRelocation = normalizePointOrNull(pendingRelocation);
+    this.relocationCount = assertInteger(relocationCount, 0, REST_SITE_RELOCATION_PLACEMENTS, "relocationCount");
+    if (!this.pendingRelocation) this.relocationCount = 0;
+  }
+  observePlacement(position) {
+    const point = normalizePoint(position);
+    if (!this.candidate) {
+      this.candidate = point;
+      this.clearPendingRelocation();
+      return observation(0, "candidate-established");
+    }
+    const distance = distanceBetween(this.candidate, point);
+    if (distance <= this.radius) {
+      this.candidate = smoothPoint(this.candidate, point, this.smoothing);
+      this.clearPendingRelocation();
+      return observation(1 - distance / this.radius, "near-candidate", distance);
+    }
+    if (this.pendingRelocation && distanceBetween(this.pendingRelocation, point) <= this.radius) {
+      this.pendingRelocation = smoothPoint(this.pendingRelocation, point, this.smoothing);
+      this.relocationCount += 1;
+    } else {
+      this.pendingRelocation = point;
+      this.relocationCount = 1;
+    }
+    if (this.relocationCount >= REST_SITE_RELOCATION_PLACEMENTS) {
+      this.candidate = this.pendingRelocation;
+      this.clearPendingRelocation();
+      return { kind: "REST_SITE_RELOCATED", strength: 0, reason: "repeated-new-area", distance };
+    }
+    return observation(0, "scattered-placement", distance);
+  }
+  resolveTarget() {
+    return this.candidate ? { ...this.candidate } : null;
+  }
+  invalidate() {
+    this.candidate = null;
+    this.clearPendingRelocation();
+  }
+  toSnapshot() {
+    return {
+      schemaVersion: REST_SITE_TRACKER_SCHEMA_VERSION,
+      candidate: this.resolveTarget(),
+      pendingRelocation: this.pendingRelocation ? { ...this.pendingRelocation } : null,
+      relocationCount: this.relocationCount
+    };
+  }
+  static fromSnapshot(snapshot) {
+    if (!snapshot) return new _RestSiteTracker();
+    if (snapshot.schemaVersion !== REST_SITE_TRACKER_SCHEMA_VERSION) {
+      throw new Error(`Unsupported REST_SITE tracker schema: ${snapshot.schemaVersion}`);
+    }
+    return new _RestSiteTracker(snapshot);
+  }
+  clearPendingRelocation() {
+    this.pendingRelocation = null;
+    this.relocationCount = 0;
+  }
+};
+function distanceBetween(left, right) {
+  const a = normalizePoint(left);
+  const b = normalizePoint(right);
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+function observation(strength, reason, distance = 0) {
+  return { kind: "REST_SITE_PLACEMENT", strength: clamp012(strength), reason, distance };
+}
+function smoothPoint(current, next, amount) {
+  return {
+    x: current.x + (next.x - current.x) * amount,
+    y: current.y + (next.y - current.y) * amount
+  };
+}
+function normalizePointOrNull(value) {
+  return value === null || value === void 0 ? null : normalizePoint(value);
+}
+function normalizePoint(value) {
+  if (!Number.isFinite(value?.x) || !Number.isFinite(value?.y)) {
+    throw new TypeError("REST_SITE position must contain finite x and y coordinates.");
+  }
+  return { x: value.x, y: value.y };
+}
+function clamp012(value) {
+  return Math.max(0, Math.min(1, value));
+}
+function assertPositive(value, name) {
+  if (!Number.isFinite(value) || value <= 0) throw new RangeError(`${name} must be positive.`);
+  return value;
+}
+function assertRange(value, minimum, maximum, name) {
+  if (!Number.isFinite(value) || value < minimum || value > maximum) throw new RangeError(`${name} is out of range.`);
+  return value;
+}
+function assertInteger(value, minimum, maximum, name) {
+  if (!Number.isInteger(value) || value < minimum || value > maximum) throw new RangeError(`${name} is out of range.`);
+  return value;
+}
+
 // integrations/openpets/persistence-envelope.js
-var PERSISTENCE_ENVELOPE_VERSION = 1;
-function serializePersistenceEnvelope(creatureSnapshot, savedAtEpochMs) {
+var PERSISTENCE_ENVELOPE_VERSION = 2;
+function serializePersistenceEnvelope(creatureSnapshot, savedAtEpochMs, spatialState = null) {
   assertEpoch(savedAtEpochMs);
   if (typeof creatureSnapshot !== "string") {
     throw new TypeError("creatureSnapshot must be the serialized CreatureCore snapshot.");
@@ -1013,11 +1255,25 @@ function serializePersistenceEnvelope(creatureSnapshot, savedAtEpochMs) {
   return JSON.stringify({
     envelopeVersion: PERSISTENCE_ENVELOPE_VERSION,
     savedAtEpochMs,
-    creatureSnapshot
+    creatureSnapshot,
+    spatialState
   });
 }
 function deserializePersistenceEnvelope(storedValue) {
   const parsed = typeof storedValue === "string" ? JSON.parse(storedValue) : storedValue;
+  if (parsed?.envelopeVersion === 1) {
+    assertEpoch(parsed.savedAtEpochMs);
+    if (typeof parsed.creatureSnapshot !== "string") {
+      throw new TypeError("Persistence envelope creatureSnapshot must be serialized text.");
+    }
+    return {
+      envelopeVersion: 1,
+      savedAtEpochMs: parsed.savedAtEpochMs,
+      creatureSnapshot: parsed.creatureSnapshot,
+      spatialState: null,
+      legacy: false
+    };
+  }
   if (parsed?.envelopeVersion === PERSISTENCE_ENVELOPE_VERSION) {
     assertEpoch(parsed.savedAtEpochMs);
     if (typeof parsed.creatureSnapshot !== "string") {
@@ -1027,6 +1283,7 @@ function deserializePersistenceEnvelope(storedValue) {
       envelopeVersion: PERSISTENCE_ENVELOPE_VERSION,
       savedAtEpochMs: parsed.savedAtEpochMs,
       creatureSnapshot: parsed.creatureSnapshot,
+      spatialState: parsed.spatialState ?? null,
       legacy: false
     };
   }
@@ -1035,6 +1292,7 @@ function deserializePersistenceEnvelope(storedValue) {
       envelopeVersion: null,
       savedAtEpochMs: null,
       creatureSnapshot: storedValue,
+      spatialState: null,
       legacy: true
     };
   }
@@ -1076,7 +1334,8 @@ function restoreAndReconcile(storedValue, {
       clockSkew: false,
       legacy: false,
       savedAtEpochMs: null,
-      resumeIntent: null
+      resumeIntent: null,
+      spatialState: null
     };
   }
   const envelope = deserializePersistenceEnvelope(storedValue);
@@ -1106,7 +1365,8 @@ function restoreAndReconcile(storedValue, {
     clockSkew,
     legacy: envelope.legacy,
     savedAtEpochMs,
-    resumeIntent: core.currentIntent()
+    resumeIntent: core.currentIntent(),
+    spatialState: envelope.spatialState
   };
 }
 
@@ -1139,6 +1399,13 @@ function forcedIntent(action) {
     interruptible: true
   });
 }
+function targetSleepIntent(intent, core, restSiteTracker) {
+  if (intent?.action !== "SLEEP" || core.spatialSnapshot().restSiteAffinity < REST_SITE_AFFINITY_THRESHOLD) {
+    return intent;
+  }
+  if (!restSiteTracker.resolveTarget()) return intent;
+  return new BehaviorIntent({ ...intent, habitatTarget: "REST_SITE" });
+}
 function register(OpenPetsPlugin) {
   OpenPetsPlugin.register({
     async start(ctx) {
@@ -1161,6 +1428,8 @@ function register(OpenPetsPlugin) {
         coreFactory: CreatureCore.fromSnapshot
       });
       const core = restored.core ?? CreatureCore.create({ seed: 1112556611 });
+      const restSiteTracker = RestSiteTracker.fromSnapshot(restored.spatialState);
+      adapter.spatialTracker = restSiteTracker;
       log(ctx, "CORE", (/* @__PURE__ */ new Date()).toISOString(), saved ? "snapshot restored" : "new individual created", {
         creatureId: core.creatureId,
         snapshot: Boolean(saved),
@@ -1180,19 +1449,21 @@ function register(OpenPetsPlugin) {
         const now = Date.now();
         if (!force && now - lastPersistAt < 1e3) return saveChain;
         lastPersistAt = now;
-        const envelope = serializePersistenceEnvelope(core.serialize(), now);
+        const envelope = serializePersistenceEnvelope(core.serialize(), now, restSiteTracker.toSnapshot());
         saveChain = saveChain.then(() => ctx.storage.set(SNAPSHOT_KEY, envelope));
         return saveChain;
       };
       const executeIntent = async (intent, source = "AUTONOMOUS") => {
+        const bodyIntent = targetSleepIntent(intent, core, restSiteTracker);
         log(ctx, "CORE", (/* @__PURE__ */ new Date()).toISOString(), `${source} selected ${intent.action}`, {
           creatureId: core.creatureId,
           utility: intent.score,
           durationSeconds: intent.duration,
           reason: intent.reason,
-          scoreBreakdown: intent.scoreBreakdown
+          scoreBreakdown: intent.scoreBreakdown,
+          habitatTarget: bodyIntent.habitatTarget
         });
-        await adapter.execute(intent);
+        await adapter.execute(bodyIntent);
         await persist(true);
       };
       await persist(true);
@@ -1207,7 +1478,9 @@ function register(OpenPetsPlugin) {
         unsubscribePresence: () => {
         },
         tickChain: Promise.resolve(),
-        persist
+        persist,
+        unsubscribeSpatial: () => {
+        }
       };
       runtime.unsubscribePresence = adapter.subscribePresence((signal) => {
         const snapshot = presence.apply(signal);
@@ -1245,6 +1518,29 @@ function register(OpenPetsPlugin) {
           await persist(true);
         }).catch((error) => log(ctx, "ERROR", (/* @__PURE__ */ new Date()).toISOString(), "interaction handling failed", { message: String(error?.message ?? error) }));
       });
+      runtime.unsubscribeSpatial = adapter.subscribeSpatial((observation2) => {
+        runtime.tickChain = runtime.tickChain.then(async () => {
+          if (observation2.kind === "DISPLAY_CHANGED") {
+            restSiteTracker.invalidate();
+            const spatial2 = core.resetRestSitePreference();
+            log(ctx, "SPATIAL", (/* @__PURE__ */ new Date()).toISOString(), "display changed; REST_SITE invalidated", { spatial: spatial2 });
+            await persist(true);
+            return;
+          }
+          const before = core.spatialSnapshot();
+          const trackerResult = restSiteTracker.observePlacement(observation2.position);
+          const spatial = trackerResult.kind === "REST_SITE_RELOCATED" ? core.resetRestSitePreference() : core.observeSpatial(trackerResult);
+          log(ctx, "SPATIAL", (/* @__PURE__ */ new Date()).toISOString(), "user placement observed", {
+            source: observation2.source,
+            position: observation2.position,
+            tracker: trackerResult,
+            affinityBefore: before.restSiteAffinity,
+            affinityAfter: spatial.restSiteAffinity,
+            site: restSiteTracker.resolveTarget()
+          });
+          await persist(true);
+        }).catch((error) => log(ctx, "ERROR", (/* @__PURE__ */ new Date()).toISOString(), "spatial observation handling failed", { message: String(error?.message ?? error) }));
+      });
       runtime.unsubscribe = ctx.pet.onTick((dtMs) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
           const seconds = Math.max(0, Math.min(5, dtMs / 1e3));
@@ -1280,6 +1576,7 @@ function register(OpenPetsPlugin) {
       runtime.unsubscribe();
       runtime.unsubscribePresence();
       runtime.unsubscribeInteraction();
+      runtime.unsubscribeSpatial();
       await runtime.tickChain;
       await runtime.persist(true);
       await runtime.adapter.shutdown();
@@ -1287,5 +1584,6 @@ function register(OpenPetsPlugin) {
   });
 }
 export {
-  register
+  register,
+  targetSleepIntent
 };

@@ -275,3 +275,15 @@
 - Publication: normal `git push origin main` succeeded; final local `main == origin/main == 619b35e1e2020ba9157d16d5241628f73a83395c`; worktree clean; no history rewrite.
 - Evidence boundary: live P7 visual observation remains `UNKNOWN`/not claimed.
 - Next boundary: wait for a new Architect directive; do not start Phase 8.
+
+## BPDC-P8-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P8-001-SPATIAL-HABITAT-PREFERENCE`
+- Closed for Codex handoff: 2026-08-24 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Retrieval confidence: `ADEQUATE`; jCodemunch-MCP was unavailable, so bounded direct reads were used only for the relevant implementation, tests, build, and Authority files.
+- Summary: Added one persistent abstract `REST_SITE` preference. Geometry remains integration-owned; repeated user drag placement is the only learning source; affinity is bounded, saturating, decaying, relocatable, and inspectable. A normally selected SLEEP may target the site through adapter-side `moveTo` without changing utility selection.
+- Validation: 45/45 tests; P8 CLI experiment suite; manifest; local-staged bundle at 59,600 bytes; schema/envelope migration; spatial concentration/scatter, saturation, decay/relocation, persistence, adapter, display invalidation, utility non-interference, boundary/privacy/secret scans; and diff check all passed.
+- Evidence: `BPDC-E030`, `E4_REGRESSION_PROTECTED`; live P8 visual drag/return observation remains `UNKNOWN`/not claimed and is non-blocking.
+- Boundary: no multiple-site system, screen grid, pathfinding, new behavior, utility change, privacy-sensitive signal, OpenPets core change, or Phase 9 work.
+- Follow-up directive: Architect review of `BPDC-P8-001`.

@@ -19,6 +19,7 @@ const coreFiles = [
   "persistence.js",
   "relationship.js",
   "seeded-rng.js",
+  "spatial.js",
 ];
 
 await mkdir(coreTarget, { recursive: true });

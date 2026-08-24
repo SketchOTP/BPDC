@@ -1,5 +1,5 @@
 export class BehaviorIntent {
-  constructor({ action, time, duration, reason, score, scoreBreakdown, interruptible }) {
+  constructor({ action, time, duration, reason, score, scoreBreakdown, interruptible, habitatTarget = null }) {
     this.action = action;
     this.time = time;
     this.duration = duration;
@@ -7,6 +7,7 @@ export class BehaviorIntent {
     this.score = score;
     this.scoreBreakdown = scoreBreakdown;
     this.interruptible = interruptible;
+    this.habitatTarget = habitatTarget;
   }
 }
 

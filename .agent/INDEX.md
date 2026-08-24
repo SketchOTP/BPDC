@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 7 — Immediate Touch Response (accepted and synchronized; new live expression observation not claimed)
-- Active directive: BPDC-SYNC-004 (complete)
-- Active task packet: `.agent/tasks/active/BPDC-SYNC-004.md`
-- Last Codex outcome: BPDC-SYNC-004 (PASS; accepted P7 published)
-- Last state sync: 2026-08-24 America/New_York; local `main == origin/main == 619b35e1e2020ba9157d16d5241628f73a83395c`; worktree clean.
+- Current stage: Phase 8 — Spatial Habitat Familiarity (implementation complete; Architect acceptance pending; live visual observation not claimed)
+- Active directive: BPDC-P8-001
+- Active task packet: `.agent/tasks/active/BPDC-P8-001.md`
+- Last Codex outcome: BPDC-P8-001 (implementation complete for Architect review)
+- Last state sync: 2026-08-24 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; current worktree contains the authorized P8 implementation pending commit.
 
 ## Mandatory kernel
 

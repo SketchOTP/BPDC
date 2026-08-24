@@ -200,8 +200,9 @@ test("time habit persists through schema-2 migration and deterministic reload", 
   const schema2 = { ...snapshot, schemaVersion: 2 };
   delete schema2.habit;
   const migrated = CreatureCore.fromSnapshot(schema2);
-  assert.equal(migrated.toSnapshot().schemaVersion, 3);
+  assert.equal(migrated.toSnapshot().schemaVersion, 4);
   assert.deepEqual(migrated.toSnapshot().habit.attentionByHour, Array(24).fill(0));
+  assert.equal(migrated.toSnapshot().spatial.restSiteAffinity, 0);
   assert.equal(migrated.relationship.events.length, snapshot.relationship.events.length);
   assert.equal(migrated.creatureId, snapshot.creatureId);
 });

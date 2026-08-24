@@ -286,3 +286,16 @@
 - Publication: normal non-force push succeeded from `bdeffd909ef7c993dc4daf9d97837a14e36742d1` to `619b35e1e2020ba9157d16d5241628f73a83395c`; local `main == origin/main`; worktree clean.
 - Validation: 38/38 tests, diff check, and publication-safety scan passed; zero filename/content safety findings; live P7 visual response remains `UNKNOWN`/not claimed.
 - Boundary: no Phase 8 work started; await a new Architect directive.
+
+## BPDC-P8-001-IMPLEMENTATION-COMPLETE
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P8-001-IMPLEMENTATION-COMPLETE`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Implement the authorized minimal spatial familiarity mechanism as one abstract `REST_SITE`, not a coordinate map.
+- Core: schema 4 adds bounded persistent `restSiteAffinity`; raw host coordinates remain outside CreatureCore.
+- Integration: version-2 envelope stores one candidate coordinate plus a bounded relocation streak; `pet:dragEnd` is the only learning source; `display:changed` invalidates geometry; SLEEP targeting calls `moveTo` before the existing sleep expression.
+- Rule: 96-unit consistency radius, 0.25 coordinate smoothing, 0.12 saturating learning rate, 14-day affinity half-life, 0.6 targeting threshold, three repeated new-area placements for relocation.
+- Validation: `BPDC-E030`; 45/45 tests; P8 experiments; manifest; staged bundle; schema/envelope/persistence tests; adapter/display/utility tests; boundary/privacy/secret scans; diff check.
+- Limitation: live Windows/Electron spatial observation is `UNKNOWN`/not claimed; no synthetic live claim was made.
+- Supersession: `BPDC-SYNC-004-PUBLISHED` as the active implementation stage.

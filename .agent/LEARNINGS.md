@@ -179,3 +179,10 @@
 - Confidence: `VERIFIED` for deterministic core/adapter behavior and current pinned reaction mappings; live physical-click expression remains `UNKNOWN`.
 - Scope: BPDC-P7-001 immediate touch response.
 - Supersedes: `NONE`
+## BPDC-P8-001 spatial habitat learning
+
+- A single abstract site is sufficient for the first spatial-familiarity cue; a portable screen grid is unnecessary and would violate the host geometry boundary.
+- Keep raw coordinates in the OpenPets integration envelope. CreatureCore should persist only normalized `restSiteAffinity` and never screen, monitor, pixel, bounds, or position data.
+- A first placement should establish a candidate without learning. Nearby repeated placements can reinforce with smoothing and proximity strength; a bounded repeated-new-area streak can relocate the single site without maintaining a site list.
+- SLEEP targeting must be a body-side consequence of an already-selected SLEEP intent. Spatial familiarity must not affect SLEEP utility or consume autonomous-selection randomness.
+- Display changes are safest when they invalidate the host coordinate and reset the scalar preference; preserving stale geometry creates an unsafe targeting path.

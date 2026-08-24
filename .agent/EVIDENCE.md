@@ -313,3 +313,15 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Type: `REPOSITORY_DURABILITY`
 - Result: `PASSED`; local `98b506d` product implementation and `619b35e` Authority closure were the only unpublished commits, `origin/main` at `bdeffd9` was their ancestor, 38/38 tests passed, `git diff --check` passed, publication-safety scan found no filename or content findings, and normal non-force push published `main` at `619b35e1e2020ba9157d16d5241628f73a83395c`.
 - Final state: local `main == origin/main == 619b35e1e2020ba9157d16d5241628f73a83395c`; worktree clean; no history rewrite; no Phase 8 work; live P7 physical response observation remains `UNKNOWN`/not claimed.
+
+## BPDC-E030 — Phase 8 spatial habitat preference
+
+- Created: 2026-08-24 America/New_York
+- Directive/outcome: `BPDC-P8-001` / implementation handoff
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; exactly one abstract `REST_SITE` preference was implemented. CreatureCore persists only schema-1 spatial state with bounded `restSiteAffinity`; the OpenPets integration persists the single host coordinate and bounded relocation streak in envelope version 2. Raw coordinates do not enter CreatureCore.
+- Learning: only `pet:dragEnd` placements reach the tracker; first placement establishes a candidate without learning, nearby placements within the 96-unit radius reinforce with 0.25 smoothing and normalized proximity strength, scattered placements do not reinforce, and three repeated placements in a new area relocate the candidate. Affinity learns at rate 0.12, saturates, and decays with a 14-day half-life. `display:changed` invalidates geometry and resets affinity.
+- SLEEP: utility scoring is unchanged. Once affinity reaches 0.6 and a coordinate resolves, an already-selected SLEEP intent carries `habitatTarget=REST_SITE`; the adapter calls `moveTo` before the normal waiting reaction and falls back safely when geometry is absent.
+- Validation: `node --test` 45/45; `node src/cli/experiments.js` BPDC-P8-001 PASS; generated bundle syntax check PASS; local-staged plugin build PASS at 59,600 bytes; OpenPets manifest validation PASS; spatial concentration/scatter, saturation, decay/relocation, utility non-interference, dragEnd, REST_SITE moveTo, display invalidation, schema migration, envelope migration, persistence/reload, and P7 regression PASS; CreatureCore boundary scan 0 findings; privacy scan 0 findings; secret scan 0 findings; `git diff --check` PASS.
+- Reliability/limitations: target-tested/regression-protected only. No new live Windows/Electron drag → learned site → SLEEP visual observation was performed or claimed. Canonical UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. jCodemunch-MCP was unavailable and bounded direct reads were used for relevant files.

@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 7 — Immediate Touch Response; accepted and synchronized on 2026-08-24 after Architect acceptance of P7.
+- Current phase: Phase 8 — Spatial Habitat Familiarity; implementation complete for Architect review, acceptance pending.
 
 ## Languages and runtimes
 
@@ -26,11 +26,11 @@
 
 ## Verified commands
 
-- Governance checks: `UNSET UNTIL VERIFIED`
-- Project-specific checks: `node --test` — verified; `node src/cli/experiments.js` — verified; `node src/cli/simulate.js --seed 1234 --hours 24` — verified.
+- Governance checks: `git diff --check`; boundary/privacy/secret scans — verified.
+- Project-specific checks: `node --test` — verified; `node src/cli/experiments.js` — verified; `node src/cli/simulate.js --seed 1234 --hours 24` — verified; local-staged `node scripts/build-openpets-plugin.mjs` — verified; pinned OpenPets manifest validation — verified.
 
 ## Constraints
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–7 state is synchronized to GitHub `main`; no subsequent phase is authorized.
+- Deployment: no deployment authorized; accepted Phase 1–7 state remains synchronized to GitHub `main`; P8 is local implementation pending Architect acceptance; no Phase 9 is authorized.

@@ -41,7 +41,7 @@ The plugin stores its versioned CreatureCore snapshot under `bpdc.creature.snaps
 
 ## Elapsed-time reconciliation
 
-The integration stores a version-1 persistence envelope containing the existing serialized CreatureCore snapshot plus `savedAtEpochMs`. On restart, elapsed wall time is calculated outside CreatureCore and reconciled through the same deterministic simulation path with `userPresent=false`, zero interaction pressure, and changing local time. Historical intents are suppressed; only the current resume behavior is expressed. Legacy raw schema-3 values receive zero invented catch-up and are migrated to the envelope on the next save. Backward clock movement also receives zero catch-up and a diagnostic. CreatureCore remains free of wall-clock APIs.
+The integration stores a version-2 persistence envelope containing the serialized CreatureCore snapshot, `savedAtEpochMs`, and the integration-owned REST_SITE tracker state. On restart, elapsed wall time is calculated outside CreatureCore and reconciled through the same deterministic simulation path with `userPresent=false`, zero interaction pressure, and changing local time. Historical intents are suppressed; only the current resume behavior is expressed. Legacy raw schema-3 values and version-1 envelopes receive zero invented catch-up and are migrated on the next save. Backward clock movement also receives zero catch-up and a diagnostic. CreatureCore remains free of wall-clock APIs.
 
 ## Presence boundary
 
@@ -51,10 +51,16 @@ The plugin translates only OpenPets' curated `idle:enter`, `idle:exit`, `screen:
 
 After a normalized `POSITIVE_CONTACT` is learned, CreatureCore returns a separate, non-persistent `InteractionResponseIntent`. It uses only existing bond, sociability, independence, and current-behavior state to choose one of `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, or `WITHDRAW_CONTACT`. The response does not call the autonomous selector, consume RNG, replace behavior timing, or advance simulation time. The OpenPets adapter maps the response to an existing placeholder reaction, coalesces rapid responses to one restoration timer, and restores the still-current autonomous behavior afterward. Offline elapsed-time reconciliation never fabricates a contact response.
 
+## Spatial habitat preference
+
+Phase 8 adds exactly one persistent spatial preference: `restSiteAffinity`, a bounded, saturating, slowly decaying scalar in CreatureCore. The core stores no coordinates. The OpenPets integration owns one normalized candidate coordinate and a bounded relocation streak. Only repeated user placement from `pet:dragEnd` reinforces the preference; random wandering does not. Nearby placements are smoothed within a fixed radius, scattered placements do not reinforce, and three repeated placements in a new area relocate the candidate. `display:changed` invalidates the stored host geometry and resets the affinity so stale coordinates cannot be used.
+
+When `SLEEP` has already won normally, the plugin may decorate that intent with `habitatTarget: REST_SITE` after the affinity threshold is reached and the integration can resolve a current coordinate. The adapter then calls OpenPets `moveTo(...)` before the existing SLEEP reaction. Missing geometry falls back to ordinary SLEEP, and the SLEEP utility score is unchanged.
+
 ## Boundary
 
 ```text
-CreatureCore -> BehaviorIntent -> future DesktopAdapter
+CreatureCore -> BehaviorIntent -> DesktopAdapter -> OpenPets SDK -> visible pet
 ```
 
-`CreatureCore` owns deterministic state and decisions. A later adapter may translate `BehaviorIntent` values into OpenPets actions, but desktop integration is not part of this phase.
+`CreatureCore` owns deterministic state and decisions. OpenPets owns only host translation, one coordinate tracker, and movement execution; raw desktop geometry never enters CreatureCore.

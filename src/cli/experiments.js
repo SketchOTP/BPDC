@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { CreatureCore, createEnvironment } from "../creature-core/index.js";
 import { PresenceTracker } from "../../integrations/openpets/presence-tracker.js";
+import { RestSiteTracker, distanceBetween } from "../../integrations/openpets/rest-site-tracker.js";
 import { offlineEnvironmentAt, restoreAndReconcile } from "../../integrations/openpets/elapsed-reconciliation.js";
 import {
   deserializePersistenceEnvelope,
@@ -36,10 +37,15 @@ const responseState = runInteractionResponseStateExperiment();
 const responsePreservation = runInteractionResponsePreservationExperiment();
 const responseLearning = runInteractionResponseLearningExperiment();
 const responseOffline = runInteractionResponseOfflineExperiment();
+const spatialConcentration = runSpatialConcentrationExperiment();
+const spatialSaturation = runSpatialSaturationExperiment();
+const spatialDecayRelocation = runSpatialDecayRelocationExperiment();
+const spatialPersistence = runSpatialPersistenceExperiment();
+const spatialUtility = runSpatialUtilityNonInterferenceExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P7-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline]
+  directive: "BPDC-P8-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -50,6 +56,7 @@ console.log(JSON.stringify({
     quietNormal, absence, decayContinuity, midnight, idempotentRestart,
     backwardClock, legacyMigration, longAbsence, integrationHarness,
     responseState, responsePreservation, responseLearning, responseOffline,
+    spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility,
   },
   trace24h,
 }, null, 2));
@@ -518,6 +525,89 @@ function runInteractionResponseOfflineExperiment() {
     status: !Object.hasOwn(restored, "response") && !Object.hasOwn(restored.core.toSnapshot(), "interactionResponse") ? "PASS" : "FAIL",
     elapsedSeconds: restored.elapsedSeconds,
     resumeAction: restored.resumeIntent?.action ?? null,
+  };
+}
+
+function runSpatialConcentrationExperiment() {
+  const concentrated = CreatureCore.create({ seed: 801 });
+  const scattered = CreatureCore.create({ seed: 801 });
+  const concentratedTracker = new RestSiteTracker();
+  const scatteredTracker = new RestSiteTracker();
+  concentratedTracker.observePlacement({ x: 100, y: 100 });
+  for (const position of [{ x: 102, y: 101 }, { x: 98, y: 99 }, { x: 101, y: 102 }, { x: 100, y: 100 }]) {
+    concentrated.observeSpatial(concentratedTracker.observePlacement(position));
+  }
+  for (const position of [{ x: 100, y: 100 }, { x: 400, y: 100 }, { x: 800, y: 100 }, { x: 1_200, y: 100 }, { x: 1_600, y: 100 }]) {
+    scattered.observeSpatial(scatteredTracker.observePlacement(position));
+  }
+  const concentratedAffinity = concentrated.spatialSnapshot().restSiteAffinity;
+  const scatteredAffinity = scattered.spatialSnapshot().restSiteAffinity;
+  return {
+    status: concentratedAffinity > scatteredAffinity && scatteredAffinity === 0 ? "PASS" : "FAIL",
+    concentratedAffinity,
+    scatteredAffinity,
+  };
+}
+
+function runSpatialSaturationExperiment() {
+  const core = CreatureCore.create({ seed: 802 });
+  const tracker = new RestSiteTracker();
+  tracker.observePlacement({ x: 50, y: 50 });
+  for (let index = 0; index < 20; index += 1) core.observeSpatial(tracker.observePlacement({ x: 50, y: 50 }));
+  const affinity = core.spatialSnapshot().restSiteAffinity;
+  return { status: affinity > 0.8 && affinity < 1 ? "PASS" : "FAIL", affinity };
+}
+
+function runSpatialDecayRelocationExperiment() {
+  const core = CreatureCore.create({ seed: 803 });
+  const tracker = new RestSiteTracker();
+  tracker.observePlacement({ x: 50, y: 50 });
+  for (let index = 0; index < 8; index += 1) core.observeSpatial(tracker.observePlacement({ x: 50, y: 50 }));
+  const before = core.spatialSnapshot().restSiteAffinity;
+  core.advance(14 * 24 * 3600, createEnvironment({ localTime: 12 }));
+  const after = core.spatialSnapshot().restSiteAffinity;
+  const relocation = [
+    tracker.observePlacement({ x: 500, y: 500 }),
+    tracker.observePlacement({ x: 502, y: 501 }),
+    tracker.observePlacement({ x: 498, y: 499 }),
+  ];
+  return {
+    status: before > after && relocation.at(-1).kind === "REST_SITE_RELOCATED"
+      && distanceBetween(tracker.resolveTarget(), { x: 500, y: 500 }) < 5 ? "PASS" : "FAIL",
+    before,
+    after,
+    relocation: relocation.map(({ kind }) => kind),
+  };
+}
+
+function runSpatialPersistenceExperiment() {
+  const core = CreatureCore.create({ seed: 804 });
+  const tracker = new RestSiteTracker();
+  tracker.observePlacement({ x: 200, y: 300 });
+  for (let index = 0; index < 5; index += 1) core.observeSpatial(tracker.observePlacement({ x: 200, y: 300 }));
+  const stored = serializePersistenceEnvelope(core.serialize(), 10_000, tracker.toSnapshot());
+  const restored = restoreAndReconcile(stored, { nowEpochMs: 10_000, coreFactory: CreatureCore.fromSnapshot });
+  return {
+    status: JSON.stringify(restored.core.toSnapshot()) === JSON.stringify(core.toSnapshot())
+      && JSON.stringify(restored.spatialState) === JSON.stringify(tracker.toSnapshot()) ? "PASS" : "FAIL",
+    schema: restored.core.toSnapshot().schemaVersion,
+    envelope: deserializePersistenceEnvelope(stored).envelopeVersion,
+    affinity: restored.core.spatialSnapshot().restSiteAffinity,
+  };
+}
+
+function runSpatialUtilityNonInterferenceExperiment() {
+  const core = CreatureCore.create({ seed: 805 });
+  const environment = createEnvironment({ localTime: 12, userPresent: true });
+  const before = getCandidate(core, "SLEEP", environment);
+  const tracker = new RestSiteTracker();
+  tracker.observePlacement({ x: 10, y: 20 });
+  for (let index = 0; index < 10; index += 1) core.observeSpatial(tracker.observePlacement({ x: 10, y: 20 }));
+  const after = getCandidate(core, "SLEEP", environment);
+  return {
+    status: before.score === after.score && JSON.stringify(before.contributors) === JSON.stringify(after.contributors) ? "PASS" : "FAIL",
+    before: before.score,
+    after: after.score,
   };
 }
 

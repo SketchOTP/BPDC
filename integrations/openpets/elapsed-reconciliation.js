@@ -32,6 +32,7 @@ export function restoreAndReconcile(storedValue, {
       legacy: false,
       savedAtEpochMs: null,
       resumeIntent: null,
+      spatialState: null,
     };
   }
 
@@ -65,5 +66,6 @@ export function restoreAndReconcile(storedValue, {
     legacy: envelope.legacy,
     savedAtEpochMs,
     resumeIntent: core.currentIntent(),
+    spatialState: envelope.spatialState,
   };
 }

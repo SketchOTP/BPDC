@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-SYNC-004`
-- External directive ID: `BPDC-SYNC-004`
-- Objective: Publish the Architect-accepted Phase 7 implementation and Authority closure without changing application behavior.
-- Current status: `SYNCHRONIZED`
-- Acceptance: Architect accepted P7; the accepted product and Authority closure were published by normal non-force push under `BPDC-SYNC-004`; local `main == origin/main` at `619b35e1e2020ba9157d16d5241628f73a83395c` and the worktree is clean. Live new-response observation remains `UNKNOWN` and is not claimed.
-- Current phase: `Phase 7 — Immediate Touch Response` closed and synchronized; no Phase 8 work is authorized.
-- Expected touched areas: Authority records and Notion synchronization only; no application changes.
-- Immediate next action: wait for a new Architect directive. Do not start Phase 8 or add new emotional, memory, sensing, or autonomous-behavior categories.
+- Local directive ID: `BPDC-P8-001`
+- External directive ID: `BPDC-P8-001`
+- Objective: Implement one persistent abstract `REST_SITE` preference from repeated user placement, with all raw geometry confined to the OpenPets integration.
+- Current status: `IMPLEMENTED_PENDING_ARCHITECT_ACCEPTANCE`
+- Acceptance: P8 implementation is target-tested and regression-protected; local live visual evidence is `UNKNOWN`/not claimed and is non-blocking under the directive.
+- Current phase: `Phase 8 — Spatial Habitat Familiarity` implementation complete for handoff; no Phase 9 work is authorized.
+- Expected touched areas: CreatureCore schema/persistence, OpenPets integration tracker/adapter, generated plugin, tests, README, and Authority records.
+- Immediate next action: Architect review of `BPDC-P8-001`; do not add multiple sites, grids, pathfinding, new utility weights, or a subsequent phase.
 
 ## Temporary task-relevant facts
 
@@ -25,7 +25,7 @@
 ## Last validation
 
 - Command or check: `node --test`, `node src/cli/experiments.js`, adapter response harness, manifest validation, local-staged OpenPets build, dependency/privacy/publication-safety scans, and `git diff --check`
-- Result: `PASSED`; 38/38 tests, BPDC-P7-001 experiment suite PASS, adapter/state/preservation/learning/sleep/rapid-click/offline checks PASS, manifest PASS, staged bundle PASS at 48,071 bytes, boundary/privacy/publication-safety scans PASS, and diff check PASS. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Live Windows/Electron observation of the new contact expression remains `UNKNOWN`/not claimed.
+- Result: `PASSED`; 45/45 tests, BPDC-P8-001 experiment suite PASS, spatial/adapter/state/persistence/migration/display/utility checks PASS, manifest PASS, staged bundle PASS at 59,600 bytes, boundary/privacy/secret scans PASS, and diff check PASS. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Live Windows/Electron spatial observation remains `UNKNOWN`/not claimed.
 
 ## Risks and blockers
 
@@ -48,4 +48,4 @@
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, accepted `BPDC-P5-001`, accepted `BPDC-P6-001`, accepted `BPDC-P7-001`, and accepted `BPDC-SYNC-004`; no subsequent phase is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, accepted `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, and `BPDC-SYNC-004`; `BPDC-P8-001` is implemented pending review and no Phase 9 work is authorized.

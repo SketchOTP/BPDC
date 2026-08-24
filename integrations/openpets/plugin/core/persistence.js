@@ -1,7 +1,8 @@
 import { createInitialRelationship } from "./relationship.js";
 import { createInitialHabit } from "./habit.js";
+import { createInitialSpatial } from "./spatial.js";
 
-export const SNAPSHOT_SCHEMA_VERSION = 3;
+export const SNAPSHOT_SCHEMA_VERSION = 4;
 
 export function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
@@ -15,6 +16,7 @@ export function deserializeSnapshot(serialized) {
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       relationship: createInitialRelationship(snapshot.simulationTimestamp ?? 0),
       habit: createInitialHabit(snapshot.simulationTimestamp ?? 0),
+      spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
     };
   }
   if (snapshot?.schemaVersion === 2) {
@@ -22,6 +24,14 @@ export function deserializeSnapshot(serialized) {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       habit: createInitialHabit(snapshot.simulationTimestamp ?? 0),
+      spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
+    };
+  }
+  if (snapshot?.schemaVersion === 3) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
     };
   }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {

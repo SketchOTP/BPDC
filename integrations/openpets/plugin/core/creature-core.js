@@ -25,6 +25,14 @@ import {
   relationshipForScoring,
   validateRelationship,
 } from "./relationship.js";
+import {
+  createInitialSpatial,
+  decaySpatial,
+  reinforceRestSite,
+  REST_SITE_AFFINITY_THRESHOLD,
+  resetRestSite,
+  validateSpatial,
+} from "./spatial.js";
 
 export class CreatureCore {
   constructor({
@@ -37,6 +45,7 @@ export class CreatureCore {
     currentBehavior = null,
     relationship,
     habit,
+    spatial = createInitialSpatial(simulationTimestamp),
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer(),
   }) {
@@ -49,6 +58,7 @@ export class CreatureCore {
     this.currentBehavior = currentBehavior ? clone(currentBehavior) : null;
     this.relationship = validateRelationship(relationship, this.clock.now());
     this.habit = validateHabit(habit, this.clock.now());
+    this.spatial = validateSpatial(spatial, this.clock.now());
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -158,6 +168,7 @@ export class CreatureCore {
       candidates: evaluation.candidates,
       relationship: this.relationshipSnapshot(),
       habit: this.habitSnapshot(environment),
+      spatial: this.spatialSnapshot(),
       rngState: this.rng.getState(),
     };
   }
@@ -182,6 +193,7 @@ export class CreatureCore {
       internalState: clone(this.drives),
       relationship: this.relationshipSnapshot(),
       habit: this.habitStateSnapshot(),
+      spatial: this.spatialStateSnapshot(),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming,
     };
@@ -203,6 +215,7 @@ export class CreatureCore {
       currentBehavior: snapshot.currentBehavior,
       relationship: snapshot.relationship,
       habit: snapshot.habit,
+      spatial: snapshot.spatial,
     });
   }
 
@@ -325,6 +338,10 @@ export class CreatureCore {
     decayTimeHabit(this.habit, this.clock.now());
   }
 
+  decaySpatial() {
+    decaySpatial(this.spatial, this.clock.now());
+  }
+
   habitForScoring(environment = this.lastEnvironment) {
     return {
       timeHabit: timeHabitForScoring(this.habit, environment.localTime, this.clock.now()),
@@ -350,6 +367,33 @@ export class CreatureCore {
       attentionByHour: clone(this.habit.attentionByHour),
       lastUpdatedAt: this.habit.lastUpdatedAt,
     };
+  }
+
+  observeSpatial(observation) {
+    this.decaySpatial();
+    if (observation?.kind !== "REST_SITE_PLACEMENT") {
+      throw new RangeError(`Unsupported spatial observation: ${observation?.kind}`);
+    }
+    reinforceRestSite(this.spatial, observation.strength ?? 0, this.clock.now());
+    return this.spatialSnapshot();
+  }
+
+  resetRestSitePreference() {
+    resetRestSite(this.spatial, this.clock.now());
+    return this.spatialSnapshot();
+  }
+
+  spatialSnapshot() {
+    this.decaySpatial();
+    return {
+      ...clone(this.spatial),
+      restSiteTarget: this.spatial.restSiteAffinity >= REST_SITE_AFFINITY_THRESHOLD ? "REST_SITE" : null,
+    };
+  }
+
+  spatialStateSnapshot() {
+    this.decaySpatial();
+    return clone(this.spatial);
   }
 
   evolveDrives(seconds, environment) {

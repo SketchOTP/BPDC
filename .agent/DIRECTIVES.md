@@ -252,3 +252,17 @@
 - Acceptance: accepted commits `98b506d` and `619b35e` are verified as the only unpublished descendants of `bdeffd9`; validation and publication-safety checks pass; normal push succeeds; local `main == origin/main`; worktree clean; live P7 observation remains `UNKNOWN`.
 - Discovery: not required; repository durability only.
 - Status at issuance: `AUTHORIZED`; completed successfully.
+
+## BPDC-P8-001
+
+- Issued: 2026-08-24 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-SYNC-004`
+- Objective: Implement exactly one persistent abstract spatial preference, `REST_SITE`, learned from repeated user placement and optionally used only after an already-selected `SLEEP` behavior.
+- Scope: integration-owned position observation/tracker; host-neutral spatial observation; one bounded core `restSiteAffinity`; schema-3 → 4 migration; envelope version-1 → 2 migration; repeated-nearby reinforcement; saturation, decay, relocation, persistence, display invalidation, SLEEP targeting, adapter `moveTo`, deterministic experiments, regression, build, manifest, boundary, privacy, and diff validation.
+- Exclusions: no screen grid, multiple locations, pathfinding, navigation, monitor/window/application awareness, cursor tracking, raw geometry in CreatureCore, new behaviors/drives/utility weights, general habits, mood, hunger, semantic memory, development/evolution, LLM, OpenPets core changes, or Phase 9.
+- Learning rule: first drag establishes the candidate without affinity; nearby placements within 96 host units reinforce with smoothed coordinates and normalized proximity strength; three repeated placements in a new area relocate the single candidate; scattered placements do not reinforce.
+- Preference rule: `restSiteAffinity` learns at `0.12 * strength * (1 - affinity)`, decays with a 14-day half-life, and reaches the `REST_SITE` target threshold at `0.6`.
+- Display rule: `display:changed` invalidates the integration coordinate and resets the core preference; stale geometry cannot be targeted.
+- Acceptance: all 23 criteria in the Architect directive, with live visual observation useful but non-blocking and classified separately.
+- Discovery: not required; Architect discovery rejected a portable screen grid and authorized the minimal one-site design.
+- Status at issuance: `AUTHORIZED`
