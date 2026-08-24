@@ -257,3 +257,14 @@
 - Limitation: live Windows/Electron physical-click observation of the new response remains `UNKNOWN` and is not claimed, as permitted by the directive.
 - Boundary: no new autonomous behavior, state dimension, persistence field, utility weight, privacy-sensitive sensing, OpenPets core change, or later phase.
 - Supersession: `BPDC-P6-001-PUBLISHED` as the active implementation stage.
+
+## BPDC-P7-001-LOCAL-COMMIT
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P7-001-LOCAL-COMMIT`
+- Status: `PASSED`
+- Decision: Record the completed P7 implementation and Authority handoff locally without remote publication.
+- Commit: `98b506d` (`feat: express immediate contact response`).
+- Publication: no push performed; GitHub remains at accepted Phase 6 head `bdeffd9` pending separate authorization.
+- Notion: canonical BPDC page updated and verified for the P7 handoff.
+- Supersession: `BPDC-P7-001-IMPLEMENTATION-COMPLETE` remains the implementation record.

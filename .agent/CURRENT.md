@@ -44,6 +44,7 @@
 - Phase 6 validation: `node --test` 31/31, `node src/cli/experiments.js` BPDC-P6-001 PASS, OpenPets manifest PASS, local-staged bundle PASS at 43,351 bytes, core wall-clock boundary scan PASS, privacy scan PASS, and `git diff --check` PASS. Canonical UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds. Live desktop elapsed-time observation is `UNKNOWN`/not claimed.
 - Phase 6 publication: product and Authority implementation commit `2e4ff7eb261b1df1c8db57392cfa4bbee9b99b61` was pushed normally; final Authority closure verification is recorded after the follow-up records-only commit.
 - Phase 7 implementation: `InteractionResponseIntent` is transient and non-persistent; `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, and `WITHDRAW_CONTACT` are selected from existing bond/personality/current behavior. The adapter maps them to existing reactions and uses one generation-guarded restoration timer; no autonomous behavior/timing/RNG/drive state is replaced.
+- Phase 7 publication: local commit `98b506d` (`feat: express immediate contact response`) contains product, generated plugin, tests, README, and Authority records. It is not pushed; GitHub remains at accepted Phase 6 head `bdeffd9` pending separate authorization.
 
 ## Pending decisions
 

@@ -14,7 +14,7 @@
 - Active directive: BPDC-P7-001 (complete for Architect handoff)
 - Active task packet: `.agent/tasks/active/BPDC-P7-001.md`
 - Last Codex outcome: BPDC-P7-001 (PASS; Authority handoff prepared)
-- Last state sync: 2026-08-24 America/New_York; P7 implementation and records are ready for local commit; no remote publication authorized by the directive.
+- Last state sync: 2026-08-24 America/New_York; P7 implementation and records are committed locally at `98b506d`; no remote publication authorized by the directive.
 
 ## Mandatory kernel
 

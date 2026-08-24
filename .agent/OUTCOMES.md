@@ -244,3 +244,13 @@
 - Evidence: `BPDC-E028`, `E4_REGRESSION_PROTECTED`; live Windows/Electron physical-click observation of the new response remains `UNKNOWN`/not claimed.
 - Boundary: no new autonomous behavior, drive, memory/habit dimension, persistence field, utility weight, privacy-sensitive signal, OpenPets core change, or Phase 8 work.
 - Follow-up directive: Architect review of `BPDC-P7-001`.
+
+## BPDC-P7-001 - LOCAL COMMIT RECORDED
+
+- Outcome ID: `BPDC-P7-001-LOCAL-COMMIT`
+- Recorded: 2026-08-24 America/New_York
+- Acceptance: `MET_FOR_ARCHITECT_REVIEW`
+- Local commit: `98b506d` (`feat: express immediate contact response`).
+- Publication: not pushed; local `main` is intentionally one commit ahead of `origin/main` at accepted Phase 6 head `bdeffd9` because the directive did not separately authorize remote publication.
+- Notion: canonical BPDC page updated with the P7 handoff and evidence boundary.
+- Supersession: `BPDC-P7-001-TRANSIENT-CONTACT-EXPRESSION` handoff record remains the implementation evidence record.
