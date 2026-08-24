@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 9 — User-Shaped Activity Preference; implementation authorized and in progress.
+- Current phase: Phase 9 — User-Shaped Activity Preference; accepted and published.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–8 state remains synchronized to GitHub `main`; P9 is local implementation pending Architect acceptance; no Phase 10 is authorized.
+- Deployment: no deployment authorized; accepted Phase 1–9 state is synchronized to GitHub `main`; no Phase 10 is authorized.

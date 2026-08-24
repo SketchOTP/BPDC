@@ -321,6 +321,19 @@
 - Controlled result: eight equal positive contacts produced play preference `0.25421048866004275` during PLAY versus `0` in non-PLAY control; bond and time habit remained equal. Trained PLAY utility was `0.91705229520286` versus neutral `0.8004909000000001`, with learned contribution `0.11656139520285994`.
 - Validation: 53/53 tests; P9 CLI experiments; P4-P8 regression; migration, persistence, offline, no-self-reinforcement, non-domination, P7 response, and P8 REST_SITE checks; manifest; staged bundle at 63,376 bytes; boundary/privacy/secret/publication-safety scans; and diff check all passed.
 - Evidence: `BPDC-E032`, `E4_REGRESSION_PROTECTED`; live observation is not required and is not claimed.
+
+## BPDC-SYNC-006 - PUBLISHED
+
+- Outcome ID: `BPDC-SYNC-006-PUBLISHED`
+- Published: 2026-08-24 America/New_York
+- Acceptance: `PASSED`
+- Local before: `main` at `58acab9a85fefeb7b79d130b3ceb0e75d7aada89`, clean; remote before `origin/main` at `1feeb4c8079e823cb365a1016536f7dc655f5362`.
+- Unpublished commits: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`) and `58acab9a85fefeb7b79d130b3ceb0e75d7aada89` (`chore: record Phase 9 authority handoff`); no unexpected source or generated files.
+- Ancestry: freshly fetched `origin/main` was an ancestor of local `HEAD`.
+- Validation: 53/53 tests; P9 experiment suite PASS; `git diff --check` PASS; publication-safety scan PASS with zero unexpected files, bad filenames, or added secret findings.
+- Publication: normal `git push origin main` succeeded; final local `main == origin/main == 58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; worktree clean; no history rewrite.
+- Evidence boundary: live observation was not required and is not claimed.
+- Next boundary: Phase 9 is closed; await a new Architect directive; do not start Phase 10.
 - Boundary: no other preference, generic reinforcement engine, mutable personality, development stage, new behavior, new sensing, LLM, OpenPets core change, or Phase 10 work.
 - Local commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); push is explicitly not authorized by this directive.
 - Follow-up directive: Architect review of `BPDC-P9-001`.

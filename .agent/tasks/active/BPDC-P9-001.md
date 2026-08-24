@@ -2,7 +2,7 @@
 
 ## Status
 
-`IMPLEMENTED_PENDING_ARCHITECT_ACCEPTANCE`
+`ACCEPTED_AND_PUBLISHED`
 
 ## Objective
 
@@ -40,3 +40,13 @@ Implement exactly one persistent `playPreference` learned from positive contact 
 - `git diff --check`: PASS.
 - Implementation is complete for Architect review; no push performed.
 - Local product commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`).
+
+## Architect acceptance and publication
+
+- Architect review: `BPDC-P9-001: ACCEPTED`; Phase 9 closed.
+- Sync directive: `BPDC-SYNC-006` completed by normal non-force push.
+- Published product commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6`.
+- Published Authority closure: `58acab9a85fefeb7b79d130b3ceb0e75d7aada89`.
+- Final state: local `main == origin/main == 58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; worktree clean.
+- Live observation: not required and not claimed.
+- Phase 10: not started and not authorized.

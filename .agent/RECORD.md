@@ -345,3 +345,14 @@
 - Publication: no push performed; `origin/main` remains at accepted Phase 8 publication `1feeb4c`.
 - Validation: `BPDC-E032`; 53/53 tests; P9 experiments; staged bundle at 63,376 bytes; manifest; boundary/privacy/secret/publication-safety scans; diff check.
 - Boundary: exactly one user-shaped play preference; no mutable personality, general reinforcement, development stage, or Phase 10 work.
+
+## BPDC-SYNC-006-PUBLISHED
+
+- Date: 2026-08-24
+- Record ID: `BPDC-SYNC-006-PUBLISHED`
+- Status: `PASSED`
+- Decision: Publish the Architect-accepted Phase 9 implementation and Authority closure without application changes or history rewriting.
+- Publication: normal non-force push succeeded from `1feeb4c8079e823cb365a1016536f7dc655f5362` to `58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; local `main == origin/main`; worktree clean.
+- Unpublished commits: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` and `58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; freshly fetched remote was an ancestor; no unexpected files.
+- Validation: 53/53 tests, P9 experiments, diff check, and publication-safety scan passed; zero bad filenames or added secret findings.
+- Boundary: live observation was not required and remains unclaimed; Phase 10 was not started and is not authorized.

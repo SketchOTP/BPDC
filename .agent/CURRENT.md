@@ -7,18 +7,19 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P9-001`
-- External directive ID: `BPDC-P9-001`
-- Objective: Implement exactly one persistent user-shaped `playPreference` learned from positive contact during committed autonomous `PLAY`.
-- Current status: `IMPLEMENTED_PENDING_ARCHITECT_ACCEPTANCE`
-- Acceptance: Phase 9 implementation is deterministic and regression-protected for Architect review; live observation is not required and no Phase 10 work is authorized.
-- Current phase: `Phase 9 — User-Shaped Activity Preference` implementation complete for handoff.
+- Local directive ID: `BPDC-SYNC-006`
+- External directive ID: `BPDC-SYNC-006`
+- Objective: Publish the Architect-accepted Phase 9 product and Authority commits to canonical GitHub `main` without changing application behavior.
+- Current status: `COMPLETED`
+- Acceptance: Phase 9 is closed and published; live observation was not required and remains unclaimed; no Phase 10 work is authorized.
+- Current phase: `Phase 9 — User-Shaped Activity Preference` closed; synchronization complete.
 - Expected touched areas: CreatureCore schema/persistence, OpenPets integration tracker/adapter, generated plugin, tests, README, and Authority records.
-- Immediate next action: complete deterministic validation and Authority handoff; do not add other preferences, development stages, or a subsequent phase.
+- Immediate next action: await a new Architect directive; do not add other preferences, development stages, or begin Phase 10.
 - Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
 - Authority closure commit: `807d867` (`chore: record Phase 8 authority handoff`); published.
-- Local P9 implementation commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); not pushed.
-- Publication result: normal non-force pushes published the accepted P8 state and the records-only sync closure; final local/remote equality was verified after the closure.
+- Local P9 implementation commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); published.
+- Authority closure commit: `58acab9a85fefeb7b79d130b3ceb0e75d7aada89` (`chore: record Phase 9 authority handoff`); published.
+- Publication result: `BPDC-SYNC-006` pushed normally and non-force; final local `main == origin/main == 58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; worktree clean.
 
 ## Temporary task-relevant facts
 

@@ -294,3 +294,15 @@
 - Acceptance: `0b7e70e` and `807d867` are the intended unpublished descendants of `b9d6b5d`; validation and publication-safety checks pass; normal push succeeds; final local `main == origin/main`; worktree clean; live P8 spatial observation remains `UNKNOWN`/not claimed.
 - Discovery: not required; repository durability only.
 - Status at issuance: `AUTHORIZED`; completed successfully.
+
+## BPDC-SYNC-006
+
+- Issued: 2026-08-24 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-P9-001`
+- External directive: `BPDC-SYNC-006`
+- Objective: Publish the accepted Phase 9 product and Authority commits to canonical GitHub `main` without changing application behavior.
+- Scope: Authority read, clean-tree and commit verification, fresh fetch, remote-tip and ancestry proof, unpublished-content and publication-safety inspection, 53-test regression, P9 experiment suite, diff check, normal non-force push, final GitHub/local equality verification, clean-worktree verification, and Authority/Notion recording.
+- Exclusions: no playPreference changes, retuning, additional preference, development stage, reunion behavior, Phase 10, amend/rebase/squash, force push, live-evidence fabrication, release, deployment, or OpenPets core change.
+- Acceptance: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` and `58acab9a85fefeb7b79d130b3ceb0e75d7aada89` were the only unpublished descendants of `1feeb4c8079e823cb365a1016536f7dc655f5362`; validation and publication-safety checks passed; normal push succeeded; final local `main == origin/main`; worktree clean; Phase 10 untouched.
+- Discovery: not required; repository durability only.
+- Status at issuance: `AUTHORIZED`; completed successfully.

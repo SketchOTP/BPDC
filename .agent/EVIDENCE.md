@@ -349,3 +349,15 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Safety evidence: no-self-reinforcement passed; 40 positive contacts saturated at `0.9158383688565739`; 21-day decay reduced it to `0.4579191844282902`; strong fatigue still selected `SLEEP`; offline reconciliation decayed `0.3253234941140425` to `0.1626617470570229` over 1,814,400 seconds without fabricating interaction; P7 response and P8 REST_SITE regressions passed.
 - Validation: `node --test` 53/53; `node src/cli/experiments.js` BPDC-P9-001 PASS; generated plugin syntax PASS; local-staged plugin build PASS at 63,376 bytes; OpenPets manifest PASS; CreatureCore boundary/privacy/secret scans 0 findings; publication-safety scan PASS; `git diff --check` PASS.
 - Reliability/limitations: live observation is not required by the directive and was not claimed. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. jCodemunch-MCP was unavailable and bounded direct reads were used for relevant files.
+
+## BPDC-E033 — Phase 9 accepted publication
+
+- Created: 2026-08-24 America/New_York
+- Directive/outcome: Architect acceptance `BPDC-P9-001` / `BPDC-SYNC-006`
+- Evidence level: `E4_REGRESSION_PROTECTED` for the accepted P9 mechanism; publication durability verified
+- Type: `REPOSITORY_DURABILITY`
+- Result: `PASSED`; freshly fetched `origin/main` at `1feeb4c8079e823cb365a1016536f7dc655f5362` was an ancestor of local `HEAD`; the only unpublished commits were the accepted P9 product commit `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` and Authority closure `58acab9a85fefeb7b79d130b3ceb0e75d7aada89`.
+- Validation: 53/53 tests; P9 experiment suite PASS; `git diff --check` PASS; publication-safety scan found 25 expected changed files, zero unexpected files, zero bad filenames, and zero added secret findings.
+- Publication: normal non-force `git push origin main` succeeded from `1feeb4c8079e823cb365a1016536f7dc655f5362` to `58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; no history rewrite.
+- Final state: local `main == origin/main == 58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; worktree clean; Phase 10 untouched.
+- Reliability/limitations: live observation was not required and remains unclaimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
