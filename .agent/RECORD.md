@@ -299,3 +299,14 @@
 - Validation: `BPDC-E030`; 45/45 tests; P8 experiments; manifest; staged bundle; schema/envelope/persistence tests; adapter/display/utility tests; boundary/privacy/secret scans; diff check.
 - Limitation: live Windows/Electron spatial observation is `UNKNOWN`/not claimed; no synthetic live claim was made.
 - Supersession: `BPDC-SYNC-004-PUBLISHED` as the active implementation stage.
+
+## BPDC-P8-001-LOCAL-COMMIT
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P8-001-LOCAL-COMMIT`
+- Status: `PASSED`
+- Decision: Record the completed P8 implementation locally without remote publication.
+- Commit: `0b7e70e` (`feat: teach one persistent rest site`).
+- Publication: no push performed; GitHub remains at `b9d6b5d` pending separate authorization.
+- Validation: post-commit 45/45 tests, P8 experiments, bundle syntax, and diff check passed; live spatial observation remains `UNKNOWN`/not claimed.
+- Supersession: `BPDC-P8-001-IMPLEMENTATION-COMPLETE` remains the implementation evidence record.

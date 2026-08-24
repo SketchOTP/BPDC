@@ -287,3 +287,13 @@
 - Evidence: `BPDC-E030`, `E4_REGRESSION_PROTECTED`; live P8 visual drag/return observation remains `UNKNOWN`/not claimed and is non-blocking.
 - Boundary: no multiple-site system, screen grid, pathfinding, new behavior, utility change, privacy-sensitive signal, OpenPets core change, or Phase 9 work.
 - Follow-up directive: Architect review of `BPDC-P8-001`.
+
+## BPDC-P8-001 - LOCAL COMMIT RECORDED
+
+- Outcome ID: `BPDC-P8-001-LOCAL-COMMIT`
+- Recorded: 2026-08-24 America/New_York
+- Acceptance: `MET_FOR_ARCHITECT_REVIEW`
+- Local commit: `0b7e70e` (`feat: teach one persistent rest site`).
+- Publication: not pushed; `origin/main` remains at accepted P7 publication `b9d6b5d` pending separate authorization.
+- Verification: post-commit `node --test` 45/45, P8 experiments, generated bundle syntax, and diff check passed; worktree clean before this records-only closure.
+- Evidence: `BPDC-E030`; live P8 visual spatial observation remains `UNKNOWN`/not claimed.

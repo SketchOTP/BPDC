@@ -15,6 +15,7 @@
 - Current phase: `Phase 8 — Spatial Habitat Familiarity` implementation complete for handoff; no Phase 9 work is authorized.
 - Expected touched areas: CreatureCore schema/persistence, OpenPets integration tracker/adapter, generated plugin, tests, README, and Authority records.
 - Immediate next action: Architect review of `BPDC-P8-001`; do not add multiple sites, grids, pathfinding, new utility weights, or a subsequent phase.
+- Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); not pushed.
 
 ## Temporary task-relevant facts
 
