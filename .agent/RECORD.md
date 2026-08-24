@@ -224,3 +224,14 @@
 - Evidence: `BPDC-E026`; 22/22 tests, P4/presence experiments, adapter harness, manifest, staged bundle, core/privacy scans, and diff check passed.
 - Limitation: live desktop presence observation is not claimed or required by `BPDC-P5-001`.
 - Supersession: `BPDC-P5-001-IMPLEMENTATION-COMPLETE` pending-acceptance state.
+
+## BPDC-P6-001-IMPLEMENTATION-COMPLETE
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P6-001-IMPLEMENTATION-COMPLETE`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Implement the authorized elapsed-time continuity layer before adding more environmental familiarity or memory categories.
+- Evidence: version-1 persistence envelope, exact quiet reconciliation through existing CreatureCore mechanics, current-intent resume handling, legacy migration, clock-skew protection, offline local-time timeline, 31/31 tests, P6 experiment suite, persistence harness, manifest, staged bundle, core/privacy scans, and diff check.
+- Measured performance: approximately 13ms/81ms/340ms for exact 24-hour/7-day/30-day catch-up in the Node 24 environment.
+- Limitation: live Windows/Electron elapsed-time observation is `UNKNOWN` and not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
+- Supersession: `BPDC-P5-001-PUBLISHED` as the active implementation stage.

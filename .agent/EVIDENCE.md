@@ -281,3 +281,14 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: `node --test` 22/22; P4 and presence experiment suite PASS; adapter event harness PASS; OpenPets manifest PASS; local-staged bundle PASS at 38,483 bytes; CreatureCore framework/time scan PASS; privacy-sensitive API scan PASS; `git diff --check` PASS.
 - Utility/drive results: active `SEEK_ATTENTION` `0.74979795` > idle `0.39979795`; active `SLEEP` `0.4844834` < idle `0.6344834`; four-hour social pressure active `0.166` < absent `0.322`.
 - Reliability/limitations: target-tested and regression-protected only; no live desktop observation is claimed or required. Presence is transient and does not enter the persistence schema.
+
+## BPDC-E027 — Phase 6 elapsed-time reconciliation
+
+- Created: 2026-08-24 America/New_York
+- Directive/outcome: `BPDC-P6-001` / pending Architect acceptance
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; the integration now stores a version-1 envelope containing `savedAtEpochMs` and the existing serialized CreatureCore schema-3 snapshot. Restart reconciliation computes non-negative elapsed time outside CreatureCore, advances through the same deterministic mechanics with offline absence and a changing local-time function, suppresses historical intents, returns only the current resume intent, and persists immediately.
+- Validation: `node --test` 31/31; `node src/cli/experiments.js` BPDC-P6-001 PASS; quiet/normal equivalence PASS; six-hour absence PASS; relationship/habit decay PASS; midnight crossing PASS; idempotent restart PASS; backward clock PASS; legacy migration PASS; 24-hour/7-day/30-day timing PASS at approximately 13ms/81ms/340ms; OpenPets persistence harness PASS; manifest PASS; local-staged bundle PASS at 43,351 bytes; core wall-clock boundary scan PASS; privacy scan PASS; `git diff --check` pending final commit.
+- Persistence findings: legacy raw schema-3 storage receives zero invented catch-up and is migrated on its next save; negative elapsed time performs zero catch-up and logs a diagnostic; immediate restart at the new checkpoint applies zero additional elapsed time.
+- Reliability/limitations: deterministic target/regression evidence only. Live Windows/Electron elapsed-time observation is `UNKNOWN` and is not claimed; canonical UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.

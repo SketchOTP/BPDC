@@ -217,3 +217,15 @@
 - Acceptance: existing 17-test/P4 regression remains passing; new presence tests pass; active/idle utility and presence/absence drive effects have the required direction; plugin no longer hard-codes absence; core remains framework-independent; presence is transient and not persisted; no privacy-sensitive inputs are added.
 - Live evidence policy: Computer Use/Sky is not required for acceptance; any future desktop observation must be classified separately and must not be fabricated.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-P6-001
+
+- Issued: 2026-08-24 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-P5-001`
+- External directive: `BPDC-P6-001`
+- Objective: Continue deterministic CreatureCore life across host shutdown and restart by reconciling elapsed wall-clock time at the integration/persistence boundary.
+- Scope: version-1 persistence envelope with `savedAtEpochMs`; safe legacy raw schema-3 migration; backward-clock protection; offline absent environment with changing local time; quiet advancement through the existing CreatureCore mechanics; current-resume-intent retrieval; immediate post-catch-up persistence; deterministic equivalence, decay, midnight, idempotence, migration, performance, and integration-harness validation.
+- Exclusions: no CreatureCore wall-clock/platform APIs, no offline interaction fabrication, no replay of historical intents through OpenPets, no new drives/behaviors/memory/habits/location/application sensing/mood/hunger/evolution/LLM/cloud services, no OpenPets core change, and no subsequent phase.
+- Acceptance: all 24 criteria in the Architect directive, including exact quiet/normal state equivalence, six-hour absence, decay continuity, local-time transition, zero double-advance, backward-clock safety, legacy migration, practical 30-day catch-up, immediate persistence, and preserved privacy boundary.
+- Live evidence policy: live desktop elapsed-time observation is optional and remains separately classified; deterministic OpenPets persistence harness evidence is required for this handoff.
+- Status at issuance: `AUTHORIZED`

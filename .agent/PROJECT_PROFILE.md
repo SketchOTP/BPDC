@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 4 — Minimal Time-of-Day Habit; Architect authorized on 2026-08-23 after accepted synchronization at `b40232c`
+- Current phase: Phase 6 — Elapsed-Time Reconciliation; Architect authorized on 2026-08-24 after acceptance of Phase 5.
 
 ## Languages and runtimes
 

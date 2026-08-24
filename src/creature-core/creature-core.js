@@ -65,7 +65,7 @@ export class CreatureCore {
     });
   }
 
-  advance(seconds, environmentInput = this.lastEnvironment) {
+  advance(seconds, environmentInput = this.lastEnvironment, { collectIntents = true } = {}) {
     assertNonNegative(seconds, "seconds");
     this.decayRelationship();
     this.decayHabit();
@@ -75,7 +75,8 @@ export class CreatureCore {
     if (!this.currentBehavior) {
       const environment = resolveEnvironment(environmentInput, this.clock.now());
       this.lastEnvironment = environment;
-      events.push(this.commitBehavior(environment));
+      const intent = this.commitBehavior(environment);
+      if (collectIntents) events.push(intent);
     }
 
     while (remaining > 0) {
@@ -97,7 +98,8 @@ export class CreatureCore {
         this.currentBehavior = null;
         if (remaining > 0) {
           const nextEnvironment = resolveEnvironment(environmentInput, this.clock.now());
-          events.push(this.commitBehavior(nextEnvironment));
+          const intent = this.commitBehavior(nextEnvironment);
+          if (collectIntents) events.push(intent);
         }
       } else if (segment === 0) {
         throw new Error("CreatureCore could not advance; behavior timing is invalid.");
@@ -105,6 +107,23 @@ export class CreatureCore {
     }
 
     return events;
+  }
+
+  reconcileElapsed(seconds, environmentInput = this.lastEnvironment) {
+    return this.advance(seconds, environmentInput, { collectIntents: false });
+  }
+
+  currentIntent() {
+    if (!this.currentBehavior) return null;
+    return new BehaviorIntent({
+      time: this.clock.now(),
+      action: this.currentBehavior.action,
+      duration: Math.max(0, this.currentBehavior.endsAt - this.clock.now()),
+      reason: this.currentBehavior.reason,
+      score: this.currentBehavior.score,
+      scoreBreakdown: clone(this.currentBehavior.scoreBreakdown),
+      interruptible: this.currentBehavior.interruptible,
+    });
   }
 
   evaluate(environmentInput = this.lastEnvironment) {

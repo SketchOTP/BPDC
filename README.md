@@ -39,6 +39,10 @@ For this UNC workspace, run the bundle build from a local staging directory and 
 
 The plugin stores its versioned CreatureCore snapshot under `bpdc.creature.snapshot` in OpenPets plugin storage and logs `CORE`, `ADAPT`, `HOST`, and `STATUS` records. OpenPets host gravity is explicitly disabled. The pinned host's tick is used as timing only; no host behavior selector was found or used.
 
+## Elapsed-time reconciliation
+
+The integration stores a version-1 persistence envelope containing the existing serialized CreatureCore snapshot plus `savedAtEpochMs`. On restart, elapsed wall time is calculated outside CreatureCore and reconciled through the same deterministic simulation path with `userPresent=false`, zero interaction pressure, and changing local time. Historical intents are suppressed; only the current resume behavior is expressed. Legacy raw schema-3 values receive zero invented catch-up and are migrated to the envelope on the next save. Backward clock movement also receives zero catch-up and a diagnostic. CreatureCore remains free of wall-clock APIs.
+
 ## Presence boundary
 
 The plugin translates only OpenPets' curated `idle:enter`, `idle:exit`, `screen:locked`, and `screen:unlocked` events into a transient `PresenceTracker`. The tracker exposes `ACTIVE`, `IDLE`, and `LOCKED` semantics through the existing host-neutral `userPresent` and `userIdleDuration` environment fields; direct pet interaction also establishes active presence. Startup is conservatively `UNKNOWN`, which maps to absent/zero-duration until an explicit signal arrives. Presence is not persisted and no keystrokes, clipboard contents, screen pixels, window titles, application names, or document contents are collected.

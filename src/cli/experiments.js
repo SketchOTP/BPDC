@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 import { CreatureCore, createEnvironment } from "../creature-core/index.js";
 import { PresenceTracker } from "../../integrations/openpets/presence-tracker.js";
+import { offlineEnvironmentAt, restoreAndReconcile } from "../../integrations/openpets/elapsed-reconciliation.js";
+import {
+  deserializePersistenceEnvelope,
+  serializePersistenceEnvelope,
+} from "../../integrations/openpets/persistence-envelope.js";
 
 const replay = runReplayExperiment();
 const personality = runPersonalityExperiment();
@@ -18,10 +23,19 @@ const habitNonDomination = runHabitNonDominationExperiment();
 const presenceTransitions = runPresenceTransitionExperiment();
 const presenceUtility = runPresenceUtilityExperiment();
 const presenceDriveEvolution = runPresenceDriveEvolutionExperiment();
+const quietNormal = runQuietNormalExperiment();
+const absence = runAbsenceExperiment();
+const decayContinuity = runDecayContinuityExperiment();
+const midnight = runMidnightExperiment();
+const idempotentRestart = runIdempotentRestartExperiment();
+const backwardClock = runBackwardClockExperiment();
+const legacyMigration = runLegacyMigrationExperiment();
+const longAbsence = runLongAbsenceExperiment();
+const integrationHarness = runIntegrationHarnessExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P5-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution]
+  directive: "BPDC-P6-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -29,6 +43,8 @@ console.log(JSON.stringify({
     replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation,
     habitConcentration, habitPersistence, habitDecay, habitNonDomination,
     presenceTransitions, presenceUtility, presenceDriveEvolution,
+    quietNormal, absence, decayContinuity, midnight, idempotentRestart,
+    backwardClock, legacyMigration, longAbsence, integrationHarness,
   },
   trace24h,
 }, null, 2));
@@ -290,6 +306,141 @@ function runPresenceDriveEvolutionExperiment() {
     status: active.drives.social < absent.drives.social ? "PASS" : "FAIL",
     activeSocial: active.drives.social,
     absentSocial: absent.drives.social,
+  };
+}
+
+function runQuietNormalExperiment() {
+  const normal = CreatureCore.create({ seed: 611 });
+  const quiet = CreatureCore.create({ seed: 611 });
+  normal.advance(0, timedEnvironment);
+  quiet.advance(0, timedEnvironment);
+  const normalEvents = normal.advance(6 * 3600, timedEnvironment);
+  const quietEvents = quiet.reconcileElapsed(6 * 3600, timedEnvironment);
+  return {
+    status: quietEvents.length === 0 && normalEvents.length > 0
+      && JSON.stringify(normal.toSnapshot()) === JSON.stringify(quiet.toSnapshot()) ? "PASS" : "FAIL",
+    normalEvents: normalEvents.length,
+    quietEvents: quietEvents.length,
+  };
+}
+
+function runAbsenceExperiment() {
+  const savedAt = 1_000_000;
+  const core = CreatureCore.create({ seed: 612 });
+  core.advance(0, (timestamp) => offlineEnvironmentAt(savedAt + timestamp * 1_000, savedAt));
+  const before = core.toSnapshot();
+  const restored = restoreAndReconcile(
+    serializePersistenceEnvelope(core.serialize(), savedAt),
+    { nowEpochMs: savedAt + 6 * 3600 * 1_000, coreFactory: CreatureCore.fromSnapshot },
+  );
+  const after = restored.core.toSnapshot();
+  return {
+    status: after.simulationTimestamp > before.simulationTimestamp
+      && JSON.stringify(after.internalState) !== JSON.stringify(before.internalState)
+      && after.relationship.events.length === 0 ? "PASS" : "FAIL",
+    elapsedSeconds: restored.elapsedSeconds,
+    simulationTimestamp: after.simulationTimestamp,
+    resumeAction: restored.resumeIntent?.action ?? null,
+  };
+}
+
+function runDecayContinuityExperiment() {
+  const core = CreatureCore.create({ seed: 613 });
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, environmentAt(20));
+  const bondBefore = core.relationshipSnapshot().bond;
+  const habitBefore = core.habitSnapshot(environmentAt(20)).timeHabit;
+  core.reconcileElapsed(8 * 24 * 3600, (timestamp) => offlineEnvironmentAt(timestamp * 1_000, 0));
+  const bondAfter = core.relationshipSnapshot().bond;
+  const habitAfter = core.habitSnapshot(environmentAt(20)).timeHabit;
+  return {
+    status: bondAfter < bondBefore && habitAfter < habitBefore && core.relationship.events.length === 0 ? "PASS" : "FAIL",
+    bondBefore, bondAfter, habitBefore, habitAfter,
+  };
+}
+
+function runMidnightExperiment() {
+  const startEpochMs = new Date(2026, 7, 24, 23, 0, 0).getTime();
+  const hours = new Set();
+  const environment = (timestamp) => {
+    const value = offlineEnvironmentAt(startEpochMs + timestamp * 1_000, startEpochMs);
+    hours.add(Math.floor(value.localTime));
+    return value;
+  };
+  const core = CreatureCore.create({ seed: 614 });
+  core.advance(0, environment);
+  core.reconcileElapsed(8 * 3600, environment);
+  hours.add(Math.floor(offlineEnvironmentAt(startEpochMs + 8 * 3600 * 1_000, startEpochMs).localTime));
+  return { status: hours.has(23) && hours.has(0) && hours.has(7) ? "PASS" : "FAIL", observedHours: [...hours].sort((a, b) => a - b) };
+}
+
+function runIdempotentRestartExperiment() {
+  const savedAt = 2_000_000;
+  const resumedAt = savedAt + 6 * 3600 * 1_000;
+  const core = CreatureCore.create({ seed: 615 });
+  core.advance(0, offlineEnvironmentAt);
+  const first = restoreAndReconcile(
+    serializePersistenceEnvelope(core.serialize(), savedAt),
+    { nowEpochMs: resumedAt, coreFactory: CreatureCore.fromSnapshot },
+  );
+  const second = restoreAndReconcile(
+    serializePersistenceEnvelope(first.core.serialize(), resumedAt),
+    { nowEpochMs: resumedAt, coreFactory: CreatureCore.fromSnapshot },
+  );
+  return {
+    status: first.elapsedSeconds === 6 * 3600 && second.elapsedSeconds === 0
+      && JSON.stringify(first.core.toSnapshot()) === JSON.stringify(second.core.toSnapshot()) ? "PASS" : "FAIL",
+    firstElapsedSeconds: first.elapsedSeconds,
+    secondElapsedSeconds: second.elapsedSeconds,
+  };
+}
+
+function runBackwardClockExperiment() {
+  const savedAt = 3_000_000;
+  const core = CreatureCore.create({ seed: 616 });
+  const stored = serializePersistenceEnvelope(core.serialize(), savedAt);
+  const restored = restoreAndReconcile(stored, { nowEpochMs: savedAt - 1, coreFactory: CreatureCore.fromSnapshot });
+  return { status: restored.clockSkew && restored.elapsedSeconds === 0 ? "PASS" : "FAIL", clockSkew: restored.clockSkew };
+}
+
+function runLegacyMigrationExperiment() {
+  const core = CreatureCore.create({ seed: 617 });
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.6 });
+  const restored = restoreAndReconcile(core.serialize(), { nowEpochMs: 4_000_000, coreFactory: CreatureCore.fromSnapshot });
+  const migrated = deserializePersistenceEnvelope(serializePersistenceEnvelope(restored.core.serialize(), 4_000_000));
+  return { status: restored.legacy && restored.elapsedSeconds === 0 && !migrated.legacy ? "PASS" : "FAIL", schema: JSON.parse(migrated.creatureSnapshot).schemaVersion };
+}
+
+function runLongAbsenceExperiment() {
+  const durations = [24 * 3600, 7 * 24 * 3600, 30 * 24 * 3600];
+  const timings = {};
+  for (const duration of durations) {
+    const core = CreatureCore.create({ seed: 618 });
+    core.advance(0, offlineEnvironmentAt);
+    const started = process.hrtime.bigint();
+    core.reconcileElapsed(duration, (timestamp) => offlineEnvironmentAt(timestamp * 1_000, 0));
+    timings[`${duration / 3600}h`] = Number(process.hrtime.bigint() - started) / 1e6;
+  }
+  return {
+    status: Object.values(timings).every((milliseconds) => milliseconds < 5_000) ? "PASS" : "FAIL",
+    milliseconds: timings,
+  };
+}
+
+function runIntegrationHarnessExperiment() {
+  const savedAt = 5_000_000;
+  const resumedAt = savedAt + 6 * 3600 * 1_000;
+  const core = CreatureCore.create({ seed: 619 });
+  core.advance(0, offlineEnvironmentAt);
+  const restored = restoreAndReconcile(
+    serializePersistenceEnvelope(core.serialize(), savedAt),
+    { nowEpochMs: resumedAt, coreFactory: CreatureCore.fromSnapshot },
+  );
+  const envelope = serializePersistenceEnvelope(restored.core.serialize(), resumedAt);
+  const decoded = deserializePersistenceEnvelope(envelope);
+  return {
+    status: decoded.savedAtEpochMs === resumedAt && JSON.parse(decoded.creatureSnapshot).creatureId === core.creatureId ? "PASS" : "FAIL",
+    savedAtEpochMs: decoded.savedAtEpochMs,
+    creatureId: JSON.parse(decoded.creatureSnapshot).creatureId,
   };
 }
 

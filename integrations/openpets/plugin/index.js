@@ -487,7 +487,7 @@ var CreatureCore = class _CreatureCore {
       rngState: normalizedSeed ^ 2779096485
     });
   }
-  advance(seconds, environmentInput = this.lastEnvironment) {
+  advance(seconds, environmentInput = this.lastEnvironment, { collectIntents = true } = {}) {
     assertNonNegative(seconds, "seconds");
     this.decayRelationship();
     this.decayHabit();
@@ -496,7 +496,8 @@ var CreatureCore = class _CreatureCore {
     if (!this.currentBehavior) {
       const environment = resolveEnvironment(environmentInput, this.clock.now());
       this.lastEnvironment = environment;
-      events.push(this.commitBehavior(environment));
+      const intent = this.commitBehavior(environment);
+      if (collectIntents) events.push(intent);
     }
     while (remaining > 0) {
       const now = this.clock.now();
@@ -515,13 +516,29 @@ var CreatureCore = class _CreatureCore {
         this.currentBehavior = null;
         if (remaining > 0) {
           const nextEnvironment = resolveEnvironment(environmentInput, this.clock.now());
-          events.push(this.commitBehavior(nextEnvironment));
+          const intent = this.commitBehavior(nextEnvironment);
+          if (collectIntents) events.push(intent);
         }
       } else if (segment === 0) {
         throw new Error("CreatureCore could not advance; behavior timing is invalid.");
       }
     }
     return events;
+  }
+  reconcileElapsed(seconds, environmentInput = this.lastEnvironment) {
+    return this.advance(seconds, environmentInput, { collectIntents: false });
+  }
+  currentIntent() {
+    if (!this.currentBehavior) return null;
+    return new BehaviorIntent({
+      time: this.clock.now(),
+      action: this.currentBehavior.action,
+      duration: Math.max(0, this.currentBehavior.endsAt - this.clock.now()),
+      reason: this.currentBehavior.reason,
+      score: this.currentBehavior.score,
+      scoreBreakdown: clone(this.currentBehavior.scoreBreakdown),
+      interruptible: this.currentBehavior.interruptible
+    });
   }
   evaluate(environmentInput = this.lastEnvironment) {
     const environment = resolveEnvironment(environmentInput, this.clock.now());
@@ -881,6 +898,113 @@ function nonNegativeFinite(value, name) {
   return value;
 }
 
+// integrations/openpets/persistence-envelope.js
+var PERSISTENCE_ENVELOPE_VERSION = 1;
+function serializePersistenceEnvelope(creatureSnapshot, savedAtEpochMs) {
+  assertEpoch(savedAtEpochMs);
+  if (typeof creatureSnapshot !== "string") {
+    throw new TypeError("creatureSnapshot must be the serialized CreatureCore snapshot.");
+  }
+  return JSON.stringify({
+    envelopeVersion: PERSISTENCE_ENVELOPE_VERSION,
+    savedAtEpochMs,
+    creatureSnapshot
+  });
+}
+function deserializePersistenceEnvelope(storedValue) {
+  const parsed = typeof storedValue === "string" ? JSON.parse(storedValue) : storedValue;
+  if (parsed?.envelopeVersion === PERSISTENCE_ENVELOPE_VERSION) {
+    assertEpoch(parsed.savedAtEpochMs);
+    if (typeof parsed.creatureSnapshot !== "string") {
+      throw new TypeError("Persistence envelope creatureSnapshot must be serialized text.");
+    }
+    return {
+      envelopeVersion: PERSISTENCE_ENVELOPE_VERSION,
+      savedAtEpochMs: parsed.savedAtEpochMs,
+      creatureSnapshot: parsed.creatureSnapshot,
+      legacy: false
+    };
+  }
+  if (parsed?.schemaVersion !== void 0) {
+    return {
+      envelopeVersion: null,
+      savedAtEpochMs: null,
+      creatureSnapshot: storedValue,
+      legacy: true
+    };
+  }
+  throw new Error("Unsupported BPDC persistence value.");
+}
+function assertEpoch(value) {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new RangeError("savedAtEpochMs must be a finite non-negative number.");
+  }
+}
+
+// integrations/openpets/elapsed-reconciliation.js
+function localHourAt(epochMs) {
+  const date = new Date(epochMs);
+  return date.getHours() + date.getMinutes() / 60 + date.getSeconds() / 3600;
+}
+function offlineEnvironmentAt(epochMs, startEpochMs = epochMs) {
+  return {
+    localTime: localHourAt(epochMs),
+    userPresent: false,
+    userIdleDuration: Math.max(0, (epochMs - startEpochMs) / 1e3),
+    novelty: 0.1,
+    interactionPressure: 0
+  };
+}
+function restoreAndReconcile(storedValue, {
+  nowEpochMs = Date.now(),
+  coreFactory,
+  environmentAt = offlineEnvironmentAt
+} = {}) {
+  if (!Number.isFinite(nowEpochMs) || nowEpochMs < 0) {
+    throw new RangeError("nowEpochMs must be a finite non-negative number.");
+  }
+  if (!storedValue) {
+    return {
+      core: null,
+      elapsedMs: 0,
+      elapsedSeconds: 0,
+      clockSkew: false,
+      legacy: false,
+      savedAtEpochMs: null,
+      resumeIntent: null
+    };
+  }
+  const envelope = deserializePersistenceEnvelope(storedValue);
+  if (typeof coreFactory !== "function") {
+    throw new TypeError("coreFactory is required to restore a CreatureCore snapshot.");
+  }
+  const core = coreFactory(envelope.creatureSnapshot);
+  const initialSimulationTimestamp = core.toSnapshot().simulationTimestamp;
+  const savedAtEpochMs = envelope.savedAtEpochMs;
+  const rawElapsedMs = savedAtEpochMs === null ? 0 : nowEpochMs - savedAtEpochMs;
+  const clockSkew = rawElapsedMs < 0;
+  const elapsedMs = clockSkew ? 0 : rawElapsedMs;
+  const elapsedSeconds = elapsedMs / 1e3;
+  if (elapsedSeconds > 0) {
+    core.reconcileElapsed(
+      elapsedSeconds,
+      (simulationTimestamp) => environmentAt(
+        savedAtEpochMs + (simulationTimestamp - initialSimulationTimestamp) * 1e3,
+        savedAtEpochMs
+      )
+    );
+  }
+  return {
+    core,
+    elapsedMs,
+    elapsedSeconds,
+    clockSkew,
+    legacy: envelope.legacy,
+    savedAtEpochMs,
+    resumeIntent: core.currentIntent()
+  };
+}
+
 // integrations/openpets/plugin/index.src.js
 var SNAPSHOT_KEY = "bpdc.creature.snapshot";
 var LOG_PREFIX = "BPDC";
@@ -888,8 +1012,8 @@ var activeRuntime = null;
 function log(ctx, stage, timestamp, message, details = void 0) {
   void ctx.log.info(LOG_PREFIX, { stage, timestamp, message, ...details ? { details } : {} });
 }
-function environmentNow(presence) {
-  const date = /* @__PURE__ */ new Date();
+function environmentNow(presence, epochMs = Date.now()) {
+  const date = new Date(epochMs);
   const presenceSnapshot = presence.snapshot();
   return createEnvironment({
     localTime: date.getHours() + date.getMinutes() / 60,
@@ -924,20 +1048,34 @@ function register(OpenPetsPlugin) {
       const presence = new PresenceTracker();
       await ctx.pet.show();
       await ctx.pet.physics({ gravity: false, bounce: 0 });
+      const startupEpochMs = Date.now();
       const saved = await ctx.storage.get(SNAPSHOT_KEY);
-      const core = saved ? CreatureCore.fromSnapshot(saved) : CreatureCore.create({ seed: 1112556611 });
+      const restored = restoreAndReconcile(saved, {
+        nowEpochMs: startupEpochMs,
+        coreFactory: CreatureCore.fromSnapshot
+      });
+      const core = restored.core ?? CreatureCore.create({ seed: 1112556611 });
       log(ctx, "CORE", (/* @__PURE__ */ new Date()).toISOString(), saved ? "snapshot restored" : "new individual created", {
         creatureId: core.creatureId,
-        snapshot: Boolean(saved)
+        snapshot: Boolean(saved),
+        elapsedSeconds: restored.elapsedSeconds,
+        legacy: restored.legacy,
+        clockSkew: restored.clockSkew
       });
+      if (restored.clockSkew) {
+        log(ctx, "PERSIST", (/* @__PURE__ */ new Date()).toISOString(), "clock moved backwards; skipped elapsed catch-up", {
+          savedAtEpochMs: restored.savedAtEpochMs,
+          nowEpochMs: startupEpochMs
+        });
+      }
       let saveChain = Promise.resolve();
       let lastPersistAt = 0;
       const persist = (force = false) => {
         const now = Date.now();
         if (!force && now - lastPersistAt < 1e3) return saveChain;
         lastPersistAt = now;
-        const snapshot = core.serialize();
-        saveChain = saveChain.then(() => ctx.storage.set(SNAPSHOT_KEY, snapshot));
+        const envelope = serializePersistenceEnvelope(core.serialize(), now);
+        saveChain = saveChain.then(() => ctx.storage.set(SNAPSHOT_KEY, envelope));
         return saveChain;
       };
       const executeIntent = async (intent, source = "AUTONOMOUS") => {
@@ -952,7 +1090,8 @@ function register(OpenPetsPlugin) {
         await persist(true);
       };
       await persist(true);
-      for (const intent of core.advance(0, environmentNow(presence))) await executeIntent(intent);
+      const resumeIntent = restored.resumeIntent ?? core.advance(0, environmentNow(presence, startupEpochMs))[0];
+      if (resumeIntent) await executeIntent(resumeIntent, restored.resumeIntent ? "RESUME" : "AUTONOMOUS");
       const runtime = {
         adapter,
         unsubscribe: () => {

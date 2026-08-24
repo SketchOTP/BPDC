@@ -1,6 +1,8 @@
 import { CreatureCore, BehaviorIntent, createEnvironment } from "./core/index.js";
 import { OpenPetsAdapter } from "./openpets-adapter.js";
 import { PresenceTracker } from "../presence-tracker.js";
+import { restoreAndReconcile } from "../elapsed-reconciliation.js";
+import { serializePersistenceEnvelope } from "../persistence-envelope.js";
 
 const SNAPSHOT_KEY = "bpdc.creature.snapshot";
 const LOG_PREFIX = "BPDC";
@@ -10,8 +12,8 @@ function log(ctx, stage, timestamp, message, details = undefined) {
   void ctx.log.info(LOG_PREFIX, { stage, timestamp, message, ...(details ? { details } : {}) });
 }
 
-function environmentNow(presence) {
-  const date = new Date();
+function environmentNow(presence, epochMs = Date.now()) {
+  const date = new Date(epochMs);
   const presenceSnapshot = presence.snapshot();
   return createEnvironment({
     localTime: date.getHours() + date.getMinutes() / 60,
@@ -42,11 +44,25 @@ export function register(OpenPetsPlugin) {
 
       await ctx.pet.show();
       await ctx.pet.physics({ gravity: false, bounce: 0 });
+      const startupEpochMs = Date.now();
       const saved = await ctx.storage.get(SNAPSHOT_KEY);
-      const core = saved ? CreatureCore.fromSnapshot(saved) : CreatureCore.create({ seed: 0x42504443 });
-      log(ctx, "CORE", new Date().toISOString(), saved ? "snapshot restored" : "new individual created", {
-        creatureId: core.creatureId, snapshot: Boolean(saved),
+      const restored = restoreAndReconcile(saved, {
+        nowEpochMs: startupEpochMs,
+        coreFactory: CreatureCore.fromSnapshot,
       });
+      const core = restored.core ?? CreatureCore.create({ seed: 0x42504443 });
+      log(ctx, "CORE", new Date().toISOString(), saved ? "snapshot restored" : "new individual created", {
+        creatureId: core.creatureId,
+        snapshot: Boolean(saved),
+        elapsedSeconds: restored.elapsedSeconds,
+        legacy: restored.legacy,
+        clockSkew: restored.clockSkew,
+      });
+      if (restored.clockSkew) {
+        log(ctx, "PERSIST", new Date().toISOString(), "clock moved backwards; skipped elapsed catch-up", {
+          savedAtEpochMs: restored.savedAtEpochMs, nowEpochMs: startupEpochMs,
+        });
+      }
 
       let saveChain = Promise.resolve();
       let lastPersistAt = 0;
@@ -54,8 +70,8 @@ export function register(OpenPetsPlugin) {
         const now = Date.now();
         if (!force && now - lastPersistAt < 1_000) return saveChain;
         lastPersistAt = now;
-        const snapshot = core.serialize();
-        saveChain = saveChain.then(() => ctx.storage.set(SNAPSHOT_KEY, snapshot));
+        const envelope = serializePersistenceEnvelope(core.serialize(), now);
+        saveChain = saveChain.then(() => ctx.storage.set(SNAPSHOT_KEY, envelope));
         return saveChain;
       };
 
@@ -69,7 +85,8 @@ export function register(OpenPetsPlugin) {
       };
 
       await persist(true);
-      for (const intent of core.advance(0, environmentNow(presence))) await executeIntent(intent);
+      const resumeIntent = restored.resumeIntent ?? core.advance(0, environmentNow(presence, startupEpochMs))[0];
+      if (resumeIntent) await executeIntent(resumeIntent, restored.resumeIntent ? "RESUME" : "AUTONOMOUS");
 
       const runtime = {
         adapter,

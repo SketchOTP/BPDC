@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 5 — Minimal User Presence Awareness (implementation target-tested; operational desktop observation not required)
-- Active directive: BPDC-P5-001 (complete for Architect handoff)
-- Active task packet: `.agent/tasks/active/BPDC-P5-001.md`
-- Last Codex outcome: BPDC-P5-001 (PASS; product commit published and Authority handoff prepared)
-- Last state sync: 2026-08-24 America/New_York; product commit `c13d3e8b0a51b1799872672ffbca57059fa56a55` is published after `9189d3129199a3ff46f0fa8df6a0bd8b284567b4`
+- Current stage: Phase 6 — Elapsed-Time Reconciliation (implementation target-tested; operational desktop observation not claimed)
+- Active directive: BPDC-P6-001 (complete for Architect handoff)
+- Active task packet: `.agent/tasks/active/BPDC-P6-001.md`
+- Last Codex outcome: BPDC-P6-001 (PASS; product commit and Authority handoff prepared)
+- Last state sync: 2026-08-24 America/New_York; P6 entry was synchronized at `47bb5cc` before implementation.
 
 ## Mandatory kernel
 

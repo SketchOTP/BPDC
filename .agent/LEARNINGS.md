@@ -161,3 +161,12 @@
 - Confidence: `VERIFIED` for deterministic integration behavior and current pinned event vocabulary; live desktop operation remains unobserved and is not required for acceptance.
 - Scope: Phase 5 minimal user presence awareness.
 - Supersedes: `NONE`
+
+## BPDC-L019
+
+- Date: 2026-08-24
+- Fact: BPDC can preserve continuity without an offline-specific AI by storing a real integration-boundary checkpoint and running the same deterministic CreatureCore advancement with intent collection disabled. A separate current-intent accessor prevents historical desktop actions from replaying after restart.
+- Evidence: `BPDC-E027`; quiet/normal equivalence, six-hour absence, midnight, idempotence, legacy migration, and 30-day performance experiments.
+- Confidence: `VERIFIED` for deterministic integration behavior and current schema-3 snapshots; live desktop elapsed-time observation remains `UNKNOWN`.
+- Scope: Phase 6 elapsed-time reconciliation.
+- Supersedes: `NONE`

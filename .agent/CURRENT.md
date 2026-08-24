@@ -7,19 +7,19 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P5-001`
-- External directive ID: `BPDC-P5-001`
-- Objective: Wire OpenPets' bounded presence signals into the existing host-neutral environment snapshot without adding a behavioral subsystem.
+- Local directive ID: `BPDC-P6-001`
+- External directive ID: `BPDC-P6-001`
+- Objective: Reconcile deterministic CreatureCore life across ordinary host shutdown and restart using an integration-owned wall-clock checkpoint.
 - Current status: `COMPLETE_FOR_ARCHITECT_HANDOFF`
-- Acceptance: Phase 5 presence translation is implemented and target-tested; startup presence remains conservatively `UNKNOWN` until a curated signal arrives; no live desktop session is required for acceptance and no operational claim is made.
-- Current phase: `Phase 5 — Minimal User Presence Awareness` complete for Architect review; no subsequent phase is authorized.
-- Expected touched areas: integration presence tracker, OpenPets adapter/plugin bundle, deterministic experiments/tests, README, and Authority records only.
-- Immediate next action: wait for Architect review. Do not start Phase 6 or add broader environmental sensing.
+- Acceptance: elapsed-time reconciliation, legacy migration, backward-clock protection, quiet/normal equivalence, changing offline local time, immediate persistence, and bounded long-absence performance are implemented and target-tested; live desktop elapsed-time observation remains `UNKNOWN` and is not claimed.
+- Current phase: `Phase 6 — Elapsed-Time Reconciliation` complete for Architect review; no subsequent phase is authorized.
+- Expected touched areas: integration persistence envelope/reconciliation, CreatureCore quiet advancement/current intent, OpenPets plugin bundle, deterministic experiments/tests, README, and Authority records only.
+- Immediate next action: wait for Architect review. Do not start a later phase or add new memory/environment categories.
 
 ## Temporary task-relevant facts
 
 - Canonical repository path: `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; retired `\\rpi5\RPI5SharedDrive` must not be used.
-- GitHub repository exists at `SketchOTP/BPDC`, default branch `main`; local `main` and `origin/main` both resolve to `b40232c` at entry.
+- GitHub repository exists at `SketchOTP/BPDC`, default branch `main`; P6 entry and final verification use local `main == origin/main` at `47bb5cc` before the P6 commit.
 - Notion defines Phase 0 as evaluation of OpenPets first, VPet second, and a minimal shell only if required, with PetzA as behavioral research.
 
 ## Last validation
@@ -40,7 +40,9 @@
 - Phase 5 implementation: OpenPets `idle:enter`, `idle:exit`, `screen:locked`, and `screen:unlocked` map through a transient integration `PresenceTracker` to the existing `userPresent` and `userIdleDuration` fields. Direct pet interaction marks active presence. Startup uses internal `UNKNOWN`, conservatively mapped to absent/zero-duration; presence is not persisted.
 - Phase 5 validation: `node --test` 22/22, combined experiment suite PASS, manifest PASS, local-staged plugin build PASS at 38,483 bytes, core dependency/privacy scans PASS, and `git diff --check` PASS. Canonical UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds.
 - Phase 5 publication: product commit `c13d3e8b0a51b1799872672ffbca57059fa56a55` (`feat: wire curated user presence signals`) pushed normally; final local/remote equality and clean-worktree verification will be recorded after the Authority closure commit.
+- Phase 6 implementation: integration-owned version-1 envelope stores `savedAtEpochMs` beside the existing serialized schema-3 snapshot; legacy raw snapshots receive zero invented catch-up and migrate on save; backward clocks skip catch-up; offline environment is absent with changing local time; quiet reconciliation uses the existing deterministic core path; only the current resume intent is expressed.
+- Phase 6 validation: `node --test` 31/31, `node src/cli/experiments.js` BPDC-P6-001 PASS, OpenPets manifest PASS, local-staged bundle PASS at 43,351 bytes, core wall-clock boundary scan PASS, privacy scan PASS, and `git diff --check` pending final commit. Canonical UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds. Live desktop elapsed-time observation is `UNKNOWN`/not claimed.
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, and issued `BPDC-P5-001`; P5 is complete for Architect handoff and no subsequent phase is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, accepted `BPDC-P5-001`, and issued `BPDC-P6-001`; P6 is complete for Architect handoff and no subsequent phase is authorized.

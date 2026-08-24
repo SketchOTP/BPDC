@@ -208,3 +208,15 @@
 - Scope: only the bounded presence tracker, curated adapter mappings, plugin bundle, deterministic validation, README, and Authority records were published.
 - Evidence boundary: `BPDC-E026` remains `E4_REGRESSION_PROTECTED`; no live desktop claim is made. No subsequent phase started.
 - Closure: final records-only Authority commit and local/remote equality/clean-worktree verification follow.
+
+## BPDC-P6-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P6-001-ELAPSED-TIME-RECONCILIATION`
+- Closed for Codex handoff: 2026-08-24 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Summary: Implemented the smallest elapsed-time continuity layer at the OpenPets persistence boundary. A version-1 envelope records real `savedAtEpochMs` beside the unchanged schema-3 CreatureCore snapshot; restart computes safe elapsed time, runs exact quiet reconciliation through existing mechanics under offline absence, and persists the reconciled state before live ticking.
+- Validation: `node --test` PASSED 31/31; `node src/cli/experiments.js` BPDC-P6-001 PASSED; OpenPets persistence harness PASSED; manifest PASSED; local-staged plugin build PASSED at 43,351 bytes; core wall-clock boundary and privacy scans PASSED; `git diff --check` pending final commit.
+- Measured performance: exact quiet catch-up approximately 13ms for 24h, 81ms for 7d, and 340ms for 30d in the Node 24 environment; no historical intent collection occurred.
+- Evidence: `BPDC-E027`, `E4_REGRESSION_PROTECTED`; live desktop elapsed-time observation remains `UNKNOWN`/not claimed.
+- Boundary: no CreatureCore wall-clock dependency, no new behavior/drive/memory/habit category, no offline interaction or intent replay, no OpenPets core change, and no later phase started.
+- Follow-up directive: Architect review of `BPDC-P6-001`.
