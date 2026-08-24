@@ -220,3 +220,14 @@
 - Evidence: `BPDC-E027`, `E4_REGRESSION_PROTECTED`; live desktop elapsed-time observation remains `UNKNOWN`/not claimed.
 - Boundary: no CreatureCore wall-clock dependency, no new behavior/drive/memory/habit category, no offline interaction or intent replay, no OpenPets core change, and no later phase started.
 - Follow-up directive: Architect review of `BPDC-P6-001`.
+
+## BPDC-P6-001 - PUBLISHED
+
+- Outcome ID: `BPDC-P6-001-ELAPSED-TIME-RECONCILIATION-PUBLISHED`
+- Published: 2026-08-24 America/New_York
+- Acceptance: `MET_FOR_ARCHITECT_REVIEW`
+- Product and Authority implementation commit: `2e4ff7eb261b1df1c8db57392cfa4bbee9b99b61` (`feat: reconcile elapsed life across restart`).
+- Publication: normal non-force push succeeded from `47bb5cc` to `2e4ff7e`; final local/remote equality verified at `2e4ff7e`; worktree clean before this records-only closure.
+- Validation: 31/31 tests, P6 experiments, persistence harness, manifest, staged bundle, boundary/privacy scans, publication-safety scan, and diff check passed. Direct UNC esbuild `spawn EPERM` remains a known environment limitation.
+- Evidence boundary: `BPDC-E027` remains deterministic/regression-protected; live Windows/Electron elapsed-time observation remains `UNKNOWN`/not claimed.
+- Supersession: `BPDC-P6-001-CODEX HANDOFF COMPLETE` pending-acceptance state.

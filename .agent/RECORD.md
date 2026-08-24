@@ -235,3 +235,14 @@
 - Measured performance: approximately 13ms/81ms/340ms for exact 24-hour/7-day/30-day catch-up in the Node 24 environment.
 - Limitation: live Windows/Electron elapsed-time observation is `UNKNOWN` and not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
 - Supersession: `BPDC-P5-001-PUBLISHED` as the active implementation stage.
+
+## BPDC-P6-001-PUBLISHED
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P6-001-PUBLISHED`
+- Status: `PASSED`
+- Decision: Publish the authorized elapsed-time reconciliation implementation and close the Phase 6 Codex handoff without starting a later phase.
+- Product commit: `2e4ff7eb261b1df1c8db57392cfa4bbee9b99b61`; normal non-force push succeeded; local `main`, `origin/main`, and GitHub `main` were verified equal at `2e4ff7e`.
+- Evidence: `BPDC-E027`; 31/31 tests, P6 experiments A–I, persistence harness, manifest, staged bundle, core/privacy scans, publication-safety scan, and diff check passed.
+- Limitation: live Windows/Electron elapsed-time observation remains `UNKNOWN` and not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while staging succeeds.
+- Supersession: `BPDC-P6-001-IMPLEMENTATION-COMPLETE` pending-acceptance state.
