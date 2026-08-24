@@ -213,3 +213,14 @@
 - Startup rule: internal `UNKNOWN`, conservatively mapped to absent/zero-duration until an explicit signal; no unknown state enters CreatureCore and presence is not persisted.
 - Limitation: no live desktop observation is claimed; the Architect explicitly made it unnecessary for acceptance.
 - Supersession: `BPDC-SYNC-003-PUBLISHED` as the active implementation stage.
+
+## BPDC-P5-001-PUBLISHED
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P5-001-PUBLISHED`
+- Status: `PASSED`
+- Decision: Publish the accepted-scope Phase 5 presence implementation and preserve the explicit non-live evidence boundary.
+- Product commit: `c13d3e8b0a51b1799872672ffbca57059fa56a55`; normal non-force push succeeded.
+- Evidence: `BPDC-E026`; 22/22 tests, P4/presence experiments, adapter harness, manifest, staged bundle, core/privacy scans, and diff check passed.
+- Limitation: live desktop presence observation is not claimed or required by `BPDC-P5-001`.
+- Supersession: `BPDC-P5-001-IMPLEMENTATION-COMPLETE` pending-acceptance state.

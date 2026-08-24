@@ -197,3 +197,14 @@
 - Evidence: `BPDC-E026`, target-tested/regression-protected only. No live desktop claim was made because live observation is not required by the directive.
 - Boundary: no new behavior, drive, memory, habit, persistence schema, or privacy-sensitive sensing; no subsequent phase started.
 - Follow-up directive: Architect review of `BPDC-P5-001`.
+
+## BPDC-P5-001 - PUBLISHED
+
+- Outcome ID: `BPDC-P5-001-PRESENCE-AWARENESS-PUBLISHED`
+- Published: 2026-08-24 America/New_York
+- Acceptance: `MET_FOR_ARCHITECT_REVIEW`
+- Product commit: `c13d3e8b0a51b1799872672ffbca57059fa56a55` (`feat: wire curated user presence signals`)
+- Publication: normal push succeeded from `9189d3129199a3ff46f0fa8df6a0bd8b284567b4` to `c13d3e8`; no force-push or history rewrite.
+- Scope: only the bounded presence tracker, curated adapter mappings, plugin bundle, deterministic validation, README, and Authority records were published.
+- Evidence boundary: `BPDC-E026` remains `E4_REGRESSION_PROTECTED`; no live desktop claim is made. No subsequent phase started.
+- Closure: final records-only Authority commit and local/remote equality/clean-worktree verification follow.
