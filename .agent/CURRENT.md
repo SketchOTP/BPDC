@@ -17,6 +17,7 @@
 - Immediate next action: complete deterministic validation and Authority handoff; do not add other preferences, development stages, or a subsequent phase.
 - Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
 - Authority closure commit: `807d867` (`chore: record Phase 8 authority handoff`); published.
+- Local P9 implementation commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); not pushed.
 - Publication result: normal non-force pushes published the accepted P8 state and the records-only sync closure; final local/remote equality was verified after the closure.
 
 ## Temporary task-relevant facts

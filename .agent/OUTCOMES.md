@@ -322,5 +322,15 @@
 - Validation: 53/53 tests; P9 CLI experiments; P4-P8 regression; migration, persistence, offline, no-self-reinforcement, non-domination, P7 response, and P8 REST_SITE checks; manifest; staged bundle at 63,376 bytes; boundary/privacy/secret/publication-safety scans; and diff check all passed.
 - Evidence: `BPDC-E032`, `E4_REGRESSION_PROTECTED`; live observation is not required and is not claimed.
 - Boundary: no other preference, generic reinforcement engine, mutable personality, development stage, new behavior, new sensing, LLM, OpenPets core change, or Phase 10 work.
-- Local commit: pending below; push is explicitly not authorized by this directive.
+- Local commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); push is explicitly not authorized by this directive.
 - Follow-up directive: Architect review of `BPDC-P9-001`.
+
+## BPDC-P9-001 - LOCAL COMMIT RECORDED
+
+- Outcome ID: `BPDC-P9-001-LOCAL-COMMIT`
+- Recorded: 2026-08-24 America/New_York
+- Acceptance: `MET_FOR_ARCHITECT_REVIEW`
+- Local commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`).
+- Publication: not pushed; `origin/main` remains at accepted Phase 8 publication `1feeb4c` pending a separate Architect publication decision.
+- Verification: 53/53 tests, P9 experiments, staged bundle, manifest, boundary/privacy/secret/publication-safety scans, and diff check passed.
+- Evidence: `BPDC-E032`, `E4_REGRESSION_PROTECTED`; live observation is not required and is not claimed.

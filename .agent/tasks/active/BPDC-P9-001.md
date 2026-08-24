@@ -39,3 +39,4 @@ Implement exactly one persistent `playPreference` learned from positive contact 
 - Publication-safety scan: PASS.
 - `git diff --check`: PASS.
 - Implementation is complete for Architect review; no push performed.
+- Local product commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`).

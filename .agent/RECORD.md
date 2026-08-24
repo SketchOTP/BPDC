@@ -334,3 +334,14 @@
 - Validation: `BPDC-E032`; 53/53 tests; P9 experiments; P4-P8 regression; manifest; staged bundle at 63,376 bytes; boundary/privacy/secret/publication-safety scans; diff check.
 - Limitation: live observation is not required and is not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
 - Publication: local commit authorized; push not authorized; stop before Phase 10.
+
+## BPDC-P9-001-LOCAL-COMMIT
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P9-001-LOCAL-COMMIT`
+- Status: `PASSED`
+- Decision: Record the completed P9 implementation locally for Architect review without remote publication.
+- Commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`).
+- Publication: no push performed; `origin/main` remains at accepted Phase 8 publication `1feeb4c`.
+- Validation: `BPDC-E032`; 53/53 tests; P9 experiments; staged bundle at 63,376 bytes; manifest; boundary/privacy/secret/publication-safety scans; diff check.
+- Boundary: exactly one user-shaped play preference; no mutable personality, general reinforcement, development stage, or Phase 10 work.
