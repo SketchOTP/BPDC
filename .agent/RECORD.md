@@ -320,3 +320,17 @@
 - Publication: normal non-force push succeeded from `b9d6b5d10e83df54d9e039421d2b40aba1c0176d` to the accepted P8 state `807d867e898b784b2b0321e0c570db4ea9314ae5`; records-only closure pushes then completed; local `main == origin/main`; worktree clean. The exact final SHA is recorded in the verified Notion handoff and repository state.
 - Validation: 45/45 tests, P8 experiments, diff check, and publication-safety scan passed; zero unexpected filenames, secret-pattern findings, or out-of-scope files.
 - Boundary: live P8 drag/return/SLEEP visual observation remains `UNKNOWN`/not claimed; no Phase 9 work started.
+
+## BPDC-P9-001-IMPLEMENTATION-COMPLETE
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P9-001-IMPLEMENTATION-COMPLETE`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Implement exactly one user-shaped play preference without mutable personality or a general reinforcement system.
+- Core: schema 5 adds bounded persistent `playPreference` with deterministic last-update metadata; schema 4 and earlier snapshots migrate to zero preference.
+- Learning: only positive contact during committed `PLAY` reinforces at `0.06` against remaining capacity; other behaviors and autonomous PLAY without contact do not.
+- Utility: `PLAY.learnedPreference` contributes at most `0.3`; strong fatigue still selects `SLEEP`.
+- Decay: deterministic 21-day half-life; offline reconciliation decays but never reinforces.
+- Validation: `BPDC-E032`; 53/53 tests; P9 experiments; P4-P8 regression; manifest; staged bundle at 63,376 bytes; boundary/privacy/secret/publication-safety scans; diff check.
+- Limitation: live observation is not required and is not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
+- Publication: local commit authorized; push not authorized; stop before Phase 10.

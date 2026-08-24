@@ -42,10 +42,18 @@ const spatialSaturation = runSpatialSaturationExperiment();
 const spatialDecayRelocation = runSpatialDecayRelocationExperiment();
 const spatialPersistence = runSpatialPersistenceExperiment();
 const spatialUtility = runSpatialUtilityNonInterferenceExperiment();
+const playPreferenceLearning = runPlayPreferenceLearningExperiment();
+const playPreferenceUtility = runPlayPreferenceUtilityExperiment();
+const playPreferenceNoSelfReinforcement = runPlayPreferenceNoSelfReinforcementExperiment();
+const playPreferenceNonDomination = runPlayPreferenceNonDominationExperiment();
+const playPreferenceDecay = runPlayPreferenceDecayExperiment();
+const playPreferencePersistence = runPlayPreferencePersistenceExperiment();
+const playPreferenceOffline = runPlayPreferenceOfflineExperiment();
+const playPreferenceResponse = runPlayPreferenceResponseExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P8-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility]
+  directive: "BPDC-P9-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -57,6 +65,9 @@ console.log(JSON.stringify({
     backwardClock, legacyMigration, longAbsence, integrationHarness,
     responseState, responsePreservation, responseLearning, responseOffline,
     spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility,
+    playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement,
+    playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence,
+    playPreferenceOffline, playPreferenceResponse,
   },
   trace24h,
 }, null, 2));
@@ -609,6 +620,169 @@ function runSpatialUtilityNonInterferenceExperiment() {
     before: before.score,
     after: after.score,
   };
+}
+
+function runPlayPreferenceLearningExperiment() {
+  const playing = CreatureCore.create({ seed: 901 });
+  const control = CreatureCore.create({ seed: 901 });
+  commitControlledBehavior(playing, "PLAY");
+  commitControlledBehavior(control, "WANDER");
+  for (let index = 0; index < 8; index += 1) {
+    const interaction = { kind: "POSITIVE_CONTACT", intensity: 0.6 };
+    playing.recordInteraction(interaction, playPreferenceEnvironment());
+    control.recordInteraction(interaction, playPreferenceEnvironment());
+  }
+  return {
+    status: playing.playPreference.playPreference > control.playPreference.playPreference
+      && playing.relationship.bond === control.relationship.bond
+      && JSON.stringify(playing.habit.attentionByHour) === JSON.stringify(control.habit.attentionByHour)
+      ? "PASS" : "FAIL",
+    interactionCounts: { playing: 8, control: 8 },
+    bond: { playing: playing.relationship.bond, control: control.relationship.bond },
+    timeHabit: {
+      playing: playing.habit.attentionByHour[12],
+      control: control.habit.attentionByHour[12],
+    },
+    playPreference: {
+      playing: playing.playPreference.playPreference,
+      control: control.playPreference.playPreference,
+    },
+  };
+}
+
+function runPlayPreferenceUtilityExperiment() {
+  const trained = CreatureCore.create({ seed: 902 });
+  const neutral = CreatureCore.create({ seed: 902 });
+  trainPlayPreference(trained, 10, 0.8);
+  for (let index = 0; index < 10; index += 1) {
+    commitControlledBehavior(neutral, "OBSERVE");
+    neutral.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.8 }, playPreferenceEnvironment());
+  }
+  const trainedPlay = getCandidate(trained, "PLAY", playPreferenceEnvironment());
+  const neutralPlay = getCandidate(neutral, "PLAY", playPreferenceEnvironment());
+  return {
+    status: trainedPlay.contributors.learnedPreference > 0
+      && trainedPlay.score > neutralPlay.score
+      && neutralPlay.contributors.learnedPreference === 0 ? "PASS" : "FAIL",
+    neutralScore: neutralPlay.score,
+    trainedScore: trainedPlay.score,
+    learnedPreference: trainedPlay.contributors.learnedPreference,
+  };
+}
+
+function runPlayPreferenceNoSelfReinforcementExperiment() {
+  const core = CreatureCore.create({ seed: 903 });
+  trainPlayPreference(core, 6, 1);
+  const before = core.playPreference.playPreference;
+  commitControlledBehavior(core, "PLAY");
+  core.advance(24 * 3600, playPreferenceEnvironment());
+  const after = core.playPreference.playPreference;
+  const expected = before * 2 ** (-(24 * 3600) / (21 * 24 * 3600));
+  return { status: after < before && Math.abs(after - expected) < 1e-12 ? "PASS" : "FAIL", before, after };
+}
+
+function runPlayPreferenceNonDominationExperiment() {
+  const core = CreatureCore.create({ seed: 905 });
+  trainPlayPreference(core, 40, 1);
+  core.drives = { energy: 1, social: 0.05, curiosity: 0.05, stimulation: 0.05 };
+  core.currentBehavior = null;
+  const intent = core.advance(0, createEnvironment({ localTime: 12 }))[0];
+  return { status: intent.action === "SLEEP" ? "PASS" : "FAIL", selected: intent.action };
+}
+
+function runPlayPreferenceDecayExperiment() {
+  const core = CreatureCore.create({ seed: 904 });
+  trainPlayPreference(core, 40, 1);
+  const saturated = core.playPreference.playPreference;
+  core.advance(21 * 24 * 3600, createEnvironment({ localTime: 12 }));
+  const decayed = core.playPreference.playPreference;
+  return {
+    status: saturated > 0.8 && saturated < 1 && decayed < saturated && Math.abs(decayed - saturated / 2) < 1e-9 ? "PASS" : "FAIL",
+    saturated,
+    decayed,
+  };
+}
+
+function runPlayPreferencePersistenceExperiment() {
+  const core = CreatureCore.create({ seed: 906 });
+  trainPlayPreference(core, 5, 0.7);
+  const restored = CreatureCore.fromSnapshot(JSON.parse(core.serialize()));
+  const schema4 = { ...core.toSnapshot(), schemaVersion: 4 };
+  delete schema4.playPreference;
+  const migrated = CreatureCore.fromSnapshot(schema4);
+  return {
+    status: JSON.stringify(restored.toSnapshot()) === JSON.stringify(core.toSnapshot())
+      && migrated.toSnapshot().schemaVersion === 5
+      && migrated.playPreference.playPreference === 0 ? "PASS" : "FAIL",
+    schema: restored.toSnapshot().schemaVersion,
+    migratedPreference: migrated.playPreference.playPreference,
+  };
+}
+
+function runPlayPreferenceOfflineExperiment() {
+  const savedAt = 10_000_000;
+  const core = CreatureCore.create({ seed: 907 });
+  trainPlayPreference(core, 8, 0.8);
+  const before = core.playPreference.playPreference;
+  const restored = restoreAndReconcile(
+    serializePersistenceEnvelope(core.serialize(), savedAt),
+    { nowEpochMs: savedAt + 21 * 24 * 3600 * 1_000, coreFactory: CreatureCore.fromSnapshot },
+  );
+  return {
+    status: restored.core.playPreference.playPreference < before
+      && restored.elapsedSeconds === 21 * 24 * 3600 ? "PASS" : "FAIL",
+    before,
+    after: restored.core.playPreference.playPreference,
+    elapsedSeconds: restored.elapsedSeconds,
+  };
+}
+
+function runPlayPreferenceResponseExperiment() {
+  const trained = CreatureCore.create({ seed: 908 });
+  const neutral = CreatureCore.create({ seed: 908 });
+  commitControlledBehavior(trained, "PLAY");
+  commitControlledBehavior(neutral, "PLAY");
+  trained.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, playPreferenceEnvironment());
+  neutral.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, playPreferenceEnvironment());
+  const trainedResponse = trained.selectInteractionResponse();
+  const neutralResponse = neutral.selectInteractionResponse();
+  return {
+    status: trainedResponse.kind === neutralResponse.kind
+      && trained.currentBehavior.action === neutral.currentBehavior.action ? "PASS" : "FAIL",
+    response: trainedResponse.kind,
+  };
+}
+
+function trainPlayPreference(core, count, intensity) {
+  commitControlledBehavior(core, "PLAY");
+  for (let index = 0; index < count; index += 1) {
+    core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity }, playPreferenceEnvironment());
+  }
+}
+
+function commitControlledBehavior(core, action) {
+  const now = core.clock.now();
+  core.currentBehavior = {
+    action,
+    startedAt: now,
+    endsAt: now + 600,
+    duration: 600,
+    interruptible: true,
+    cooldown: 0,
+    reason: "controlled experiment behavior",
+    score: 0,
+    scoreBreakdown: { source: "CONTROLLED_EXPERIMENT_BEHAVIOR" },
+  };
+}
+
+function playPreferenceEnvironment() {
+  return createEnvironment({
+    localTime: 12,
+    userPresent: true,
+    userIdleDuration: 60,
+    novelty: 0.1,
+    interactionPressure: 0.1,
+  });
 }
 
 function responseFixture({ bond, sociability, independence }) {

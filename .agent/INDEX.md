@@ -10,10 +10,10 @@
 
 ## Current pointers
 
-- Current stage: Phase 8 — Spatial Habitat Familiarity (closed; live visual observation not claimed)
-- Active directive: BPDC-SYNC-005 (completed; await next Architect directive)
-- Active task packet: `.agent/tasks/active/BPDC-SYNC-005.md`
-- Last Codex outcome: BPDC-SYNC-005 (Phase 8 publication complete)
+- Current stage: Phase 9 — User-Shaped Activity Preference (implementation in progress)
+- Active directive: BPDC-P9-001
+- Active task packet: `.agent/tasks/active/BPDC-P9-001.md`
+- Last Codex outcome: BPDC-P9-001 (implementation complete for Architect review)
 - Last state sync: 2026-08-24 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == origin/main`; worktree clean.
 
 ## Mandatory kernel

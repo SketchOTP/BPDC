@@ -335,3 +335,17 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Result: `PASSED`; local `0b7e70e` product and `807d867` Authority closure were the only unpublished descendants of `b9d6b5d`; freshly fetched `origin/main` was an ancestor; no unexpected files or publication-safety findings were present; 45/45 tests, P8 experiments, diff check, and safety scan passed; normal non-force push published `main` at `807d867e898b784b2b0321e0c570db4ea9314ae5`, followed by a records-only closure push.
 - Final state: local `main == origin/main`; worktree clean; no history rewrite; no Phase 9 work started. The exact final SHA is recorded in the verified Notion handoff and repository state.
 - Reliability/limitations: live Windows/Electron drag → learned site → SLEEP observation remains `UNKNOWN`/not claimed. Canonical UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds.
+
+## BPDC-E032 — Phase 9 user-shaped play preference
+
+- Created: 2026-08-24 America/New_York
+- Directive/outcome: `BPDC-P9-001` / implementation handoff
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; exactly one dedicated persistent `playPreference` scalar was added. Positive contact reinforces it only when the committed autonomous behavior is `PLAY`; positive contact during other behaviors and autonomous PLAY without contact do not reinforce it. Innate `personality.playfulness` remains unchanged.
+- Model: normalized `0..1`; saturating learning rate `0.06`; deterministic 21-day half-life; maximum `PLAY.learnedPreference` utility contribution `0.3`. The contributor is inspectable in normal score diagnostics and remains subordinate to strong fatigue.
+- Persistence: CreatureCore snapshot schema 5; schema 4 and earlier snapshots initialize `playPreference` to zero while preserving relationship, time habit, elapsed-life, contact-response, and spatial state.
+- Controlled evidence: eight equal positive contacts yielded `playPreference 0.25421048866004275` during PLAY versus `0` in non-PLAY control, with equal bond `0.6081283202811519` and equal time-habit strength `0.3253234941140425`. Utility comparison yielded neutral PLAY `0.8004909000000001` versus trained PLAY `0.91705229520286`, including `learnedPreference 0.11656139520285994`.
+- Safety evidence: no-self-reinforcement passed; 40 positive contacts saturated at `0.9158383688565739`; 21-day decay reduced it to `0.4579191844282902`; strong fatigue still selected `SLEEP`; offline reconciliation decayed `0.3253234941140425` to `0.1626617470570229` over 1,814,400 seconds without fabricating interaction; P7 response and P8 REST_SITE regressions passed.
+- Validation: `node --test` 53/53; `node src/cli/experiments.js` BPDC-P9-001 PASS; generated plugin syntax PASS; local-staged plugin build PASS at 63,376 bytes; OpenPets manifest PASS; CreatureCore boundary/privacy/secret scans 0 findings; publication-safety scan PASS; `git diff --check` PASS.
+- Reliability/limitations: live observation is not required by the directive and was not claimed. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. jCodemunch-MCP was unavailable and bounded direct reads were used for relevant files.

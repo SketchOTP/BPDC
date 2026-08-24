@@ -57,6 +57,14 @@ Phase 8 adds exactly one persistent spatial preference: `restSiteAffinity`, a bo
 
 When `SLEEP` has already won normally, the plugin may decorate that intent with `habitatTarget: REST_SITE` after the affinity threshold is reached and the integration can resolve a current coordinate. The adapter then calls OpenPets `moveTo(...)` before the existing SLEEP reaction. Missing geometry falls back to ordinary SLEEP, and the SLEEP utility score is unchanged.
 
+## User-shaped play preference
+
+Phase 9 adds exactly one learned activity preference: `playPreference`. It is a bounded, saturating scalar stored in CreatureCore and learned only when positive contact occurs while the committed autonomous behavior is `PLAY`. Positive contact during other behaviors preserves its existing relationship and time-habit effects but does not reinforce play. Autonomous PLAY without contact never self-reinforces the preference.
+
+The preference uses a `0.06` saturating learning rate, a deterministic 21-day half-life, and a maximum `0.3` `PLAY.learnedPreference` utility contribution. The contributor appears in normal score diagnostics and remains subordinate to stronger competing drives such as fatigue. Innate `personality.playfulness` is never mutated, and no general reinforcement or preference map is introduced.
+
+CreatureCore snapshots now use schema 5. Schema 4 and earlier snapshots migrate with `playPreference = 0` while preserving the accepted relationship, time-habit, elapsed-life, contact-response, and spatial state. P6 offline reconciliation may decay the preference but cannot reinforce it. P7 contact response and P8 REST_SITE targeting remain independent.
+
 ## Boundary
 
 ```text

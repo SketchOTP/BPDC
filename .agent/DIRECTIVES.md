@@ -253,6 +253,22 @@
 - Discovery: not required; repository durability only.
 - Status at issuance: `AUTHORIZED`; completed successfully.
 
+## BPDC-P9-001
+
+- Issued: 2026-08-24 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-SYNC-005`
+- External directive: `BPDC-P9-001`
+- Objective: Implement exactly one persistent user-shaped activity preference, `playPreference`, learned only from positive contact while the committed autonomous behavior is `PLAY`, and expose its bounded future utility effect.
+- Scope: one dedicated scalar preference state; saturating positive-PLAY reinforcement; slow deterministic decay; `PLAY.learnedPreference` diagnostics; schema-4 → 5 migration; persistence/reload; P6 offline decay without reinforcement; P7 response independence; P8 regression; deterministic experiments; build, manifest, boundary, privacy, and diff validation.
+- Exclusions: no other preferences, generic reinforcement-learning engine, negative reinforcement, training commands, mutable personality, development/aging/evolution, mood, hunger, new behavior, new sensing, LLM, OpenPets core changes, or Phase 10.
+- Learning rule: positive interaction valence during committed `PLAY` reinforces at a bounded saturating rate; positive contact during other behaviors and autonomous PLAY without contact do not reinforce.
+- Preference rule: `playPreference` is normalized `0..1`; learning rate `0.06`; 21-day half-life; maximum `PLAY.learnedPreference` contribution `0.3`.
+- Persistence rule: CreatureCore snapshot schema 5; schema 4 and earlier snapshots initialize `playPreference` to zero while preserving accepted state.
+- Live evidence policy: live observation is not required; deterministic core/integration evidence is sufficient and no synthetic live claim may be made.
+- Acceptance: all 24 Architect criteria, including controlled PLAY versus non-PLAY learning, utility consequence, no self-reinforcement, non-domination, decay, deterministic persistence, offline non-reinforcement, P7/P8 regression, boundary/privacy checks, and no Phase 10.
+- Discovery: not required during implementation; Architect discovery completed.
+- Status at issuance: `AUTHORIZED`
+
 ## BPDC-P8-001
 
 - Issued: 2026-08-24 America/New_York

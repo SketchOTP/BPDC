@@ -20,6 +20,7 @@ const coreFiles = [
   "relationship.js",
   "seeded-rng.js",
   "spatial.js",
+  "play-preference.js",
 ];
 
 await mkdir(coreTarget, { recursive: true });

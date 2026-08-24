@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-SYNC-005`
-- External directive ID: `BPDC-SYNC-005`
-- Objective: Publish the accepted Phase 8 implementation and Authority closure to canonical GitHub `main` without changing application behavior.
-- Current status: `COMPLETED`
-- Acceptance: P8 is Architect-accepted and published; local `main == origin/main`; worktree is clean; live spatial observation remains `UNKNOWN`/not claimed.
-- Current phase: `Phase 8 — Spatial Habitat Familiarity` closed; awaiting a new Architect directive; no Phase 9 work is authorized.
+- Local directive ID: `BPDC-P9-001`
+- External directive ID: `BPDC-P9-001`
+- Objective: Implement exactly one persistent user-shaped `playPreference` learned from positive contact during committed autonomous `PLAY`.
+- Current status: `IMPLEMENTED_PENDING_ARCHITECT_ACCEPTANCE`
+- Acceptance: Phase 9 implementation is deterministic and regression-protected for Architect review; live observation is not required and no Phase 10 work is authorized.
+- Current phase: `Phase 9 — User-Shaped Activity Preference` implementation complete for handoff.
 - Expected touched areas: CreatureCore schema/persistence, OpenPets integration tracker/adapter, generated plugin, tests, README, and Authority records.
-- Immediate next action: await the next Architect directive; do not add multiple sites, grids, pathfinding, new utility weights, or a subsequent phase.
+- Immediate next action: complete deterministic validation and Authority handoff; do not add other preferences, development stages, or a subsequent phase.
 - Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
 - Authority closure commit: `807d867` (`chore: record Phase 8 authority handoff`); published.
 - Publication result: normal non-force pushes published the accepted P8 state and the records-only sync closure; final local/remote equality was verified after the closure.
@@ -28,7 +28,7 @@
 ## Last validation
 
 - Command or check: `node --test`, `node src/cli/experiments.js`, adapter response harness, manifest validation, local-staged OpenPets build, dependency/privacy/publication-safety scans, and `git diff --check`
-- Result: `PASSED`; 45/45 tests, BPDC-P8-001 experiment suite PASS, spatial/adapter/state/persistence/migration/display/utility checks PASS, manifest PASS, staged bundle PASS at 59,600 bytes, boundary/privacy/secret scans PASS, diff check PASS, publication-safety scan PASS, normal pushes PASS, and final local/remote equality verified after the closure. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Live Windows/Electron spatial observation remains `UNKNOWN`/not claimed.
+- Result: `PASSED`; 53/53 tests, BPDC-P9-001 experiment suite PASS, staged bundle PASS at 63,376 bytes, manifest PASS, CreatureCore boundary/privacy/secret scans clear, publication-safety scan PASS, and `git diff --check` PASS. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. Live observation is not required.
 
 ## Risks and blockers
 
@@ -51,4 +51,4 @@
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, and `BPDC-P8-001`; `BPDC-SYNC-005` is complete and no Phase 9 work is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, and `BPDC-SYNC-005`; `BPDC-P9-001` is authorized and no Phase 10 work is authorized.

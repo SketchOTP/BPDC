@@ -310,3 +310,17 @@
 - Publication: normal `git push origin main` succeeded for the accepted P8 state, followed by records-only closure pushes; final local `main == origin/main`; worktree clean; no history rewrite. The exact final SHA is recorded in the verified Notion handoff and repository state.
 - Evidence boundary: live P8 drag/return/SLEEP visual observation remains `UNKNOWN`/not claimed.
 - Next boundary: Phase 8 is closed; await a new Architect directive; do not start Phase 9.
+
+## BPDC-P9-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P9-001-USER-SHAPED-PLAY-PREFERENCE`
+- Closed for Codex handoff: 2026-08-24 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Summary: Implemented exactly one persistent `playPreference` scalar. Positive contact during committed PLAY reinforces it with bounded saturation; other behaviors and autonomous PLAY do not. Utility diagnostics expose `PLAY.learnedPreference`; innate playfulness is unchanged.
+- Parameters: learning rate `0.06`; 21-day half-life; maximum utility contribution `0.3`; snapshot schema 5 with schema 4 and earlier zero-initialization.
+- Controlled result: eight equal positive contacts produced play preference `0.25421048866004275` during PLAY versus `0` in non-PLAY control; bond and time habit remained equal. Trained PLAY utility was `0.91705229520286` versus neutral `0.8004909000000001`, with learned contribution `0.11656139520285994`.
+- Validation: 53/53 tests; P9 CLI experiments; P4-P8 regression; migration, persistence, offline, no-self-reinforcement, non-domination, P7 response, and P8 REST_SITE checks; manifest; staged bundle at 63,376 bytes; boundary/privacy/secret/publication-safety scans; and diff check all passed.
+- Evidence: `BPDC-E032`, `E4_REGRESSION_PROTECTED`; live observation is not required and is not claimed.
+- Boundary: no other preference, generic reinforcement engine, mutable personality, development stage, new behavior, new sensing, LLM, OpenPets core change, or Phase 10 work.
+- Local commit: pending below; push is explicitly not authorized by this directive.
+- Follow-up directive: Architect review of `BPDC-P9-001`.

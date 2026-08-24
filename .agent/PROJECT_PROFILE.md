@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 8 — Spatial Habitat Familiarity; implementation complete for Architect review, acceptance pending.
+- Current phase: Phase 9 — User-Shaped Activity Preference; implementation authorized and in progress.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–7 state remains synchronized to GitHub `main`; P8 is local implementation pending Architect acceptance; no Phase 9 is authorized.
+- Deployment: no deployment authorized; accepted Phase 1–8 state remains synchronized to GitHub `main`; P9 is local implementation pending Architect acceptance; no Phase 10 is authorized.

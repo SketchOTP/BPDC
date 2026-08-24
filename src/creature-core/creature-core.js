@@ -33,6 +33,13 @@ import {
   resetRestSite,
   validateSpatial,
 } from "./spatial.js";
+import {
+  createInitialPlayPreference,
+  decayPlayPreference,
+  learnedPlayPreferenceForScoring,
+  reinforcePlayPreference,
+  validatePlayPreference,
+} from "./play-preference.js";
 
 export class CreatureCore {
   constructor({
@@ -46,6 +53,7 @@ export class CreatureCore {
     relationship,
     habit,
     spatial = createInitialSpatial(simulationTimestamp),
+    playPreference = createInitialPlayPreference(simulationTimestamp),
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer(),
   }) {
@@ -59,6 +67,7 @@ export class CreatureCore {
     this.relationship = validateRelationship(relationship, this.clock.now());
     this.habit = validateHabit(habit, this.clock.now());
     this.spatial = validateSpatial(spatial, this.clock.now());
+    this.playPreference = validatePlayPreference(playPreference, this.clock.now());
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -79,6 +88,7 @@ export class CreatureCore {
     assertNonNegative(seconds, "seconds");
     this.decayRelationship();
     this.decayHabit();
+    this.decayPlayPreference();
     const events = [];
     let remaining = seconds;
 
@@ -101,6 +111,7 @@ export class CreatureCore {
         this.clock.advance(segment);
         this.decayRelationship();
         this.decayHabit();
+        this.decayPlayPreference();
         remaining -= segment;
       }
 
@@ -145,6 +156,7 @@ export class CreatureCore {
       environment,
       relationship: this.relationshipForScoring(),
       habit: this.habitForScoring(environment),
+      learnedPreference: this.learnedPlayPreferenceForScoring(),
     });
     return {
       simulationTime: this.clock.now(),
@@ -169,6 +181,7 @@ export class CreatureCore {
       relationship: this.relationshipSnapshot(),
       habit: this.habitSnapshot(environment),
       spatial: this.spatialSnapshot(),
+      playPreference: this.playPreferenceSnapshot(),
       rngState: this.rng.getState(),
     };
   }
@@ -194,6 +207,7 @@ export class CreatureCore {
       relationship: this.relationshipSnapshot(),
       habit: this.habitStateSnapshot(),
       spatial: this.spatialStateSnapshot(),
+      playPreference: this.playPreferenceStateSnapshot(),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming,
     };
@@ -216,6 +230,7 @@ export class CreatureCore {
       relationship: snapshot.relationship,
       habit: snapshot.habit,
       spatial: snapshot.spatial,
+      playPreference: snapshot.playPreference,
     });
   }
 
@@ -226,6 +241,7 @@ export class CreatureCore {
       environment,
       relationship: this.relationshipForScoring(),
       habit: this.habitForScoring(environment),
+      learnedPreference: this.learnedPlayPreferenceForScoring(),
       rng: this.rng,
     });
     const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
@@ -260,9 +276,11 @@ export class CreatureCore {
   recordInteraction(event, environmentInput = this.lastEnvironment) {
     this.decayRelationship();
     this.decayHabit();
+    this.decayPlayPreference();
     const environment = resolveEnvironment(environmentInput, this.clock.now());
     this.lastEnvironment = environment;
     const interaction = normalizeInteractionEvent(event, this.clock.now());
+    const committedBehavior = this.currentBehavior?.action;
     const bounded = {
       timestamp: this.clock.now(),
       kind: interaction.kind,
@@ -278,6 +296,9 @@ export class CreatureCore {
     this.relationship.lastUpdatedAt = this.clock.now();
     if (interaction.valence > 0) {
       reinforceAttentionHabit(this.habit, environment.localTime, interaction.intensity, this.clock.now());
+      if (committedBehavior === "PLAY") {
+        reinforcePlayPreference(this.playPreference, interaction.intensity, this.clock.now());
+      }
     }
     return clone(bounded);
   }
@@ -342,10 +363,18 @@ export class CreatureCore {
     decaySpatial(this.spatial, this.clock.now());
   }
 
+  decayPlayPreference() {
+    decayPlayPreference(this.playPreference, this.clock.now());
+  }
+
   habitForScoring(environment = this.lastEnvironment) {
     return {
       timeHabit: timeHabitForScoring(this.habit, environment.localTime, this.clock.now()),
     };
+  }
+
+  learnedPlayPreferenceForScoring() {
+    return learnedPlayPreferenceForScoring(this.playPreference, this.clock.now());
   }
 
   habitSnapshot(environment = this.lastEnvironment) {
@@ -394,6 +423,19 @@ export class CreatureCore {
   spatialStateSnapshot() {
     this.decaySpatial();
     return clone(this.spatial);
+  }
+
+  playPreferenceSnapshot() {
+    this.decayPlayPreference();
+    return {
+      ...clone(this.playPreference),
+      learnedPreference: this.learnedPlayPreferenceForScoring(),
+    };
+  }
+
+  playPreferenceStateSnapshot() {
+    this.decayPlayPreference();
+    return clone(this.playPreference);
   }
 
   evolveDrives(seconds, environment) {

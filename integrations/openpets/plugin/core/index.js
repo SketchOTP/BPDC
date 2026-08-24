@@ -56,3 +56,14 @@ export {
   resetRestSite,
   validateSpatial,
 } from "./spatial.js";
+export {
+  PLAY_PREFERENCE_HALF_LIFE_SECONDS,
+  PLAY_PREFERENCE_LEARNING_RATE,
+  PLAY_PREFERENCE_SCHEMA_VERSION,
+  PLAY_PREFERENCE_UTILITY_WEIGHT,
+  createInitialPlayPreference,
+  decayPlayPreference,
+  learnedPlayPreferenceForScoring,
+  reinforcePlayPreference,
+  validatePlayPreference,
+} from "./play-preference.js";
