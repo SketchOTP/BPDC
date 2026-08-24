@@ -151,3 +151,42 @@
 - Publication: normal non-force push succeeded; local `main` equals GitHub `main` at the reconciliation SHA.
 - Supersession: `BPDC-SYNC-001-REMOTE-ANCESTRY-BLOCKED` is superseded by `BPDC-SYNC-002-RECONCILED`.
 - Boundary: Phase 4 remains unauthorized.
+
+## BPDC-P4-001-IMPLEMENTATION-STARTED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-P4-001-IMPLEMENTATION-STARTED`
+- Status: `PARTIAL_PENDING_LIVE_EVIDENCE`
+- Decision: Begin the Architect-authorized minimal time-of-day attention habit while preserving the accepted Phase 1–3 architecture and core/adapter boundary.
+- Evidence: one 24-slot `attentionByHour` aggregate; bounded reinforcement/decay; `SEEK_ATTENTION.timeHabit`; schema 2 → 3 migration; deterministic habit experiments; 17/17 regression.
+- Limitation: live OpenPets click/restart evidence was not attempted through a synthetic path because callable Computer Use UI tooling was unavailable.
+- Supersession: `BPDC-SYNC-002-RECONCILED` remains the repository checkpoint; no subsequent phase is authorized.
+
+## BPDC-P4-002-LIVE-GATE-BLOCKED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-P4-002-LIVE-GATE-BLOCKED`
+- Status: `BLOCKED_ENVIRONMENT`
+- Decision: Preserve the accepted P4 implementation and stop at the exact live evidence boundary until callable desktop automation is available.
+- Evidence: 17/17 tests, P4 experiments, staged plugin build, manifest validation, CreatureCore boundary scan, and diff check passed.
+- Limitation: the required physical click → current-hour habit reinforcement → normal persistence → host restart → restored utility chain was not run; no synthetic or manually edited evidence was substituted.
+- Supersession: `BPDC-P4-001-IMPLEMENTATION-STARTED` remains the implementation record; no subsequent phase is authorized.
+
+## BPDC-P4-001-ACCEPTED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-P4-001-ACCEPTED`
+- Status: `ACCEPTED`
+- Decision: Architect accepted the Phase 4 minimal time-of-day habit implementation on deterministic target-tested evidence.
+- Evidence: `BPDC-E023`; 17/17 regression, target experiments, schema migration, persistence, and utility subordination passed.
+- Limitation: habit-specific physical click → current-hour reinforcement → restart evidence remains `UNKNOWN` and deferred; the Phase 3 underlying click/persistence seam remains accepted at `BPDC-E022`.
+- Supersession: `BPDC-P4-001-IMPLEMENTATION-STARTED` and `BPDC-P4-002-LIVE-GATE-BLOCKED` as active blocking states.
+
+## BPDC-SYNC-003-STARTED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-SYNC-003-STARTED`
+- Status: `IN_PROGRESS`
+- Decision: Durably synchronize the accepted Phase 4 implementation to canonical GitHub `main`.
+- Evidence: dirty-tree classification found accepted P4 source/plugin/tests and Authority records only; required validation passed; canonical UNC esbuild is blocked by known `spawn EPERM`, while the local-staged build passed at 34,901 bytes.
+- Boundary: no application behavior change or subsequent phase is authorized; final commit/push and equality verification remain pending.

@@ -147,3 +147,27 @@
 - Publication: immediate refetch showed no remote movement; normal non-force push succeeded. GitHub and local `main` both resolve to `34aef6f965a10624b5db0eb06691cab60af89b1c`.
 - Supersession: `BPDC-SYNC-001` blocker is superseded by this completed reconciliation.
 - Boundary: Phase 4 remains unauthorized.
+
+## BPDC-P4-001 - PARTIAL IMPLEMENTATION HANDOFF
+
+- Outcome ID: `BPDC-P4-001-TIME-HABIT-IMPLEMENTATION`
+- Opened: 2026-08-23 America/New_York
+- Acceptance: `PARTIAL_PENDING_LIVE_EVIDENCE`
+- Summary: Implemented one 24-slot persistent `attentionByHour` habit. Positive interactions reinforce the current host-neutral local hour with saturating learning; habit values decay with a seven-day half-life; `SEEK_ATTENTION` exposes `timeHabit`; schema 2 migrates with a zeroed habit while preserving accepted Phase 3 state.
+- Parameters: learning rate `0.08 × interaction intensity × remaining capacity`; utility weight `0.25`; decay `2^(-elapsed / 604800)`.
+- Validation: `node --test` PASSED 17/17; P4 experiment suite PASSED; OpenPets manifest validation PASSED; local-staged plugin build PASSED at 35,453 bytes; CreatureCore dependency/time scan PASSED; `git diff --check` PASSED.
+- Target evidence: same-hour concentration produced `timeHabit 0.05727286423429983` versus distributed `0`; bond difference `0`; decay `0.02 → 0.01 → 0.005`; strong fatigue selected `SLEEP`; schema-2 migration and deterministic reload passed.
+- Live evidence: `NOT RUN`. Callable Computer Use `node_repl`/Sky tooling was unavailable; no synthetic click or manual state mutation was used.
+- Files: `src/creature-core/habit.js`, core scoring/persistence/interaction integration, OpenPets plugin provenance logging, generated plugin core/bundle, experiments, and tests.
+- Boundary: no subsequent phase started; implementation remains uncommitted pending the live evidence gate.
+
+## BPDC-P4-002 - BLOCKED LIVE EVIDENCE
+
+- Outcome ID: `BPDC-P4-002-TIME-HABIT-LIVE-GATE`
+- Closed for Codex handoff: 2026-08-23 America/New_York
+- Acceptance: `BLOCKED_ENVIRONMENT`
+- Summary: Re-read the P4-002 Architect continuation, confirmed canonical Atlas state and the expected dirty P4 implementation, reran deterministic validation, rebuilt the staged plugin, validated the manifest, scanned the CreatureCore boundary, and passed diff checking. The required live physical-click → current-hour habit → persistence → restart evidence could not be run because no callable Computer Use `node_repl`/Sky tool is exposed in this session.
+- Validation: `node --test` PASSED 17/17; P4 experiment suite PASSED; OpenPets manifest validation PASSED; local-staged plugin build PASSED at 34,901 bytes; CreatureCore boundary scan PASSED; `git diff --check` PASSED.
+- Live evidence: `BLOCKED`; no host launch/click/restart claim, synthetic event, direct learner call, manual habit mutation, or snapshot edit was used.
+- Repository state: local `main` and `origin/main` both remain `b40232c691adeb9c376ef9b88ae7618db9022ecb`; Phase 4 implementation and records remain uncommitted; no push performed.
+- Recommendation: `CONTINUE` P4-002 when callable desktop automation is available; do not begin Phase 5 or any broader habit work.

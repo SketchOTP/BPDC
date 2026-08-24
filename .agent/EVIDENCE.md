@@ -242,3 +242,31 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Restart: the host was stopped and relaunched with the same disposable profile; logs recorded `snapshot restored` with `creature-42504443`, and the stored history returned unchanged.
 - Utility effect: after restart, restored `SEEK_ATTENTION` scored `0.5404200243808092` versus neutral-history `0.45271098450000985`, delta `0.08770903988079931`; restored contributors were bond `0.007997591419477335` and recentBond `0.07971144846132208`.
 - Reliability/limitations: the evidence is bounded to the pinned OpenPets runtime and disposable profile; no claim is made about future OpenPets versions. The transparent pet window is visually observable through Computer Use, while authoritative provenance and persistence are log/snapshot evidence.
+
+## BPDC-E023 — P4 time-of-day habit target evidence
+
+- Created: 2026-08-23 America/New_York
+- Directive/outcome: `BPDC-P4-001` / `BPDC-P4-001-TIME-HABIT-IMPLEMENTATION`
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; 24 bounded hourly values reinforce from positive interaction intensity, saturate, decay over days, persist through schema 3, and contribute only to `SEEK_ATTENTION.timeHabit`. Same-hour concentration yielded `0.05727286423429983` versus `0` at the target hour with equal bond; seven-day decay yielded `0.02 → 0.01 → 0.005`; extreme fatigue still selected `SLEEP`.
+- Validation: `node --test` 17/17; P4 experiment suite PASS; OpenPets manifest PASS; staged bundle PASS at 35,453 bytes; CreatureCore dependency/time scan PASS; `git diff --check` PASS.
+- Reliability/limitations: this is deterministic target-tested evidence only. The required real OpenPets physical click → current-hour reinforcement → persistence → restart path is `UNKNOWN` because callable Computer Use UI tooling was unavailable in this session.
+
+## BPDC-E024 — P4-002 live gate environment block
+
+- Created: 2026-08-23
+- Directive/outcome: `BPDC-P4-002` / `BPDC-P4-002-TIME-HABIT-LIVE-GATE`
+- Evidence level: `E3_TARGET_TESTED` for regression/build checks; live integration `UNKNOWN`
+- Type: `ENVIRONMENT_BLOCK`
+- Result: deterministic and packaging validation passed, but the required physical OpenPets click, current-hour provenance, normal persistence, host restart, and restored utility comparison were not run because no callable Computer Use `node_repl`/Sky tool was exposed.
+- Reliability/limitations: no synthetic interaction, direct habit learner call, manual habit mutation, or snapshot edit was used. This entry does not establish live P4 behavior.
+
+## BPDC-E025 — P4 acceptance with deferred habit-specific live evidence
+
+- Created: 2026-08-23
+- Directive/outcome: Architect review accepting `BPDC-P4-001`; `BPDC-SYNC-003`
+- Evidence level: `E3_TARGET_TESTED` for the Phase 4 mechanism; underlying click seam `E5_OPERATIONALLY_OBSERVED` from `BPDC-E022`; habit-specific live reinforcement remains `UNKNOWN`
+- Type: `ARCHITECT_ACCEPTANCE`
+- Result: the bounded 24-slot habit, saturation, seven-day decay, `SEEK_ATTENTION.timeHabit`, schema 2 → 3 migration, deterministic persistence, and fatigue subordination are accepted. The live current-hour click/restart experiment is deferred opportunistically and is not a progression blocker.
+- Reliability/limitations: no new E5 claim is made for habit-specific live reinforcement; no synthetic event or manual state mutation was used.

@@ -8,12 +8,12 @@
 ## Identity
 
 - Project: BPDC — Believably Persistent Desktop Creature
-- Repository root: `\\rpi5\RPI5SharedDrive\100_ACTIVE\Projects\BPDC`
+- Repository root: `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`
 - GitHub: `SketchOTP/BPDC`
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 3 — Minimal Relationship Memory; Architect accepted, repository safety checkpoint complete at reconciled commit `34aef6f`
+- Current phase: Phase 4 — Minimal Time-of-Day Habit; Architect authorized on 2026-08-23 after accepted synchronization at `b40232c`
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–3 state is synchronized to GitHub `main`; Phase 4 remains unauthorized.
+- Deployment: no deployment authorized; accepted Phase 1–3 state is synchronized to GitHub `main`; no subsequent phase is authorized.

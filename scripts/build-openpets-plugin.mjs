@@ -14,6 +14,7 @@ const coreFiles = [
   "index.js",
   "interaction.js",
   "intent.js",
+  "habit.js",
   "models.js",
   "persistence.js",
   "relationship.js",

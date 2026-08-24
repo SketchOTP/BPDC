@@ -4,6 +4,18 @@ export { InteractionEvent, INTERACTION_KINDS, normalizeInteractionEvent } from "
 export { SimulationClock } from "./clock.js";
 export { SeededRng, normalizeSeed } from "./seeded-rng.js";
 export {
+  HABIT_HALF_LIFE_SECONDS,
+  HABIT_HOURS,
+  HABIT_LEARNING_RATE,
+  HABIT_SCHEMA_VERSION,
+  TIME_HABIT_UTILITY_WEIGHT,
+  createInitialHabit,
+  decayHabit,
+  reinforceAttentionHabit,
+  timeHabitForScoring,
+  validateHabit,
+} from "./habit.js";
+export {
   ACTIONS,
   BEHAVIOR_DEFINITIONS,
   BehaviorScorer,

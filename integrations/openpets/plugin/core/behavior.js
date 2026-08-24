@@ -19,11 +19,17 @@ export const BEHAVIOR_DEFINITIONS = {
 };
 
 export class BehaviorScorer {
-  scoreAll({ drives, personality, environment, relationship }) {
-    return ACTIONS.map((action) => this.score(action, { drives, personality, environment, relationship }));
+  scoreAll({ drives, personality, environment, relationship, habit }) {
+    return ACTIONS.map((action) => this.score(action, { drives, personality, environment, relationship, habit }));
   }
 
-  score(action, { drives, personality, environment, relationship = { bond: 0.5, recentInfluence: 0 } }) {
+  score(action, {
+    drives,
+    personality,
+    environment,
+    relationship = { bond: 0.5, recentInfluence: 0 },
+    habit = { timeHabit: 0 },
+  }) {
     const night = environment.localTime >= 22 || environment.localTime < 7 ? 1 : 0;
     const activeUser = environment.userPresent && environment.userIdleDuration < 300 ? 1 : 0;
     const scores = {
@@ -58,6 +64,7 @@ export class BehaviorScorer {
         recentBond: relationship.recentInfluence * 0.2,
         userPresent: activeUser * 0.35,
         interaction: environment.interactionPressure * 0.25,
+        timeHabit: habit.timeHabit ?? 0,
         independencePenalty: -personality.independence * 0.35,
         fatiguePenalty: -drives.energy * 0.35,
       },
@@ -94,8 +101,8 @@ export class BehaviorSelector {
     this.noiseAmplitude = noiseAmplitude;
   }
 
-  select({ drives, personality, environment, relationship, rng }) {
-    const candidates = this.scorer.scoreAll({ drives, personality, environment, relationship }).map((candidate) => {
+  select({ drives, personality, environment, relationship, habit, rng }) {
+    const candidates = this.scorer.scoreAll({ drives, personality, environment, relationship, habit }).map((candidate) => {
       const noise = rng.nextRange(-this.noiseAmplitude, this.noiseAmplitude);
       return {
         ...candidate,

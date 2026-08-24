@@ -77,11 +77,22 @@ export function register(OpenPetsPlugin) {
       };
       runtime.unsubscribeInteraction = adapter.subscribeInteraction((event) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
-          const recorded = core.recordInteraction(event);
+          const environment = environmentNow();
+          const habitBefore = core.habitSnapshot(environment);
+          const recorded = core.recordInteraction(event, environment);
+          const habitAfter = core.habitSnapshot(environment);
           log(ctx, "CORE", new Date().toISOString(), "positive interaction recorded", {
             creatureId: core.creatureId,
             interaction: recorded,
             relationship: core.relationshipSnapshot(),
+            habit: {
+              hour: habitAfter.currentHour,
+              before: habitBefore.habitStrength,
+              after: habitAfter.habitStrength,
+              timeHabitBefore: habitBefore.timeHabit,
+              timeHabitAfter: habitAfter.timeHabit,
+              attentionByHour: habitAfter.attentionByHour,
+            },
           });
           await persist(true);
         }).catch((error) => log(ctx, "ERROR", new Date().toISOString(), "interaction handling failed", { message: String(error?.message ?? error) }));

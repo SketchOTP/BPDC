@@ -10,10 +10,10 @@
 
 ## Current pointers
 
-- Current stage: Phase 3 closed — repository safety checkpoint complete
-- Active directive: BPDC-SYNC-002 (complete; awaiting next Architect directive)
-- Active task packet: none
-- Last Codex outcome: BPDC-SYNC-002 (reconciled and synchronized successfully)
+- Current stage: Phase 4 — Minimal Time-of-Day Habit (accepted; habit-specific live evidence deferred as UNKNOWN)
+- Active directive: BPDC-SYNC-003
+- Active task packet: `.agent/tasks/active/BPDC-SYNC-003.md`
+- Last Codex outcome: BPDC-SYNC-003 (validation passed; commit/push pending)
 - Last state sync: 2026-08-23 America/New_York
 
 ## Mandatory kernel

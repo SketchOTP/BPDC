@@ -143,3 +143,12 @@
 - Confidence: `VERIFIED`
 - Scope: BPDC repository durability and Authority synchronization.
 - Supersedes: `NONE`
+
+## BPDC-L017
+
+- Date: 2026-08-23
+- Fact: A single bounded 24-hour `attentionByHour` aggregate is sufficient to demonstrate contextual routine formation without adding a general learning engine or new desktop sensing. Saturating reinforcement at `0.08 × intensity × remaining capacity`, a seven-day half-life, and utility weight `0.25` produced measurable target-hour influence while preserving fatigue-driven SLEEP selection.
+- Evidence: `BPDC-E023`; P4 experiment suite.
+- Confidence: `VERIFIED` for deterministic target tests; live host integration remains `UNKNOWN`.
+- Scope: BPDC-P4-001 minimal time-of-day habit.
+- Supersedes: `NONE`

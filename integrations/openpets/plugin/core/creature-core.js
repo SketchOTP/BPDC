@@ -13,6 +13,12 @@ import { deserializeSnapshot, SNAPSHOT_SCHEMA_VERSION, serializeSnapshot } from 
 import { BehaviorIntent } from "./intent.js";
 import { normalizeInteractionEvent } from "./interaction.js";
 import {
+  decayHabit as decayTimeHabit,
+  reinforceAttentionHabit,
+  timeHabitForScoring,
+  validateHabit,
+} from "./habit.js";
+import {
   BOND_LEARNING_RATE,
   createInitialRelationship,
   decayRelationship,
@@ -30,6 +36,7 @@ export class CreatureCore {
     rngState,
     currentBehavior = null,
     relationship,
+    habit,
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer(),
   }) {
@@ -41,6 +48,7 @@ export class CreatureCore {
     this.rng = new SeededRng(rngState ?? 1);
     this.currentBehavior = currentBehavior ? clone(currentBehavior) : null;
     this.relationship = validateRelationship(relationship, this.clock.now());
+    this.habit = validateHabit(habit, this.clock.now());
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -60,11 +68,13 @@ export class CreatureCore {
   advance(seconds, environmentInput = this.lastEnvironment) {
     assertNonNegative(seconds, "seconds");
     this.decayRelationship();
+    this.decayHabit();
     const events = [];
     let remaining = seconds;
 
     if (!this.currentBehavior) {
       const environment = resolveEnvironment(environmentInput, this.clock.now());
+      this.lastEnvironment = environment;
       events.push(this.commitBehavior(environment));
     }
 
@@ -79,6 +89,7 @@ export class CreatureCore {
         this.evolveDrives(segment, environment);
         this.clock.advance(segment);
         this.decayRelationship();
+        this.decayHabit();
         remaining -= segment;
       }
 
@@ -98,11 +109,13 @@ export class CreatureCore {
 
   evaluate(environmentInput = this.lastEnvironment) {
     const environment = resolveEnvironment(environmentInput, this.clock.now());
+    this.lastEnvironment = environment;
     const candidates = this.scorer.scoreAll({
       drives: this.drives,
       personality: this.personality,
       environment,
       relationship: this.relationshipForScoring(),
+      habit: this.habitForScoring(environment),
     });
     return {
       simulationTime: this.clock.now(),
@@ -112,7 +125,8 @@ export class CreatureCore {
   }
 
   diagnosticSnapshot(environmentInput = this.lastEnvironment) {
-    const evaluation = this.evaluate(environmentInput);
+    const environment = resolveEnvironment(environmentInput, this.clock.now());
+    const evaluation = this.evaluate(environment);
     return {
       creatureId: this.creatureId,
       simulationTime: this.clock.now(),
@@ -124,6 +138,7 @@ export class CreatureCore {
         : 0,
       candidates: evaluation.candidates,
       relationship: this.relationshipSnapshot(),
+      habit: this.habitSnapshot(environment),
       rngState: this.rng.getState(),
     };
   }
@@ -147,6 +162,7 @@ export class CreatureCore {
       personality: clone(this.personality),
       internalState: clone(this.drives),
       relationship: this.relationshipSnapshot(),
+      habit: this.habitStateSnapshot(),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming,
     };
@@ -167,6 +183,7 @@ export class CreatureCore {
       rngState: snapshot.rngState,
       currentBehavior: snapshot.currentBehavior,
       relationship: snapshot.relationship,
+      habit: snapshot.habit,
     });
   }
 
@@ -176,6 +193,7 @@ export class CreatureCore {
       personality: this.personality,
       environment,
       relationship: this.relationshipForScoring(),
+      habit: this.habitForScoring(environment),
       rng: this.rng,
     });
     const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
@@ -207,8 +225,11 @@ export class CreatureCore {
     });
   }
 
-  recordInteraction(event) {
+  recordInteraction(event, environmentInput = this.lastEnvironment) {
     this.decayRelationship();
+    this.decayHabit();
+    const environment = resolveEnvironment(environmentInput, this.clock.now());
+    this.lastEnvironment = environment;
     const interaction = normalizeInteractionEvent(event, this.clock.now());
     const bounded = {
       timestamp: this.clock.now(),
@@ -223,6 +244,9 @@ export class CreatureCore {
       this.relationship.bond + interaction.valence * interaction.intensity * BOND_LEARNING_RATE * direction,
     );
     this.relationship.lastUpdatedAt = this.clock.now();
+    if (interaction.valence > 0) {
+      reinforceAttentionHabit(this.habit, environment.localTime, interaction.intensity, this.clock.now());
+    }
     return clone(bounded);
   }
 
@@ -240,6 +264,37 @@ export class CreatureCore {
 
   decayRelationship() {
     decayRelationship(this.relationship, this.clock.now());
+  }
+
+  decayHabit() {
+    decayTimeHabit(this.habit, this.clock.now());
+  }
+
+  habitForScoring(environment = this.lastEnvironment) {
+    return {
+      timeHabit: timeHabitForScoring(this.habit, environment.localTime, this.clock.now()),
+    };
+  }
+
+  habitSnapshot(environment = this.lastEnvironment) {
+    this.decayHabit();
+    return {
+      schemaVersion: this.habit.schemaVersion,
+      attentionByHour: clone(this.habit.attentionByHour),
+      lastUpdatedAt: this.habit.lastUpdatedAt,
+      currentHour: Math.floor(environment.localTime),
+      habitStrength: this.habit.attentionByHour[Math.floor(environment.localTime)],
+      timeHabit: this.habitForScoring(environment).timeHabit,
+    };
+  }
+
+  habitStateSnapshot() {
+    this.decayHabit();
+    return {
+      schemaVersion: this.habit.schemaVersion,
+      attentionByHour: clone(this.habit.attentionByHour),
+      lastUpdatedAt: this.habit.lastUpdatedAt,
+    };
   }
 
   evolveDrives(seconds, environment) {

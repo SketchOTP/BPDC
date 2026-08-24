@@ -10,15 +10,20 @@ const relationship = runRelationshipCausalityExperiment();
 const relationshipPersistence = runRelationshipPersistenceExperiment();
 const forgetting = runForgettingExperiment();
 const saturation = runSaturationExperiment();
+const habitConcentration = runHabitConcentrationExperiment();
+const habitPersistence = runHabitPersistenceExperiment();
+const habitDecay = runHabitDecayExperiment();
+const habitNonDomination = runHabitNonDominationExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P3-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation]
+  directive: "BPDC-P4-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
   experiments: {
     replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation,
+    habitConcentration, habitPersistence, habitDecay, habitNonDomination,
   },
   trace24h,
 }, null, 2));
@@ -174,6 +179,63 @@ function runSaturationExperiment() {
   };
 }
 
+function runHabitConcentrationExperiment() {
+  const routine = CreatureCore.create({ seed: 605 });
+  const distributed = CreatureCore.create({ seed: 605 });
+  for (let index = 0; index < 8; index += 1) {
+    const interaction = { kind: "POSITIVE_CONTACT", intensity: 0.4 };
+    routine.recordInteraction(interaction, environmentAt(20));
+    distributed.recordInteraction(interaction, environmentAt(index));
+  }
+  const routineScore = getCandidate(routine, "SEEK_ATTENTION", environmentAt(20));
+  const distributedScore = getCandidate(distributed, "SEEK_ATTENTION", environmentAt(20));
+  return {
+    status: routineScore.contributors.timeHabit > distributedScore.contributors.timeHabit
+      && routine.relationship.bond === distributed.relationship.bond ? "PASS" : "FAIL",
+    routineTimeHabit: routineScore.contributors.timeHabit,
+    distributedTimeHabit: distributedScore.contributors.timeHabit,
+    bondDifference: routine.relationship.bond - distributed.relationship.bond,
+  };
+}
+
+function runHabitPersistenceExperiment() {
+  const uninterrupted = CreatureCore.create({ seed: 606 });
+  const split = CreatureCore.create({ seed: 606 });
+  for (let index = 0; index < 5; index += 1) {
+    const interaction = { kind: "POSITIVE_CONTACT", intensity: 0.6 };
+    uninterrupted.recordInteraction(interaction, environmentAt(20));
+    split.recordInteraction(interaction, environmentAt(20));
+  }
+  const reloaded = CreatureCore.fromSnapshot(JSON.parse(split.serialize()));
+  return {
+    status: JSON.stringify(uninterrupted.toSnapshot()) === JSON.stringify(reloaded.toSnapshot()) ? "PASS" : "FAIL",
+    schema: reloaded.toSnapshot().schemaVersion,
+    timeHabit: reloaded.habitSnapshot(environmentAt(20)).timeHabit,
+  };
+}
+
+function runHabitDecayExperiment() {
+  const core = CreatureCore.create({ seed: 607 });
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, environmentAt(20));
+  const initial = core.habitSnapshot(environmentAt(20)).timeHabit;
+  core.advance(7 * 24 * 3600, environmentAt(12));
+  const later = core.habitSnapshot(environmentAt(20)).timeHabit;
+  core.advance(7 * 24 * 3600, environmentAt(12));
+  const muchLater = core.habitSnapshot(environmentAt(20)).timeHabit;
+  return { status: initial > later && later > muchLater ? "PASS" : "FAIL", initial, later, muchLater };
+}
+
+function runHabitNonDominationExperiment() {
+  const core = CreatureCore.create({ seed: 608 });
+  for (let index = 0; index < 24; index += 1) {
+    core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, environmentAt(20));
+  }
+  core.drives = { energy: 1, social: 0.05, curiosity: 0.05, stimulation: 0.05 };
+  core.currentBehavior = null;
+  const intent = core.advance(0, environmentAt(20))[0];
+  return { status: intent.action === "SLEEP" ? "PASS" : "FAIL", selected: intent.action };
+}
+
 function runHours(core, hours, environment) {
   const events = [];
   for (let remaining = hours * 3600; remaining > 0; remaining -= 300) {
@@ -189,6 +251,20 @@ function countBehaviors(events) {
       events.filter((event) => event.action === action).length,
     ]),
   );
+}
+
+function getCandidate(core, action, environment) {
+  return core.evaluate(environment).candidates.find((candidate) => candidate.action === action);
+}
+
+function environmentAt(localTime) {
+  return createEnvironment({
+    localTime,
+    userPresent: true,
+    userIdleDuration: 60,
+    novelty: 0.1,
+    interactionPressure: 0.1,
+  });
 }
 
 function sharedEnvironment() {

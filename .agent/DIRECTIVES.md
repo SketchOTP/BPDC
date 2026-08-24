@@ -172,3 +172,35 @@
 - Stop conditions: unexplained application dirty state, remote movement, material license conflict, non-bootstrap conflict, application delta, regression, secret/private data discovery, push rejection, or force-push requirement.
 - Discovery: not required; repository durability checkpoint only.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-P4-001
+
+- Issued: 2026-08-23 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-SYNC-002`
+- External directive: `BPDC-P4-001`
+- Objective: Implement one minimal persistent time-of-day attention habit: repeated positive interaction around a local hour increases future `SEEK_ATTENTION` inclination around that hour.
+- Scope: 24 bounded hourly values, host-neutral `localTime`, saturating reinforcement, day-scale decay, one `SEEK_ATTENTION.timeHabit` contributor, schema-2 migration, deterministic experiments, and one live OpenPets click/restart proof.
+- Exclusions: general habit engine, additional habit dimensions, cursor/window/application sensing, generic learning, RL, mood, hunger, new behaviors, evolution, LLMs, final art, OpenPets core changes, and any subsequent phase.
+- Status at issuance: `AUTHORIZED`
+
+## BPDC-P4-002
+
+- Issued: 2026-08-23 America/New_York
+- Issuer: User / project architect via attached Architect review accepting the P4 design and continuing the evidence gate
+- External directive: `BPDC-P4-002`
+- Objective: Prove one real OpenPets physical click reaches the current local-hour habit learner, persists schema-3 habit state, survives host restart, and contributes to `SEEK_ATTENTION.timeHabit`.
+- Scope: deterministic regression and packaging checks, one live physical-click provenance capture, normal persistence, host shutdown/restart, restored habit capture, and post-restart utility comparison.
+- Exclusions: synthetic event injection, direct `recordInteraction()` calls, manual habit or snapshot mutation, habit expansion, new sensing, generic learning/RL, new behaviors, mood, hunger, development, evolution, LLMs, OpenPets core changes, and any subsequent phase.
+- Acceptance: all 16 criteria in the Architect directive, including real current-hour slot identification, target-only reinforcement, schema-3 persistence, identity/habit/relationship restoration, and positive measurable utility contribution.
+- Status at issuance: `AUTHORIZED`
+
+## BPDC-SYNC-003
+
+- Issued: 2026-08-23 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-P4-001`
+- External directive: `BPDC-SYNC-003`
+- Objective: Checkpoint and synchronize the accepted Phase 4 habit implementation to canonical GitHub `main` without changing application behavior.
+- Scope: complete dirty-tree classification, regression and packaging validation, schema-3 migration review, publication-safety scan, one coherent commit, normal non-force push, local/remote equality verification, and Authority/Notion recording.
+- Exclusions: no habit redesign, live-test fabrication, additional sensing or habits, subsequent phase, history rewrite, rebase, reset, force push, release, deployment, or OpenPets core change.
+- Acceptance: all dirty files are accepted P4 or corresponding Authority records; validation passes; no newly tracked secrets/private runtime state; commit and normal push succeed; deferred live P4 evidence remains `UNKNOWN`.
+- Status at issuance: `AUTHORIZED`

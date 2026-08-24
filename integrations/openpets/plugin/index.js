@@ -151,10 +151,16 @@ var BEHAVIOR_DEFINITIONS = {
   SLEEP: { minDuration: 600, maxDuration: 1800, interruptible: false, cooldown: 300 }
 };
 var BehaviorScorer = class {
-  scoreAll({ drives, personality, environment, relationship }) {
-    return ACTIONS.map((action) => this.score(action, { drives, personality, environment, relationship }));
+  scoreAll({ drives, personality, environment, relationship, habit }) {
+    return ACTIONS.map((action) => this.score(action, { drives, personality, environment, relationship, habit }));
   }
-  score(action, { drives, personality, environment, relationship = { bond: 0.5, recentInfluence: 0 } }) {
+  score(action, {
+    drives,
+    personality,
+    environment,
+    relationship = { bond: 0.5, recentInfluence: 0 },
+    habit = { timeHabit: 0 }
+  }) {
     const night = environment.localTime >= 22 || environment.localTime < 7 ? 1 : 0;
     const activeUser = environment.userPresent && environment.userIdleDuration < 300 ? 1 : 0;
     const scores = {
@@ -189,6 +195,7 @@ var BehaviorScorer = class {
         recentBond: relationship.recentInfluence * 0.2,
         userPresent: activeUser * 0.35,
         interaction: environment.interactionPressure * 0.25,
+        timeHabit: habit.timeHabit ?? 0,
         independencePenalty: -personality.independence * 0.35,
         fatiguePenalty: -drives.energy * 0.35
       },
@@ -221,8 +228,8 @@ var BehaviorSelector = class {
     this.scorer = scorer;
     this.noiseAmplitude = noiseAmplitude;
   }
-  select({ drives, personality, environment, relationship, rng }) {
-    const candidates = this.scorer.scoreAll({ drives, personality, environment, relationship }).map((candidate) => {
+  select({ drives, personality, environment, relationship, habit, rng }) {
+    const candidates = this.scorer.scoreAll({ drives, personality, environment, relationship, habit }).map((candidate) => {
       const noise = rng.nextRange(-this.noiseAmplitude, this.noiseAmplitude);
       return {
         ...candidate,
@@ -307,8 +314,65 @@ function nonNegative2(value, name) {
   return value;
 }
 
+// integrations/openpets/plugin/core/habit.js
+var HABIT_SCHEMA_VERSION = 1;
+var HABIT_HOURS = 24;
+var HABIT_LEARNING_RATE = 0.08;
+var HABIT_HALF_LIFE_SECONDS = 7 * 24 * 3600;
+var TIME_HABIT_UTILITY_WEIGHT = 0.25;
+function createInitialHabit(timestamp = 0) {
+  return {
+    schemaVersion: HABIT_SCHEMA_VERSION,
+    attentionByHour: Array(HABIT_HOURS).fill(0),
+    lastUpdatedAt: timestamp
+  };
+}
+function validateHabit(value, timestamp = 0) {
+  const habit = value ?? createInitialHabit(timestamp);
+  if (!Array.isArray(habit.attentionByHour) || habit.attentionByHour.length !== HABIT_HOURS) {
+    throw new TypeError(`Habit attentionByHour must contain exactly ${HABIT_HOURS} values.`);
+  }
+  if (!Number.isFinite(habit.lastUpdatedAt) || habit.lastUpdatedAt < 0) {
+    throw new RangeError("Habit lastUpdatedAt must be finite and non-negative.");
+  }
+  return {
+    schemaVersion: HABIT_SCHEMA_VERSION,
+    attentionByHour: habit.attentionByHour.map((value2) => clamp01(value2)),
+    lastUpdatedAt: habit.lastUpdatedAt
+  };
+}
+function decayHabit(habit, timestamp) {
+  if (timestamp < habit.lastUpdatedAt) return habit;
+  const elapsed = timestamp - habit.lastUpdatedAt;
+  if (elapsed > 0) {
+    const retention = 2 ** (-elapsed / HABIT_HALF_LIFE_SECONDS);
+    habit.attentionByHour = habit.attentionByHour.map((value) => clamp01(value * retention));
+  }
+  habit.lastUpdatedAt = timestamp;
+  return habit;
+}
+function reinforceAttentionHabit(habit, localTime, intensity, timestamp) {
+  assertLocalTime(localTime);
+  decayHabit(habit, timestamp);
+  const hour = Math.floor(localTime);
+  const learning = HABIT_LEARNING_RATE * clamp01(intensity);
+  const current = habit.attentionByHour[hour];
+  habit.attentionByHour[hour] = clamp01(current + learning * (1 - current));
+  return habit.attentionByHour[hour];
+}
+function timeHabitForScoring(habit, localTime, timestamp) {
+  assertLocalTime(localTime);
+  decayHabit(habit, timestamp);
+  return habit.attentionByHour[Math.floor(localTime)] * TIME_HABIT_UTILITY_WEIGHT;
+}
+function assertLocalTime(localTime) {
+  if (!Number.isFinite(localTime) || localTime < 0 || localTime >= 24) {
+    throw new RangeError("localTime must be in the range 0 <= localTime < 24.");
+  }
+}
+
 // integrations/openpets/plugin/core/persistence.js
-var SNAPSHOT_SCHEMA_VERSION = 2;
+var SNAPSHOT_SCHEMA_VERSION = 3;
 function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
 }
@@ -318,7 +382,15 @@ function deserializeSnapshot(serialized) {
     return {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
-      relationship: createInitialRelationship(snapshot.simulationTimestamp ?? 0)
+      relationship: createInitialRelationship(snapshot.simulationTimestamp ?? 0),
+      habit: createInitialHabit(snapshot.simulationTimestamp ?? 0)
+    };
+  }
+  if (snapshot?.schemaVersion === 2) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      habit: createInitialHabit(snapshot.simulationTimestamp ?? 0)
     };
   }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {
@@ -388,6 +460,7 @@ var CreatureCore = class _CreatureCore {
     rngState,
     currentBehavior = null,
     relationship,
+    habit,
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer()
   }) {
@@ -399,6 +472,7 @@ var CreatureCore = class _CreatureCore {
     this.rng = new SeededRng(rngState ?? 1);
     this.currentBehavior = currentBehavior ? clone(currentBehavior) : null;
     this.relationship = validateRelationship(relationship, this.clock.now());
+    this.habit = validateHabit(habit, this.clock.now());
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -416,10 +490,12 @@ var CreatureCore = class _CreatureCore {
   advance(seconds, environmentInput = this.lastEnvironment) {
     assertNonNegative(seconds, "seconds");
     this.decayRelationship();
+    this.decayHabit();
     const events = [];
     let remaining = seconds;
     if (!this.currentBehavior) {
       const environment = resolveEnvironment(environmentInput, this.clock.now());
+      this.lastEnvironment = environment;
       events.push(this.commitBehavior(environment));
     }
     while (remaining > 0) {
@@ -432,6 +508,7 @@ var CreatureCore = class _CreatureCore {
         this.evolveDrives(segment, environment);
         this.clock.advance(segment);
         this.decayRelationship();
+        this.decayHabit();
         remaining -= segment;
       }
       if (this.currentBehavior && this.clock.now() >= this.currentBehavior.endsAt - 1e-9) {
@@ -448,11 +525,13 @@ var CreatureCore = class _CreatureCore {
   }
   evaluate(environmentInput = this.lastEnvironment) {
     const environment = resolveEnvironment(environmentInput, this.clock.now());
+    this.lastEnvironment = environment;
     const candidates = this.scorer.scoreAll({
       drives: this.drives,
       personality: this.personality,
       environment,
-      relationship: this.relationshipForScoring()
+      relationship: this.relationshipForScoring(),
+      habit: this.habitForScoring(environment)
     });
     return {
       simulationTime: this.clock.now(),
@@ -461,7 +540,8 @@ var CreatureCore = class _CreatureCore {
     };
   }
   diagnosticSnapshot(environmentInput = this.lastEnvironment) {
-    const evaluation = this.evaluate(environmentInput);
+    const environment = resolveEnvironment(environmentInput, this.clock.now());
+    const evaluation = this.evaluate(environment);
     return {
       creatureId: this.creatureId,
       simulationTime: this.clock.now(),
@@ -471,6 +551,7 @@ var CreatureCore = class _CreatureCore {
       behaviorDurationRemaining: this.currentBehavior ? Math.max(0, this.currentBehavior.endsAt - this.clock.now()) : 0,
       candidates: evaluation.candidates,
       relationship: this.relationshipSnapshot(),
+      habit: this.habitSnapshot(environment),
       rngState: this.rng.getState()
     };
   }
@@ -490,6 +571,7 @@ var CreatureCore = class _CreatureCore {
       personality: clone(this.personality),
       internalState: clone(this.drives),
       relationship: this.relationshipSnapshot(),
+      habit: this.habitStateSnapshot(),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming
     };
@@ -507,7 +589,8 @@ var CreatureCore = class _CreatureCore {
       drives: snapshot.internalState,
       rngState: snapshot.rngState,
       currentBehavior: snapshot.currentBehavior,
-      relationship: snapshot.relationship
+      relationship: snapshot.relationship,
+      habit: snapshot.habit
     });
   }
   commitBehavior(environment) {
@@ -516,6 +599,7 @@ var CreatureCore = class _CreatureCore {
       personality: this.personality,
       environment,
       relationship: this.relationshipForScoring(),
+      habit: this.habitForScoring(environment),
       rng: this.rng
     });
     const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
@@ -546,8 +630,11 @@ var CreatureCore = class _CreatureCore {
       interruptible: currentBehavior.interruptible
     });
   }
-  recordInteraction(event) {
+  recordInteraction(event, environmentInput = this.lastEnvironment) {
     this.decayRelationship();
+    this.decayHabit();
+    const environment = resolveEnvironment(environmentInput, this.clock.now());
+    this.lastEnvironment = environment;
     const interaction = normalizeInteractionEvent(event, this.clock.now());
     const bounded = {
       timestamp: this.clock.now(),
@@ -562,6 +649,9 @@ var CreatureCore = class _CreatureCore {
       this.relationship.bond + interaction.valence * interaction.intensity * BOND_LEARNING_RATE * direction
     );
     this.relationship.lastUpdatedAt = this.clock.now();
+    if (interaction.valence > 0) {
+      reinforceAttentionHabit(this.habit, environment.localTime, interaction.intensity, this.clock.now());
+    }
     return clone(bounded);
   }
   relationshipSnapshot() {
@@ -576,6 +666,33 @@ var CreatureCore = class _CreatureCore {
   }
   decayRelationship() {
     decayRelationship(this.relationship, this.clock.now());
+  }
+  decayHabit() {
+    decayHabit(this.habit, this.clock.now());
+  }
+  habitForScoring(environment = this.lastEnvironment) {
+    return {
+      timeHabit: timeHabitForScoring(this.habit, environment.localTime, this.clock.now())
+    };
+  }
+  habitSnapshot(environment = this.lastEnvironment) {
+    this.decayHabit();
+    return {
+      schemaVersion: this.habit.schemaVersion,
+      attentionByHour: clone(this.habit.attentionByHour),
+      lastUpdatedAt: this.habit.lastUpdatedAt,
+      currentHour: Math.floor(environment.localTime),
+      habitStrength: this.habit.attentionByHour[Math.floor(environment.localTime)],
+      timeHabit: this.habitForScoring(environment).timeHabit
+    };
+  }
+  habitStateSnapshot() {
+    this.decayHabit();
+    return {
+      schemaVersion: this.habit.schemaVersion,
+      attentionByHour: clone(this.habit.attentionByHour),
+      lastUpdatedAt: this.habit.lastUpdatedAt
+    };
   }
   evolveDrives(seconds, environment) {
     const hours = seconds / 3600;
@@ -762,11 +879,22 @@ function register(OpenPetsPlugin) {
       };
       runtime.unsubscribeInteraction = adapter.subscribeInteraction((event) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
-          const recorded = core.recordInteraction(event);
+          const environment = environmentNow();
+          const habitBefore = core.habitSnapshot(environment);
+          const recorded = core.recordInteraction(event, environment);
+          const habitAfter = core.habitSnapshot(environment);
           log(ctx, "CORE", (/* @__PURE__ */ new Date()).toISOString(), "positive interaction recorded", {
             creatureId: core.creatureId,
             interaction: recorded,
-            relationship: core.relationshipSnapshot()
+            relationship: core.relationshipSnapshot(),
+            habit: {
+              hour: habitAfter.currentHour,
+              before: habitBefore.habitStrength,
+              after: habitAfter.habitStrength,
+              timeHabitBefore: habitBefore.timeHabit,
+              timeHabitAfter: habitAfter.timeHabit,
+              attentionByHour: habitAfter.attentionByHour
+            }
           });
           await persist(true);
         }).catch((error) => log(ctx, "ERROR", (/* @__PURE__ */ new Date()).toISOString(), "interaction handling failed", { message: String(error?.message ?? error) }));

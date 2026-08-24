@@ -172,6 +172,76 @@ test("repeated interaction saturates instead of dominating bond immediately", ()
   assert.ok(core.relationship.bond < 0.9);
 });
 
+test("same-hour positive interactions form a stronger isolated attention habit", () => {
+  const routine = CreatureCore.create({ seed: 505 });
+  const distributed = CreatureCore.create({ seed: 505 });
+  for (let index = 0; index < 8; index += 1) {
+    const interaction = { kind: "POSITIVE_CONTACT", intensity: 0.4 };
+    routine.recordInteraction(interaction, environmentAt(20));
+    distributed.recordInteraction(interaction, environmentAt(index));
+  }
+
+  const routineCandidate = candidate(routine, "SEEK_ATTENTION", environmentAt(20));
+  const distributedCandidate = candidate(distributed, "SEEK_ATTENTION", environmentAt(20));
+  assert.equal(routine.relationship.bond, distributed.relationship.bond);
+  assert.ok(routineCandidate.contributors.timeHabit > distributedCandidate.contributors.timeHabit);
+  assert.ok(routineCandidate.contributors.timeHabit >= 0.05);
+});
+
+test("time habit persists through schema-2 migration and deterministic reload", () => {
+  const core = CreatureCore.create({ seed: 506 });
+  for (let index = 0; index < 4; index += 1) {
+    core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.8 }, environmentAt(20));
+  }
+  const snapshot = core.toSnapshot();
+  const reloaded = CreatureCore.fromSnapshot(JSON.parse(core.serialize()));
+  assert.deepEqual(reloaded.toSnapshot(), snapshot);
+
+  const schema2 = { ...snapshot, schemaVersion: 2 };
+  delete schema2.habit;
+  const migrated = CreatureCore.fromSnapshot(schema2);
+  assert.equal(migrated.toSnapshot().schemaVersion, 3);
+  assert.deepEqual(migrated.toSnapshot().habit.attentionByHour, Array(24).fill(0));
+  assert.equal(migrated.relationship.events.length, snapshot.relationship.events.length);
+  assert.equal(migrated.creatureId, snapshot.creatureId);
+});
+
+test("time habit decays over days", () => {
+  const core = CreatureCore.create({ seed: 507 });
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, environmentAt(20));
+  const initial = core.habitSnapshot(environmentAt(20)).timeHabit;
+  core.advance(7 * 24 * 3600, environmentAt(12));
+  const later = core.habitSnapshot(environmentAt(20)).timeHabit;
+  core.advance(7 * 24 * 3600, environmentAt(12));
+  const muchLater = core.habitSnapshot(environmentAt(20)).timeHabit;
+  assert.ok(initial > later);
+  assert.ok(later > muchLater);
+});
+
+test("strong fatigue can override a learned attention habit", () => {
+  const core = CreatureCore.create({ seed: 508 });
+  for (let index = 0; index < 24; index += 1) {
+    core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, environmentAt(20));
+  }
+  core.drives = { energy: 1, social: 0.05, curiosity: 0.05, stimulation: 0.05 };
+  core.currentBehavior = null;
+  assert.equal(core.advance(0, environmentAt(20))[0].action, "SLEEP");
+});
+
+function candidate(core, action, environment) {
+  return core.evaluate(environment).candidates.find((entry) => entry.action === action);
+}
+
+function environmentAt(localTime) {
+  return createEnvironment({
+    localTime,
+    userPresent: true,
+    userIdleDuration: 60,
+    novelty: 0.1,
+    interactionPressure: 0.1,
+  });
+}
+
 function timedEnvironment(timestamp) {
   const localTime = (timestamp % 86400) / 3600;
   const userPresent = localTime >= 8 && localTime < 22;
