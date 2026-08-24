@@ -62,6 +62,20 @@ export class OpenPetsAdapter {
     }));
   }
 
+  subscribePresence(handler) {
+    if (!this.ctx.events?.on) return () => {};
+    const subscriptions = [
+      this.ctx.events.on("idle:enter", (payload = {}) => handler({
+        kind: "IDLE",
+        idleSeconds: Number.isFinite(payload?.idleSeconds) ? payload.idleSeconds : 0,
+      })),
+      this.ctx.events.on("idle:exit", () => handler({ kind: "ACTIVE" })),
+      this.ctx.events.on("screen:locked", () => handler({ kind: "LOCKED" })),
+      this.ctx.events.on("screen:unlocked", () => handler({ kind: "ACTIVE" })),
+    ];
+    return () => subscriptions.forEach((unsubscribe) => unsubscribe?.());
+  }
+
   async shutdown() {
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
   }

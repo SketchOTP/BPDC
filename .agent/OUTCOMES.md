@@ -185,3 +185,15 @@
 - Publication: normal `git push origin main` succeeded from remote `b40232c` to product commit `cb5d6ad`.
 - Deferred evidence: habit-specific physical click → current-hour reinforcement → restart remains `UNKNOWN`/deferred. The Phase 3 underlying click/persistence seam remains accepted at E5; no synthetic live evidence was manufactured.
 - Boundary: no Phase 5 or additional habit/environment capability started.
+
+## BPDC-P5-001 - PRESENCE IMPLEMENTATION HANDOFF
+
+- Outcome ID: `BPDC-P5-001-PRESENCE-AWARENESS`
+- Closed for Codex handoff: 2026-08-24 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Summary: Added a bounded integration-side `PresenceTracker` and OpenPets adapter subscriptions for `idle:enter`, `idle:exit`, `screen:locked`, and `screen:unlocked`. The live plugin now supplies the existing host-neutral environment fields instead of hard-coded absence; direct pet interaction marks active presence.
+- Startup semantics: internal `UNKNOWN`, conservatively mapped to `userPresent=false` and `userIdleDuration=0` until a curated signal is observed. This state is not added to CreatureCore and presence is not persisted.
+- Validation: `node --test` 22/22; combined P4/presence experiment suite PASS; adapter harness PASS; manifest PASS; local-staged bundle PASS at 38,483 bytes; core boundary/privacy scans PASS; `git diff --check` PASS. Canonical UNC esbuild remains a known `spawn EPERM`; staging workaround passed.
+- Evidence: `BPDC-E026`, target-tested/regression-protected only. No live desktop claim was made because live observation is not required by the directive.
+- Boundary: no new behavior, drive, memory, habit, persistence schema, or privacy-sensitive sensing; no subsequent phase started.
+- Follow-up directive: Architect review of `BPDC-P5-001`.

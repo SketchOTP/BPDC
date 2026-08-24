@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { CreatureCore, createEnvironment } from "../creature-core/index.js";
+import { PresenceTracker } from "../../integrations/openpets/presence-tracker.js";
 
 const replay = runReplayExperiment();
 const personality = runPersonalityExperiment();
@@ -14,16 +15,20 @@ const habitConcentration = runHabitConcentrationExperiment();
 const habitPersistence = runHabitPersistenceExperiment();
 const habitDecay = runHabitDecayExperiment();
 const habitNonDomination = runHabitNonDominationExperiment();
+const presenceTransitions = runPresenceTransitionExperiment();
+const presenceUtility = runPresenceUtilityExperiment();
+const presenceDriveEvolution = runPresenceDriveEvolutionExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P4-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination]
+  directive: "BPDC-P5-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
   experiments: {
     replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation,
     habitConcentration, habitPersistence, habitDecay, habitNonDomination,
+    presenceTransitions, presenceUtility, presenceDriveEvolution,
   },
   trace24h,
 }, null, 2));
@@ -234,6 +239,58 @@ function runHabitNonDominationExperiment() {
   core.currentBehavior = null;
   const intent = core.advance(0, environmentAt(20))[0];
   return { status: intent.action === "SLEEP" ? "PASS" : "FAIL", selected: intent.action };
+}
+
+function runPresenceTransitionExperiment() {
+  let now = 10_000;
+  const tracker = new PresenceTracker({ clock: () => now });
+  const startup = tracker.snapshot();
+  tracker.apply({ kind: "IDLE", idleSeconds: 120 });
+  const enteredIdle = tracker.snapshot();
+  now += 30_000;
+  const elapsedIdle = tracker.snapshot();
+  tracker.apply({ kind: "ACTIVE" });
+  const returned = tracker.snapshot();
+  tracker.apply({ kind: "LOCKED" });
+  const locked = tracker.snapshot();
+  tracker.apply({ kind: "ACTIVE" });
+  const unlocked = tracker.snapshot();
+  const passed = startup.userPresent === false
+    && enteredIdle.userIdleDuration === 120
+    && elapsedIdle.userIdleDuration === 150
+    && returned.userPresent === true
+    && locked.userPresent === false
+    && unlocked.userPresent === true;
+  return { status: passed ? "PASS" : "FAIL", startup, enteredIdle, elapsedIdle, returned, locked, unlocked };
+}
+
+function runPresenceUtilityExperiment() {
+  const core = CreatureCore.create({ seed: 609 });
+  const active = createEnvironment({ localTime: 12, userPresent: true, userIdleDuration: 0 });
+  const idle = createEnvironment({ localTime: 12, userPresent: false, userIdleDuration: 600 });
+  const activeSeek = getCandidate(core, "SEEK_ATTENTION", active);
+  const idleSeek = getCandidate(core, "SEEK_ATTENTION", idle);
+  const activeSleep = getCandidate(core, "SLEEP", active);
+  const idleSleep = getCandidate(core, "SLEEP", idle);
+  return {
+    status: activeSeek.score > idleSeek.score && activeSleep.score < idleSleep.score ? "PASS" : "FAIL",
+    activeSeek: activeSeek.score,
+    idleSeek: idleSeek.score,
+    activeSleep: activeSleep.score,
+    idleSleep: idleSleep.score,
+  };
+}
+
+function runPresenceDriveEvolutionExperiment() {
+  const active = CreatureCore.create({ seed: 610 });
+  const absent = CreatureCore.create({ seed: 610 });
+  active.evolveDrives(4 * 3600, createEnvironment({ userPresent: true, userIdleDuration: 0 }));
+  absent.evolveDrives(4 * 3600, createEnvironment({ userPresent: false, userIdleDuration: 600 }));
+  return {
+    status: active.drives.social < absent.drives.social ? "PASS" : "FAIL",
+    activeSocial: active.drives.social,
+    absentSocial: absent.drives.social,
+  };
 }
 
 function runHours(core, hours, environment) {

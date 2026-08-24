@@ -39,6 +39,10 @@ For this UNC workspace, run the bundle build from a local staging directory and 
 
 The plugin stores its versioned CreatureCore snapshot under `bpdc.creature.snapshot` in OpenPets plugin storage and logs `CORE`, `ADAPT`, `HOST`, and `STATUS` records. OpenPets host gravity is explicitly disabled. The pinned host's tick is used as timing only; no host behavior selector was found or used.
 
+## Presence boundary
+
+The plugin translates only OpenPets' curated `idle:enter`, `idle:exit`, `screen:locked`, and `screen:unlocked` events into a transient `PresenceTracker`. The tracker exposes `ACTIVE`, `IDLE`, and `LOCKED` semantics through the existing host-neutral `userPresent` and `userIdleDuration` environment fields; direct pet interaction also establishes active presence. Startup is conservatively `UNKNOWN`, which maps to absent/zero-duration until an explicit signal arrives. Presence is not persisted and no keystrokes, clipboard contents, screen pixels, window titles, application names, or document contents are collected.
+
 ## Boundary
 
 ```text

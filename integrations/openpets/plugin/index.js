@@ -793,10 +793,93 @@ var OpenPetsAdapter = class {
       intensity: 0.4
     }));
   }
+  subscribePresence(handler) {
+    if (!this.ctx.events?.on) return () => {
+    };
+    const subscriptions = [
+      this.ctx.events.on("idle:enter", (payload = {}) => handler({
+        kind: "IDLE",
+        idleSeconds: Number.isFinite(payload?.idleSeconds) ? payload.idleSeconds : 0
+      })),
+      this.ctx.events.on("idle:exit", () => handler({ kind: "ACTIVE" })),
+      this.ctx.events.on("screen:locked", () => handler({ kind: "LOCKED" })),
+      this.ctx.events.on("screen:unlocked", () => handler({ kind: "ACTIVE" }))
+    ];
+    return () => subscriptions.forEach((unsubscribe) => unsubscribe?.());
+  }
   async shutdown() {
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
   }
 };
+
+// integrations/openpets/presence-tracker.js
+var PRESENCE_STATES = Object.freeze(["UNKNOWN", "ACTIVE", "IDLE", "LOCKED"]);
+var PresenceTracker = class {
+  constructor({ clock = () => Date.now(), initialState = "UNKNOWN" } = {}) {
+    if (!PRESENCE_STATES.includes(initialState)) {
+      throw new RangeError(`Unsupported presence state: ${initialState}`);
+    }
+    this.clock = clock;
+    this.state = initialState;
+    this.idleSinceMs = null;
+    this.lastIdleDuration = 0;
+  }
+  apply(signal = {}) {
+    switch (signal.kind) {
+      case "ACTIVE":
+        return this.markActive();
+      case "IDLE":
+        return this.markIdle(signal.idleSeconds);
+      case "LOCKED":
+        return this.markLocked();
+      default:
+        throw new RangeError(`Unsupported presence signal: ${signal.kind}`);
+    }
+  }
+  markActive() {
+    this.state = "ACTIVE";
+    this.idleSinceMs = null;
+    this.lastIdleDuration = 0;
+    return this.snapshot();
+  }
+  markIdle(idleSeconds = 0) {
+    const now = this.clock();
+    const seconds = nonNegativeFinite(idleSeconds, "idleSeconds");
+    this.state = "IDLE";
+    this.idleSinceMs = now - seconds * 1e3;
+    this.lastIdleDuration = seconds;
+    return this.snapshot(now);
+  }
+  markLocked() {
+    const now = this.clock();
+    if (this.state !== "IDLE") {
+      this.idleSinceMs = now;
+      this.lastIdleDuration = 0;
+    }
+    this.state = "LOCKED";
+    return this.snapshot(now);
+  }
+  snapshot(now = this.clock()) {
+    if (!Number.isFinite(now)) throw new RangeError("Presence clock must return a finite number.");
+    if (this.state === "ACTIVE" || this.state === "UNKNOWN") {
+      return {
+        state: this.state,
+        userPresent: this.state === "ACTIVE",
+        userIdleDuration: 0
+      };
+    }
+    const elapsed = this.idleSinceMs === null ? this.lastIdleDuration : (now - this.idleSinceMs) / 1e3;
+    return {
+      state: this.state,
+      userPresent: false,
+      userIdleDuration: Math.max(this.lastIdleDuration, elapsed, 0)
+    };
+  }
+};
+function nonNegativeFinite(value, name) {
+  if (!Number.isFinite(value) || value < 0) throw new RangeError(`${name} must be finite and non-negative.`);
+  return value;
+}
 
 // integrations/openpets/plugin/index.src.js
 var SNAPSHOT_KEY = "bpdc.creature.snapshot";
@@ -805,12 +888,13 @@ var activeRuntime = null;
 function log(ctx, stage, timestamp, message, details = void 0) {
   void ctx.log.info(LOG_PREFIX, { stage, timestamp, message, ...details ? { details } : {} });
 }
-function environmentNow() {
+function environmentNow(presence) {
   const date = /* @__PURE__ */ new Date();
+  const presenceSnapshot = presence.snapshot();
   return createEnvironment({
     localTime: date.getHours() + date.getMinutes() / 60,
-    userPresent: false,
-    userIdleDuration: 0,
+    userPresent: presenceSnapshot.userPresent,
+    userIdleDuration: presenceSnapshot.userIdleDuration,
     novelty: 0.1,
     interactionPressure: 0
   });
@@ -837,6 +921,7 @@ function register(OpenPetsPlugin) {
           ...details ? { hostState: details } : {}
         })
       });
+      const presence = new PresenceTracker();
       await ctx.pet.show();
       await ctx.pet.physics({ gravity: false, bounce: 0 });
       const saved = await ctx.storage.get(SNAPSHOT_KEY);
@@ -867,19 +952,27 @@ function register(OpenPetsPlugin) {
         await persist(true);
       };
       await persist(true);
-      for (const intent of core.advance(0, environmentNow())) await executeIntent(intent);
+      for (const intent of core.advance(0, environmentNow(presence))) await executeIntent(intent);
       const runtime = {
         adapter,
         unsubscribe: () => {
         },
         unsubscribeInteraction: () => {
         },
+        unsubscribePresence: () => {
+        },
         tickChain: Promise.resolve(),
         persist
       };
+      runtime.unsubscribePresence = adapter.subscribePresence((signal) => {
+        const snapshot = presence.apply(signal);
+        log(ctx, "ENV", (/* @__PURE__ */ new Date()).toISOString(), "presence updated", { presence: snapshot });
+      });
       runtime.unsubscribeInteraction = adapter.subscribeInteraction((event) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
-          const environment = environmentNow();
+          const presenceSnapshot = presence.markActive();
+          log(ctx, "ENV", (/* @__PURE__ */ new Date()).toISOString(), "direct interaction established presence", { presence: presenceSnapshot });
+          const environment = environmentNow(presence);
           const habitBefore = core.habitSnapshot(environment);
           const recorded = core.recordInteraction(event, environment);
           const habitAfter = core.habitSnapshot(environment);
@@ -902,7 +995,7 @@ function register(OpenPetsPlugin) {
       runtime.unsubscribe = ctx.pet.onTick((dtMs) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
           const seconds = Math.max(0, Math.min(5, dtMs / 1e3));
-          for (const intent of core.advance(seconds, environmentNow())) await executeIntent(intent);
+          for (const intent of core.advance(seconds, environmentNow(presence))) await executeIntent(intent);
           await persist(false);
         }).catch((error) => log(ctx, "ERROR", (/* @__PURE__ */ new Date()).toISOString(), "autonomous tick failed", { message: String(error?.message ?? error) }));
       });
@@ -915,7 +1008,11 @@ function register(OpenPetsPlugin) {
       await registerForced("bpdc-probe-attention", "SEEK_ATTENTION", "BPDC probe: attention");
       await ctx.commands.register({ id: "bpdc-status", title: "BPDC status", placement: "top" }, async () => {
         const hostState = await adapter.getExecutionState();
-        log(ctx, "STATUS", (/* @__PURE__ */ new Date()).toISOString(), "diagnostic snapshot", { diagnostic: core.diagnosticSnapshot(environmentNow()), hostState });
+        log(ctx, "STATUS", (/* @__PURE__ */ new Date()).toISOString(), "diagnostic snapshot", {
+          diagnostic: core.diagnosticSnapshot(environmentNow(presence)),
+          presence: presence.snapshot(),
+          hostState
+        });
       });
       activeRuntime = runtime;
       log(ctx, "HOST", (/* @__PURE__ */ new Date()).toISOString(), "OpenPets host authority configured", {
@@ -928,6 +1025,7 @@ function register(OpenPetsPlugin) {
       activeRuntime = null;
       if (!runtime) return;
       runtime.unsubscribe();
+      runtime.unsubscribePresence();
       runtime.unsubscribeInteraction();
       await runtime.tickChain;
       await runtime.persist(true);

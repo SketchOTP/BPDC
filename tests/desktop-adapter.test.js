@@ -62,3 +62,23 @@ test("OpenPetsAdapter normalizes a real host click into a positive interaction",
   assert.deepEqual(received, [{ kind: "POSITIVE_CONTACT", valence: 1, intensity: 0.4 }]);
   assert.equal(ctx.interactionHandlers.size, 0);
 });
+
+test("OpenPetsAdapter maps curated host presence events to host-neutral signals", () => {
+  const ctx = createFakeContext();
+  const adapter = new OpenPetsAdapter(ctx);
+  const received = [];
+  const unsubscribe = adapter.subscribePresence((signal) => received.push(signal));
+
+  ctx.interactionHandlers.get("idle:enter")({ idleSeconds: 120 });
+  ctx.interactionHandlers.get("idle:exit")();
+  ctx.interactionHandlers.get("screen:locked")();
+  ctx.interactionHandlers.get("screen:unlocked")();
+  unsubscribe();
+
+  assert.deepEqual(received, [
+    { kind: "IDLE", idleSeconds: 120 },
+    { kind: "ACTIVE" },
+    { kind: "LOCKED" },
+    { kind: "ACTIVE" },
+  ]);
+});

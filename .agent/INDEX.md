@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 4 — Minimal Time-of-Day Habit (accepted; habit-specific live evidence deferred as UNKNOWN; sync complete)
-- Active directive: BPDC-SYNC-003 (complete)
-- Active task packet: `.agent/tasks/active/BPDC-SYNC-003.md`
-- Last Codex outcome: BPDC-SYNC-003 (PASS; product commit and Authority closure published)
-- Last state sync: 2026-08-23 America/New_York; final remote `main` verified after closure commit
+- Current stage: Phase 5 — Minimal User Presence Awareness (implementation target-tested; operational desktop observation not required)
+- Active directive: BPDC-P5-001 (complete for Architect handoff)
+- Active task packet: `.agent/tasks/active/BPDC-P5-001.md`
+- Last Codex outcome: BPDC-P5-001 (PASS; implementation and Authority handoff prepared)
+- Last state sync: 2026-08-24 America/New_York; entry was clean and synchronized at `9189d3129199a3ff46f0fa8df6a0bd8b284567b4`
 
 ## Mandatory kernel
 

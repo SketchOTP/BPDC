@@ -204,3 +204,16 @@
 - Exclusions: no habit redesign, live-test fabrication, additional sensing or habits, subsequent phase, history rewrite, rebase, reset, force push, release, deployment, or OpenPets core change.
 - Acceptance: all dirty files are accepted P4 or corresponding Authority records; validation passes; no newly tracked secrets/private runtime state; commit and normal push succeed; deferred live P4 evidence remains `UNKNOWN`.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-P5-001
+
+- Issued: 2026-08-24 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-SYNC-003`
+- External directive: `BPDC-P5-001`
+- Objective: Make BPDC minimally aware of whether the user is active, idle, or absent/locked by translating OpenPets' curated presence events into the existing host-neutral `EnvironmentSnapshot`.
+- Scope: integration-side presence translator/tracker; `idle:enter`, `idle:exit`, `screen:locked`, and `screen:unlocked` mapping; bounded injectable clock; replacement of live hard-coded absence; deterministic transition, utility, drive-evolution, adapter, build, manifest, boundary, and privacy validation.
+- Exclusions: new behaviors, drives, mood, loneliness, memory, persistence-schema changes, new habits, cursor/window/application sensing, screen capture, keystrokes, clipboard, document contents, notifications, audio, evolution, LLMs, OpenPets core changes, and any subsequent phase.
+- Startup rule: internal `UNKNOWN`, conservatively mapped to `userPresent=false` and `userIdleDuration=0` until an explicit curated signal arrives; no `UNKNOWN` state enters CreatureCore.
+- Acceptance: existing 17-test/P4 regression remains passing; new presence tests pass; active/idle utility and presence/absence drive effects have the required direction; plugin no longer hard-codes absence; core remains framework-independent; presence is transient and not persisted; no privacy-sensitive inputs are added.
+- Live evidence policy: Computer Use/Sky is not required for acceptance; any future desktop observation must be classified separately and must not be fabricated.
+- Status at issuance: `AUTHORIZED`

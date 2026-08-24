@@ -1,5 +1,6 @@
 import { CreatureCore, BehaviorIntent, createEnvironment } from "./core/index.js";
 import { OpenPetsAdapter } from "./openpets-adapter.js";
+import { PresenceTracker } from "../presence-tracker.js";
 
 const SNAPSHOT_KEY = "bpdc.creature.snapshot";
 const LOG_PREFIX = "BPDC";
@@ -9,12 +10,13 @@ function log(ctx, stage, timestamp, message, details = undefined) {
   void ctx.log.info(LOG_PREFIX, { stage, timestamp, message, ...(details ? { details } : {}) });
 }
 
-function environmentNow() {
+function environmentNow(presence) {
   const date = new Date();
+  const presenceSnapshot = presence.snapshot();
   return createEnvironment({
     localTime: date.getHours() + date.getMinutes() / 60,
-    userPresent: false,
-    userIdleDuration: 0,
+    userPresent: presenceSnapshot.userPresent,
+    userIdleDuration: presenceSnapshot.userIdleDuration,
     novelty: 0.1,
     interactionPressure: 0,
   });
@@ -36,6 +38,7 @@ export function register(OpenPetsPlugin) {
           ...(details ? { hostState: details } : {}),
         }),
       });
+      const presence = new PresenceTracker();
 
       await ctx.pet.show();
       await ctx.pet.physics({ gravity: false, bounce: 0 });
@@ -66,18 +69,25 @@ export function register(OpenPetsPlugin) {
       };
 
       await persist(true);
-      for (const intent of core.advance(0, environmentNow())) await executeIntent(intent);
+      for (const intent of core.advance(0, environmentNow(presence))) await executeIntent(intent);
 
       const runtime = {
         adapter,
         unsubscribe: () => {},
         unsubscribeInteraction: () => {},
+        unsubscribePresence: () => {},
         tickChain: Promise.resolve(),
         persist,
       };
+      runtime.unsubscribePresence = adapter.subscribePresence((signal) => {
+        const snapshot = presence.apply(signal);
+        log(ctx, "ENV", new Date().toISOString(), "presence updated", { presence: snapshot });
+      });
       runtime.unsubscribeInteraction = adapter.subscribeInteraction((event) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
-          const environment = environmentNow();
+          const presenceSnapshot = presence.markActive();
+          log(ctx, "ENV", new Date().toISOString(), "direct interaction established presence", { presence: presenceSnapshot });
+          const environment = environmentNow(presence);
           const habitBefore = core.habitSnapshot(environment);
           const recorded = core.recordInteraction(event, environment);
           const habitAfter = core.habitSnapshot(environment);
@@ -100,7 +110,7 @@ export function register(OpenPetsPlugin) {
       runtime.unsubscribe = ctx.pet.onTick((dtMs) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
           const seconds = Math.max(0, Math.min(5, dtMs / 1_000));
-          for (const intent of core.advance(seconds, environmentNow())) await executeIntent(intent);
+          for (const intent of core.advance(seconds, environmentNow(presence))) await executeIntent(intent);
           await persist(false);
         }).catch((error) => log(ctx, "ERROR", new Date().toISOString(), "autonomous tick failed", { message: String(error?.message ?? error) }));
       });
@@ -114,7 +124,11 @@ export function register(OpenPetsPlugin) {
       await registerForced("bpdc-probe-attention", "SEEK_ATTENTION", "BPDC probe: attention");
       await ctx.commands.register({ id: "bpdc-status", title: "BPDC status", placement: "top" }, async () => {
         const hostState = await adapter.getExecutionState();
-        log(ctx, "STATUS", new Date().toISOString(), "diagnostic snapshot", { diagnostic: core.diagnosticSnapshot(environmentNow()), hostState });
+        log(ctx, "STATUS", new Date().toISOString(), "diagnostic snapshot", {
+          diagnostic: core.diagnosticSnapshot(environmentNow(presence)),
+          presence: presence.snapshot(),
+          hostState,
+        });
       });
 
       activeRuntime = runtime;
@@ -127,6 +141,7 @@ export function register(OpenPetsPlugin) {
       activeRuntime = null;
       if (!runtime) return;
       runtime.unsubscribe();
+      runtime.unsubscribePresence();
       runtime.unsubscribeInteraction();
       await runtime.tickChain;
       await runtime.persist(true);

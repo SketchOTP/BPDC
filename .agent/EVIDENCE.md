@@ -270,3 +270,14 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Type: `ARCHITECT_ACCEPTANCE`
 - Result: the bounded 24-slot habit, saturation, seven-day decay, `SEEK_ATTENTION.timeHabit`, schema 2 → 3 migration, deterministic persistence, and fatigue subordination are accepted. The live current-hour click/restart experiment is deferred opportunistically and is not a progression blocker.
 - Reliability/limitations: no new E5 claim is made for habit-specific live reinforcement; no synthetic event or manual state mutation was used.
+
+## BPDC-E026 — Phase 5 bounded presence implementation
+
+- Created: 2026-08-24 America/New_York
+- Directive/outcome: `BPDC-P5-001` / pending Architect acceptance
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; a transient integration `PresenceTracker` maps host-neutral `ACTIVE`, `IDLE`, and `LOCKED` signals to the existing `userPresent` and `userIdleDuration` fields. Startup is internal `UNKNOWN`, conservatively mapped to absent/zero-duration until an explicit signal arrives. Idle duration uses an injectable integration clock, increases from the host-reported `idleSeconds`, and returns to zero on active/unlocked/direct interaction.
+- Validation: `node --test` 22/22; P4 and presence experiment suite PASS; adapter event harness PASS; OpenPets manifest PASS; local-staged bundle PASS at 38,483 bytes; CreatureCore framework/time scan PASS; privacy-sensitive API scan PASS; `git diff --check` PASS.
+- Utility/drive results: active `SEEK_ATTENTION` `0.74979795` > idle `0.39979795`; active `SLEEP` `0.4844834` < idle `0.6344834`; four-hour social pressure active `0.166` < absent `0.322`.
+- Reliability/limitations: target-tested and regression-protected only; no live desktop observation is claimed or required. Presence is transient and does not enter the persistence schema.

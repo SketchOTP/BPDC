@@ -152,3 +152,12 @@
 - Confidence: `VERIFIED` for deterministic target tests; live host integration remains `UNKNOWN`.
 - Scope: BPDC-P4-001 minimal time-of-day habit.
 - Supersedes: `NONE`
+
+## BPDC-L018
+
+- Date: 2026-08-24
+- Fact: The smallest useful presence integration is a transient adapter-side state machine. OpenPets' bounded idle and screen-lock transitions can drive the existing `userPresent` and `userIdleDuration` fields without adding a CreatureCore subsystem, persistence fields, or privacy-sensitive observation. A conservative internal `UNKNOWN` startup state avoids pretending to know session presence before the first curated event.
+- Evidence: `BPDC-E026`; `BPDC-P5-001` transition, utility, drive-evolution, adapter, boundary, and privacy checks.
+- Confidence: `VERIFIED` for deterministic integration behavior and current pinned event vocabulary; live desktop operation remains unobserved and is not required for acceptance.
+- Scope: Phase 5 minimal user presence awareness.
+- Supersedes: `NONE`

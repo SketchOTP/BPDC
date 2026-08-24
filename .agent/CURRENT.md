@@ -3,18 +3,18 @@
 ## Lifecycle
 
 - Status: `ACTIVE`
-- Last updated: 2026-08-23 America/New_York
+- Last updated: 2026-08-24 America/New_York
 
 ## Active state
 
-- Local directive ID: `BPDC-SYNC-003`
-- External directive ID: `BPDC-SYNC-003`
-- Objective: Commit and publish the Architect-accepted Phase 4 habit implementation without changing application behavior.
+- Local directive ID: `BPDC-P5-001`
+- External directive ID: `BPDC-P5-001`
+- Objective: Wire OpenPets' bounded presence signals into the existing host-neutral environment snapshot without adding a behavioral subsystem.
 - Current status: `COMPLETE_FOR_ARCHITECT_HANDOFF`
-- Acceptance: Phase 4 is accepted on deterministic and target-tested evidence; habit-specific live click reinforcement remains explicitly `UNKNOWN`/deferred and is not a blocker. Product commit `cb5d6ad` was pushed normally; final Authority closure is recorded below.
-- Current phase: `Phase 4 — Minimal Time-of-Day Habit` accepted; no subsequent phase is authorized.
-- Expected touched areas: accepted P4 source/plugin/tests plus Authority records only.
-- Immediate next action: wait for the next explicit Architect directive. Do not start Phase 5 or any additional habit/environment capability.
+- Acceptance: Phase 5 presence translation is implemented and target-tested; startup presence remains conservatively `UNKNOWN` until a curated signal arrives; no live desktop session is required for acceptance and no operational claim is made.
+- Current phase: `Phase 5 — Minimal User Presence Awareness` complete for Architect review; no subsequent phase is authorized.
+- Expected touched areas: integration presence tracker, OpenPets adapter/plugin bundle, deterministic experiments/tests, README, and Authority records only.
+- Immediate next action: wait for Architect review. Do not start Phase 6 or add broader environmental sensing.
 
 ## Temporary task-relevant facts
 
@@ -37,7 +37,9 @@
 - Phase 3 boundary: one normalized persistent `bond` value, bounded structured interaction history, deterministic decay/saturation, existing utility integration, and one real OpenPets interaction path. Phase 3 is accepted. Habits, generic memory, environment learning, mood, hunger, evolution, and Phase 4 remain out of scope.
 - Phase 4 implementation: one 24-slot `attentionByHour` aggregate, saturating positive-interaction reinforcement, seven-day half-life decay, schema 2 → 3 migration, and `SEEK_ATTENTION.timeHabit` utility contribution are implemented and target-tested. No general habit engine or additional sensing was added.
 - Deferred P4 live evidence: the Computer Use skill is present but no callable `node_repl`/Sky tool is exposed. No synthetic interaction was used and no habit-specific live claim is made. This is deferred, not a sync blocker.
+- Phase 5 implementation: OpenPets `idle:enter`, `idle:exit`, `screen:locked`, and `screen:unlocked` map through a transient integration `PresenceTracker` to the existing `userPresent` and `userIdleDuration` fields. Direct pet interaction marks active presence. Startup uses internal `UNKNOWN`, conservatively mapped to absent/zero-duration; presence is not persisted.
+- Phase 5 validation: `node --test` 22/22, combined experiment suite PASS, manifest PASS, local-staged plugin build PASS at 38,483 bytes, core dependency/privacy scans PASS, and `git diff --check` PASS. Canonical UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds.
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, and issued `BPDC-SYNC-003`; `BPDC-SYNC-003` is complete and no subsequent phase is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, and issued `BPDC-P5-001`; P5 is complete for Architect handoff and no subsequent phase is authorized.

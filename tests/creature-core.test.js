@@ -228,6 +228,28 @@ test("strong fatigue can override a learned attention habit", () => {
   assert.equal(core.advance(0, environmentAt(20))[0].action, "SLEEP");
 });
 
+test("active presence raises attention and lowers sleep utility", () => {
+  const core = CreatureCore.create({ seed: 509 });
+  const active = createEnvironment({ localTime: 12, userPresent: true, userIdleDuration: 0 });
+  const idle = createEnvironment({ localTime: 12, userPresent: false, userIdleDuration: 600 });
+  const candidateFor = (environment, action) => candidate(core, action, environment);
+
+  assert.ok(candidateFor(active, "SEEK_ATTENTION").score > candidateFor(idle, "SEEK_ATTENTION").score);
+  assert.ok(candidateFor(active, "SLEEP").score < candidateFor(idle, "SLEEP").score);
+});
+
+test("sustained presence relieves social pressure relative to absence", () => {
+  const active = CreatureCore.create({ seed: 510 });
+  const absent = CreatureCore.create({ seed: 510 });
+  const activeEnvironment = createEnvironment({ userPresent: true, userIdleDuration: 0 });
+  const absentEnvironment = createEnvironment({ userPresent: false, userIdleDuration: 600 });
+
+  active.evolveDrives(4 * 3600, activeEnvironment);
+  absent.evolveDrives(4 * 3600, absentEnvironment);
+
+  assert.ok(active.drives.social < absent.drives.social);
+});
+
 function candidate(core, action, environment) {
   return core.evaluate(environment).candidates.find((entry) => entry.action === action);
 }

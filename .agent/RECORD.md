@@ -202,3 +202,14 @@
 - Publication: normal non-force push succeeded; final Authority closure is recorded in a follow-up records-only commit; local `main == origin/main` and worktree are clean after final verification.
 - Deferred evidence: habit-specific live click reinforcement remains `UNKNOWN`; no synthetic or manually edited evidence was used.
 - Supersession: `BPDC-SYNC-003-STARTED`.
+
+## BPDC-P5-001-IMPLEMENTATION-COMPLETE
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P5-001-IMPLEMENTATION-COMPLETE`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Implement the smallest authorized environmental-awareness increment by translating curated OpenPets presence events into the existing host-neutral environment fields.
+- Evidence: transient integration `PresenceTracker`; adapter mappings for idle entry/exit and screen lock/unlock; direct interaction establishes active presence; 22/22 tests; P4/presence experiments; manifest; staged bundle; boundary/privacy scans; and diff check passed.
+- Startup rule: internal `UNKNOWN`, conservatively mapped to absent/zero-duration until an explicit signal; no unknown state enters CreatureCore and presence is not persisted.
+- Limitation: no live desktop observation is claimed; the Architect explicitly made it unnecessary for acceptance.
+- Supersession: `BPDC-SYNC-003-PUBLISHED` as the active implementation stage.
