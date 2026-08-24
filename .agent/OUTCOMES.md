@@ -231,3 +231,16 @@
 - Validation: 31/31 tests, P6 experiments, persistence harness, manifest, staged bundle, boundary/privacy scans, publication-safety scan, and diff check passed. Direct UNC esbuild `spawn EPERM` remains a known environment limitation.
 - Evidence boundary: `BPDC-E027` remains deterministic/regression-protected; live Windows/Electron elapsed-time observation remains `UNKNOWN`/not claimed.
 - Supersession: `BPDC-P6-001-CODEX HANDOFF COMPLETE` pending-acceptance state.
+
+## BPDC-P7-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P7-001-TRANSIENT-CONTACT-EXPRESSION`
+- Closed for Codex handoff: 2026-08-24 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Retrieval confidence: `ADEQUATE`; jCodemunch-MCP was unavailable, so bounded direct reads were used only for the relevant implementation, tests, build, and Authority files.
+- Summary: Implemented the smallest immediate causal-expression layer. Existing `POSITIVE_CONTACT` learning now leads CreatureCore to a separate transient response intent chosen from existing relationship/personality/current-behavior state. The OpenPets adapter maps it to existing reactions and restores the still-current autonomous behavior with one superseding, generation-guarded timer.
+- Response vocabulary: `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, `WITHDRAW_CONTACT`.
+- Validation: `node --test` PASSED 38/38; P7 CLI experiment suite PASSED; adapter harness, sleep constraint, rapid-click safety, offline regression, manifest, staged build, boundary/privacy/publication-safety scans, and diff check PASSED. Direct UNC esbuild remains BLOCKED by known `spawn EPERM`; staged build PASSED at 48,071 bytes.
+- Evidence: `BPDC-E028`, `E4_REGRESSION_PROTECTED`; live Windows/Electron physical-click observation of the new response remains `UNKNOWN`/not claimed.
+- Boundary: no new autonomous behavior, drive, memory/habit dimension, persistence field, utility weight, privacy-sensitive signal, OpenPets core change, or Phase 8 work.
+- Follow-up directive: Architect review of `BPDC-P7-001`.

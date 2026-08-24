@@ -170,3 +170,12 @@
 - Confidence: `VERIFIED` for deterministic integration behavior and current schema-3 snapshots; live desktop elapsed-time observation remains `UNKNOWN`.
 - Scope: Phase 6 elapsed-time reconciliation.
 - Supersedes: `NONE`
+
+## BPDC-L020
+
+- Date: 2026-08-24
+- Fact: Immediate contact expression can remain outside autonomous behavior state when it is represented as a separate transient intent selected from existing relationship/personality/current-behavior state. A generation-guarded adapter timer can supersede rapid expressions and restore the unchanged current behavior without adding a response to persistence or offline reconciliation.
+- Evidence: `BPDC-E028`; P7 response state, preservation, learning, adapter, sleep, rapid-click, offline, and regression checks.
+- Confidence: `VERIFIED` for deterministic core/adapter behavior and current pinned reaction mappings; live physical-click expression remains `UNKNOWN`.
+- Scope: BPDC-P7-001 immediate touch response.
+- Supersedes: `NONE`

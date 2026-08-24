@@ -32,10 +32,14 @@ const backwardClock = runBackwardClockExperiment();
 const legacyMigration = runLegacyMigrationExperiment();
 const longAbsence = runLongAbsenceExperiment();
 const integrationHarness = runIntegrationHarnessExperiment();
+const responseState = runInteractionResponseStateExperiment();
+const responsePreservation = runInteractionResponsePreservationExperiment();
+const responseLearning = runInteractionResponseLearningExperiment();
+const responseOffline = runInteractionResponseOfflineExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P6-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness]
+  directive: "BPDC-P7-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -45,6 +49,7 @@ console.log(JSON.stringify({
     presenceTransitions, presenceUtility, presenceDriveEvolution,
     quietNormal, absence, decayContinuity, midnight, idempotentRestart,
     backwardClock, legacyMigration, longAbsence, integrationHarness,
+    responseState, responsePreservation, responseLearning, responseOffline,
   },
   trace24h,
 }, null, 2));
@@ -442,6 +447,87 @@ function runIntegrationHarnessExperiment() {
     savedAtEpochMs: decoded.savedAtEpochMs,
     creatureId: JSON.parse(decoded.creatureSnapshot).creatureId,
   };
+}
+
+function runInteractionResponseStateExperiment() {
+  const enjoy = responseFixture({ bond: 0.95, sociability: 0.95, independence: 0.1 });
+  const neutral = responseFixture({ bond: 0.5, sociability: 0.5, independence: 0.5 });
+  const withdraw = responseFixture({ bond: 0.1, sociability: 0.2, independence: 0.95 });
+  return {
+    status: enjoy.kind === "ENJOY_CONTACT"
+      && neutral.kind === "ACKNOWLEDGE_CONTACT"
+      && withdraw.kind === "WITHDRAW_CONTACT"
+      && enjoy.diagnostics.affinity > neutral.diagnostics.affinity
+      && neutral.diagnostics.affinity > withdraw.diagnostics.affinity ? "PASS" : "FAIL",
+    responses: [enjoy.kind, neutral.kind, withdraw.kind],
+    affinities: [enjoy.diagnostics.affinity, neutral.diagnostics.affinity, withdraw.diagnostics.affinity],
+  };
+}
+
+function runInteractionResponsePreservationExperiment() {
+  const core = CreatureCore.create({ seed: 620 });
+  core.advance(0, createEnvironment({ localTime: 12, userPresent: true }));
+  const before = {
+    behavior: JSON.stringify(core.currentBehavior),
+    rngState: core.rng.getState(),
+    drives: JSON.stringify(core.drives),
+  };
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.4 });
+  const response = core.selectInteractionResponse();
+  const after = {
+    behavior: JSON.stringify(core.currentBehavior),
+    rngState: core.rng.getState(),
+    drives: JSON.stringify(core.drives),
+  };
+  return {
+    status: response.diagnostics && JSON.stringify(before) === JSON.stringify(after) ? "PASS" : "FAIL",
+    response: response.kind,
+    behavior: core.currentBehavior?.action ?? null,
+  };
+}
+
+function runInteractionResponseLearningExperiment() {
+  const core = CreatureCore.create({ seed: 621 });
+  core.advance(0, environmentAt(20));
+  const bondBefore = core.relationship.bond;
+  const habitBefore = core.habit.attentionByHour[20];
+  const event = core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.4 }, environmentAt(20));
+  const response = core.selectInteractionResponse();
+  return {
+    status: event.kind === "POSITIVE_CONTACT"
+      && core.relationship.bond > bondBefore
+      && core.habit.attentionByHour[20] > habitBefore
+      && response.kind ? "PASS" : "FAIL",
+    bondBefore,
+    bondAfter: core.relationship.bond,
+    habitBefore,
+    habitAfter: core.habit.attentionByHour[20],
+    response: response.kind,
+  };
+}
+
+function runInteractionResponseOfflineExperiment() {
+  const savedAt = 6_000_000;
+  const core = CreatureCore.create({ seed: 622 });
+  core.advance(0, (timestamp) => offlineEnvironmentAt(savedAt + timestamp * 1_000, savedAt));
+  const restored = restoreAndReconcile(
+    serializePersistenceEnvelope(core.serialize(), savedAt),
+    { nowEpochMs: savedAt + 6 * 3600 * 1_000, coreFactory: CreatureCore.fromSnapshot },
+  );
+  return {
+    status: !Object.hasOwn(restored, "response") && !Object.hasOwn(restored.core.toSnapshot(), "interactionResponse") ? "PASS" : "FAIL",
+    elapsedSeconds: restored.elapsedSeconds,
+    resumeAction: restored.resumeIntent?.action ?? null,
+  };
+}
+
+function responseFixture({ bond, sociability, independence }) {
+  const core = CreatureCore.create({ seed: 623 });
+  core.advance(0, createEnvironment({ localTime: 12, userPresent: true }));
+  core.relationship.bond = bond;
+  core.personality.sociability = sociability;
+  core.personality.independence = independence;
+  return core.selectInteractionResponse();
 }
 
 function runHours(core, hours, environment) {

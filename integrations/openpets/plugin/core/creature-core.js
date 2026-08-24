@@ -10,7 +10,7 @@ import {
 import { BEHAVIOR_DEFINITIONS, BehaviorScorer, BehaviorSelector } from "./behavior.js";
 import { SeededRng, normalizeSeed } from "./seeded-rng.js";
 import { deserializeSnapshot, SNAPSHOT_SCHEMA_VERSION, serializeSnapshot } from "./persistence.js";
-import { BehaviorIntent } from "./intent.js";
+import { BehaviorIntent, InteractionResponseIntent } from "./intent.js";
 import { normalizeInteractionEvent } from "./interaction.js";
 import {
   decayHabit as decayTimeHabit,
@@ -269,6 +269,42 @@ export class CreatureCore {
     return clone(bounded);
   }
 
+  selectInteractionResponse() {
+    const relationship = this.relationshipForScoring();
+    const currentBehavior = this.currentBehavior?.action ?? "NONE";
+    const currentBehaviorContribution = interactionResponseBehaviorContribution(currentBehavior);
+    const contributors = {
+      bond: relationship.bond * 0.5,
+      sociability: this.personality.sociability * 0.35,
+      independence: (1 - this.personality.independence) * 0.15,
+      currentBehavior: currentBehaviorContribution,
+    };
+    const affinity = Object.values(contributors).reduce((sum, value) => sum + value, 0);
+    const kind = affinity >= 0.64
+      ? "ENJOY_CONTACT"
+      : affinity <= 0.32
+        ? "WITHDRAW_CONTACT"
+        : "ACKNOWLEDGE_CONTACT";
+    const duration = currentBehavior === "SLEEP"
+      ? 0.45
+      : kind === "ENJOY_CONTACT"
+        ? 0.9
+        : kind === "WITHDRAW_CONTACT"
+          ? 0.75
+          : 0.65;
+
+    return new InteractionResponseIntent({
+      kind,
+      duration,
+      diagnostics: {
+        contributors,
+        affinity,
+        thresholds: { withdrawAtOrBelow: 0.32, enjoyAtOrAbove: 0.64 },
+        currentBehavior,
+      },
+    });
+  }
+
   relationshipSnapshot() {
     this.decayRelationship();
     return {
@@ -354,6 +390,13 @@ function summarizeReason(contributors) {
     .slice(0, 3)
     .map(([name, value]) => `${name}=${value.toFixed(3)}`)
     .join(", ");
+}
+
+function interactionResponseBehaviorContribution(action) {
+  if (action === "SLEEP") return -0.4;
+  if (action === "AVOID") return -0.2;
+  if (action === "SEEK_ATTENTION") return 0.04;
+  return 0;
 }
 
 function clone(value) {

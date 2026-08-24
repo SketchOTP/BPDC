@@ -36,7 +36,8 @@ export function register(OpenPetsPlugin) {
     async start(ctx) {
       const adapter = new OpenPetsAdapter(ctx, {
         log: (stage, timestamp, intent, message, details) => log(ctx, stage, timestamp, message, {
-          action: intent.action, utility: intent.score, durationSeconds: intent.duration,
+          action: intent.action ?? null, responseKind: intent.kind ?? null,
+          utility: intent.score, durationSeconds: intent.duration,
           ...(details ? { hostState: details } : {}),
         }),
       });
@@ -108,9 +109,16 @@ export function register(OpenPetsPlugin) {
           const habitBefore = core.habitSnapshot(environment);
           const recorded = core.recordInteraction(event, environment);
           const habitAfter = core.habitSnapshot(environment);
+          const response = core.selectInteractionResponse();
+          const restoreIntent = core.currentIntent();
           log(ctx, "CORE", new Date().toISOString(), "positive interaction recorded", {
             creatureId: core.creatureId,
             interaction: recorded,
+            response: {
+              kind: response.kind,
+              durationSeconds: response.duration,
+              diagnostics: response.diagnostics,
+            },
             relationship: core.relationshipSnapshot(),
             habit: {
               hour: habitAfter.currentHour,
@@ -121,6 +129,7 @@ export function register(OpenPetsPlugin) {
               attentionByHour: habitAfter.attentionByHour,
             },
           });
+          await adapter.executeInteractionResponse(response, restoreIntent);
           await persist(true);
         }).catch((error) => log(ctx, "ERROR", new Date().toISOString(), "interaction handling failed", { message: String(error?.message ?? error) }));
       });

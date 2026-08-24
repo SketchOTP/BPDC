@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P6-001`
-- External directive ID: `BPDC-P6-001`
-- Objective: Reconcile deterministic CreatureCore life across ordinary host shutdown and restart using an integration-owned wall-clock checkpoint.
+- Local directive ID: `BPDC-P7-001`
+- External directive ID: `BPDC-P7-001`
+- Objective: Make direct positive contact produce an immediate, state-dependent visible response while preserving CreatureCore's autonomous behavior authority.
 - Current status: `COMPLETE_FOR_ARCHITECT_HANDOFF`
-- Acceptance: elapsed-time reconciliation, legacy migration, backward-clock protection, quiet/normal equivalence, changing offline local time, immediate persistence, and bounded long-absence performance are implemented and target-tested; live desktop elapsed-time observation remains `UNKNOWN` and is not claimed.
-- Current phase: `Phase 6 — Elapsed-Time Reconciliation` complete for Architect review; no subsequent phase is authorized.
-- Expected touched areas: integration persistence envelope/reconciliation, CreatureCore quiet advancement/current intent, OpenPets plugin bundle, deterministic experiments/tests, README, and Authority records only.
-- Immediate next action: wait for Architect review. Do not start a later phase or add new memory/environment categories.
+- Acceptance: separate transient response intent, three bounded semantics, existing-state selection, inspectable diagnostics, autonomous-state preservation, adapter mapping/restoration, rapid-click coalescing, offline non-fabrication, regression, build, manifest, boundary, privacy, and diff checks are implemented and target-tested; live new-response observation remains `UNKNOWN` and is not claimed.
+- Current phase: `Phase 7 — Immediate Touch Response` complete for Architect review; no subsequent phase is authorized.
+- Expected touched areas: CreatureCore interaction response intent/selection, OpenPets adapter response mapping/restoration, plugin interaction pipeline, deterministic experiments/tests, README, generated plugin, and Authority records only.
+- Immediate next action: wait for Architect review. Do not start Phase 8 or add new emotional, memory, sensing, or autonomous-behavior categories.
 
 ## Temporary task-relevant facts
 
@@ -24,8 +24,8 @@
 
 ## Last validation
 
-- Command or check: `node --test`, P4 experiment suite, manifest validation, local-staged OpenPets build, dependency/time scan, and `git diff --check`
-- Result: `PASSED`; 17/17 tests, experiment suite PASS, manifest PASS, staged bundle PASS at 34,901 bytes, core scan clean, migration review PASS, publication-safety scan PASS, and diff check PASS. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Product commit `cb5d6ad1b61a3833582781a9f169ea53954b7d67` and final Authority closure commit are published; local `main == origin/main`. Habit-specific live evidence remains `UNKNOWN`/deferred.
+- Command or check: `node --test`, `node src/cli/experiments.js`, adapter response harness, manifest validation, local-staged OpenPets build, dependency/privacy/publication-safety scans, and `git diff --check`
+- Result: `PASSED`; 38/38 tests, BPDC-P7-001 experiment suite PASS, adapter/state/preservation/learning/sleep/rapid-click/offline checks PASS, manifest PASS, staged bundle PASS at 48,071 bytes, boundary/privacy/publication-safety scans PASS, and diff check PASS. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Live Windows/Electron observation of the new contact expression remains `UNKNOWN`/not claimed.
 
 ## Risks and blockers
 
@@ -43,7 +43,8 @@
 - Phase 6 implementation: integration-owned version-1 envelope stores `savedAtEpochMs` beside the existing serialized schema-3 snapshot; legacy raw snapshots receive zero invented catch-up and migrate on save; backward clocks skip catch-up; offline environment is absent with changing local time; quiet reconciliation uses the existing deterministic core path; only the current resume intent is expressed.
 - Phase 6 validation: `node --test` 31/31, `node src/cli/experiments.js` BPDC-P6-001 PASS, OpenPets manifest PASS, local-staged bundle PASS at 43,351 bytes, core wall-clock boundary scan PASS, privacy scan PASS, and `git diff --check` PASS. Canonical UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds. Live desktop elapsed-time observation is `UNKNOWN`/not claimed.
 - Phase 6 publication: product and Authority implementation commit `2e4ff7eb261b1df1c8db57392cfa4bbee9b99b61` was pushed normally; final Authority closure verification is recorded after the follow-up records-only commit.
+- Phase 7 implementation: `InteractionResponseIntent` is transient and non-persistent; `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, and `WITHDRAW_CONTACT` are selected from existing bond/personality/current behavior. The adapter maps them to existing reactions and uses one generation-guarded restoration timer; no autonomous behavior/timing/RNG/drive state is replaced.
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, accepted `BPDC-P5-001`, and issued `BPDC-P6-001`; P6 is complete for Architect handoff and no subsequent phase is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, accepted `BPDC-P5-001`, accepted `BPDC-P6-001`, and issued `BPDC-P7-001`; P7 is complete for Architect handoff and no subsequent phase is authorized.

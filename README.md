@@ -47,6 +47,10 @@ The integration stores a version-1 persistence envelope containing the existing 
 
 The plugin translates only OpenPets' curated `idle:enter`, `idle:exit`, `screen:locked`, and `screen:unlocked` events into a transient `PresenceTracker`. The tracker exposes `ACTIVE`, `IDLE`, and `LOCKED` semantics through the existing host-neutral `userPresent` and `userIdleDuration` environment fields; direct pet interaction also establishes active presence. Startup is conservatively `UNKNOWN`, which maps to absent/zero-duration until an explicit signal arrives. Presence is not persisted and no keystrokes, clipboard contents, screen pixels, window titles, application names, or document contents are collected.
 
+## Transient contact expression
+
+After a normalized `POSITIVE_CONTACT` is learned, CreatureCore returns a separate, non-persistent `InteractionResponseIntent`. It uses only existing bond, sociability, independence, and current-behavior state to choose one of `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, or `WITHDRAW_CONTACT`. The response does not call the autonomous selector, consume RNG, replace behavior timing, or advance simulation time. The OpenPets adapter maps the response to an existing placeholder reaction, coalesces rapid responses to one restoration timer, and restores the still-current autonomous behavior afterward. Offline elapsed-time reconciliation never fabricates a contact response.
+
 ## Boundary
 
 ```text

@@ -246,3 +246,14 @@
 - Evidence: `BPDC-E027`; 31/31 tests, P6 experiments A–I, persistence harness, manifest, staged bundle, core/privacy scans, publication-safety scan, and diff check passed.
 - Limitation: live Windows/Electron elapsed-time observation remains `UNKNOWN` and not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while staging succeeds.
 - Supersession: `BPDC-P6-001-IMPLEMENTATION-COMPLETE` pending-acceptance state.
+
+## BPDC-P7-001-IMPLEMENTATION-COMPLETE
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P7-001-IMPLEMENTATION-COMPLETE`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Implement the authorized transient contact-expression layer without changing autonomous behavior authority.
+- Evidence: `BPDC-E028`; separate host-neutral response intent; three bounded semantics; state-dependent diagnostics; unchanged current behavior/timing/RNG/drives; adapter mapping/restoration; rapid-click coalescing; offline non-fabrication; 38/38 regression; P7 experiments; manifest/staged build; boundary/privacy/publication-safety scans; diff check.
+- Limitation: live Windows/Electron physical-click observation of the new response remains `UNKNOWN` and is not claimed, as permitted by the directive.
+- Boundary: no new autonomous behavior, state dimension, persistence field, utility weight, privacy-sensitive sensing, OpenPets core change, or later phase.
+- Supersession: `BPDC-P6-001-PUBLISHED` as the active implementation stage.

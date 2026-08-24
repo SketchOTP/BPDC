@@ -1,5 +1,5 @@
 export { CreatureCore } from "./creature-core.js";
-export { BehaviorIntent } from "./intent.js";
+export { BehaviorIntent, InteractionResponseIntent, INTERACTION_RESPONSE_KINDS } from "./intent.js";
 export { InteractionEvent, INTERACTION_KINDS, normalizeInteractionEvent } from "./interaction.js";
 export { SimulationClock } from "./clock.js";
 export { SeededRng, normalizeSeed } from "./seeded-rng.js";

@@ -411,6 +411,24 @@ var BehaviorIntent = class {
     this.interruptible = interruptible;
   }
 };
+var INTERACTION_RESPONSE_KINDS = [
+  "ENJOY_CONTACT",
+  "ACKNOWLEDGE_CONTACT",
+  "WITHDRAW_CONTACT"
+];
+var InteractionResponseIntent = class {
+  constructor({ kind, duration, diagnostics }) {
+    if (!INTERACTION_RESPONSE_KINDS.includes(kind)) {
+      throw new RangeError(`Unknown interaction response kind: ${kind}`);
+    }
+    if (!Number.isFinite(duration) || duration <= 0) {
+      throw new RangeError("Interaction response duration must be positive.");
+    }
+    this.kind = kind;
+    this.duration = duration;
+    this.diagnostics = diagnostics;
+  }
+};
 
 // integrations/openpets/plugin/core/interaction.js
 var INTERACTION_KINDS = ["POSITIVE_CONTACT", "NEGATIVE_CONTACT"];
@@ -671,6 +689,30 @@ var CreatureCore = class _CreatureCore {
     }
     return clone(bounded);
   }
+  selectInteractionResponse() {
+    const relationship = this.relationshipForScoring();
+    const currentBehavior = this.currentBehavior?.action ?? "NONE";
+    const currentBehaviorContribution = interactionResponseBehaviorContribution(currentBehavior);
+    const contributors = {
+      bond: relationship.bond * 0.5,
+      sociability: this.personality.sociability * 0.35,
+      independence: (1 - this.personality.independence) * 0.15,
+      currentBehavior: currentBehaviorContribution
+    };
+    const affinity = Object.values(contributors).reduce((sum, value) => sum + value, 0);
+    const kind = affinity >= 0.64 ? "ENJOY_CONTACT" : affinity <= 0.32 ? "WITHDRAW_CONTACT" : "ACKNOWLEDGE_CONTACT";
+    const duration = currentBehavior === "SLEEP" ? 0.45 : kind === "ENJOY_CONTACT" ? 0.9 : kind === "WITHDRAW_CONTACT" ? 0.75 : 0.65;
+    return new InteractionResponseIntent({
+      kind,
+      duration,
+      diagnostics: {
+        contributors,
+        affinity,
+        thresholds: { withdrawAtOrBelow: 0.32, enjoyAtOrAbove: 0.64 },
+        currentBehavior
+      }
+    });
+  }
   relationshipSnapshot() {
     this.decayRelationship();
     return {
@@ -740,6 +782,12 @@ function resolveEnvironment(environmentInput, timestamp) {
 function summarizeReason(contributors) {
   return Object.entries(contributors).filter(([, value]) => Math.abs(value) >= 0.08).sort((left, right) => Math.abs(right[1]) - Math.abs(left[1])).slice(0, 3).map(([name, value]) => `${name}=${value.toFixed(3)}`).join(", ");
 }
+function interactionResponseBehaviorContribution(action) {
+  if (action === "SLEEP") return -0.4;
+  if (action === "AVOID") return -0.2;
+  if (action === "SEEK_ATTENTION") return 0.04;
+  return 0;
+}
 function clone(value) {
   return value === null || value === void 0 ? value : JSON.parse(JSON.stringify(value));
 }
@@ -768,23 +816,47 @@ var REACTION_BY_ACTION = {
   AVOID: "failed",
   SLEEP: "waiting"
 };
+var INTERACTION_RESPONSE_KINDS2 = /* @__PURE__ */ new Set([
+  "ENJOY_CONTACT",
+  "ACKNOWLEDGE_CONTACT",
+  "WITHDRAW_CONTACT"
+]);
+var REACTION_BY_INTERACTION_RESPONSE = {
+  ENJOY_CONTACT: "celebrating",
+  ACKNOWLEDGE_CONTACT: "waving",
+  WITHDRAW_CONTACT: "failed"
+};
 function clampDurationMs(seconds) {
   return Math.max(250, Math.min(1500, Math.round(seconds * 1e3)));
 }
 var OpenPetsAdapter = class {
   constructor(ctx, { log: log2 = () => {
-  } } = {}) {
+  }, setTimeoutFn = globalThis.setTimeout, clearTimeoutFn = globalThis.clearTimeout } = {}) {
     this.ctx = ctx;
     this.log = log2;
+    this.setTimeoutFn = setTimeoutFn;
+    this.clearTimeoutFn = clearTimeoutFn;
+    this.interactionExpressionTimer = null;
+    this.interactionExpressionGeneration = 0;
   }
   async execute(intent) {
+    this.cancelInteractionResponse();
+    return this.executeBehavior(intent);
+  }
+  async executeBehavior(intent, { generation = null } = {}) {
     if (!intent || !ACTIONS2.has(intent.action)) {
       throw new TypeError(`Unsupported BehaviorIntent action: ${intent?.action}`);
+    }
+    if (generation !== null && generation !== this.interactionExpressionGeneration) {
+      return { command: "stale interaction restoration suppressed", stale: true };
     }
     const durationMs = clampDurationMs(intent.duration ?? 1);
     const startedAt = (/* @__PURE__ */ new Date()).toISOString();
     this.log("ADAPT", startedAt, intent, "pending");
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
+    if (generation !== null && generation !== this.interactionExpressionGeneration) {
+      return { command: "stale interaction restoration suppressed", stale: true };
+    }
     let command;
     if (intent.action === "WANDER") {
       await this.ctx.pet.wander({ distance: 110, durationMs });
@@ -797,6 +869,38 @@ var OpenPetsAdapter = class {
     const hostState = await this.getExecutionState();
     this.log("HOST", (/* @__PURE__ */ new Date()).toISOString(), intent, `${command} result=accepted`, hostState);
     return { command, hostState };
+  }
+  async executeInteractionResponse(intent, restoreIntent = null) {
+    if (!intent || !INTERACTION_RESPONSE_KINDS2.has(intent.kind)) {
+      throw new TypeError(`Unsupported InteractionResponseIntent kind: ${intent?.kind}`);
+    }
+    this.cancelInteractionResponse();
+    const generation = this.interactionExpressionGeneration;
+    const reaction = REACTION_BY_INTERACTION_RESPONSE[intent.kind];
+    await this.ctx.pet.react(reaction, { showMessage: false });
+    this.log("ADAPT", (/* @__PURE__ */ new Date()).toISOString(), intent, `pet.react(${reaction}) response=accepted`, {
+      reaction,
+      restoreAction: restoreIntent?.action ?? null
+    });
+    if (restoreIntent) {
+      this.interactionExpressionTimer = this.setTimeoutFn(() => {
+        if (generation !== this.interactionExpressionGeneration) return;
+        this.interactionExpressionTimer = null;
+        void this.executeBehavior(restoreIntent, { generation });
+      }, clampDurationMs(intent.duration));
+    }
+    return {
+      command: `pet.react(${reaction})`,
+      restoreScheduled: Boolean(restoreIntent),
+      activeExpressions: this.interactionExpressionTimer ? 1 : 0
+    };
+  }
+  cancelInteractionResponse() {
+    this.interactionExpressionGeneration += 1;
+    if (this.interactionExpressionTimer !== null) {
+      this.clearTimeoutFn(this.interactionExpressionTimer);
+      this.interactionExpressionTimer = null;
+    }
   }
   async getExecutionState() {
     return this.ctx.pet.getState();
@@ -825,6 +929,7 @@ var OpenPetsAdapter = class {
     return () => subscriptions.forEach((unsubscribe) => unsubscribe?.());
   }
   async shutdown() {
+    this.cancelInteractionResponse();
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
   }
 };
@@ -1039,7 +1144,8 @@ function register(OpenPetsPlugin) {
     async start(ctx) {
       const adapter = new OpenPetsAdapter(ctx, {
         log: (stage, timestamp, intent, message, details) => log(ctx, stage, timestamp, message, {
-          action: intent.action,
+          action: intent.action ?? null,
+          responseKind: intent.kind ?? null,
           utility: intent.score,
           durationSeconds: intent.duration,
           ...details ? { hostState: details } : {}
@@ -1115,9 +1221,16 @@ function register(OpenPetsPlugin) {
           const habitBefore = core.habitSnapshot(environment);
           const recorded = core.recordInteraction(event, environment);
           const habitAfter = core.habitSnapshot(environment);
+          const response = core.selectInteractionResponse();
+          const restoreIntent = core.currentIntent();
           log(ctx, "CORE", (/* @__PURE__ */ new Date()).toISOString(), "positive interaction recorded", {
             creatureId: core.creatureId,
             interaction: recorded,
+            response: {
+              kind: response.kind,
+              durationSeconds: response.duration,
+              diagnostics: response.diagnostics
+            },
             relationship: core.relationshipSnapshot(),
             habit: {
               hour: habitAfter.currentHour,
@@ -1128,6 +1241,7 @@ function register(OpenPetsPlugin) {
               attentionByHour: habitAfter.attentionByHour
             }
           });
+          await adapter.executeInteractionResponse(response, restoreIntent);
           await persist(true);
         }).catch((error) => log(ctx, "ERROR", (/* @__PURE__ */ new Date()).toISOString(), "interaction handling failed", { message: String(error?.message ?? error) }));
       });

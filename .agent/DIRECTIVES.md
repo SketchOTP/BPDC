@@ -229,3 +229,15 @@
 - Acceptance: all 24 criteria in the Architect directive, including exact quiet/normal state equivalence, six-hour absence, decay continuity, local-time transition, zero double-advance, backward-clock safety, legacy migration, practical 30-day catch-up, immediate persistence, and preserved privacy boundary.
 - Live evidence policy: live desktop elapsed-time observation is optional and remains separately classified; deterministic OpenPets persistence harness evidence is required for this handoff.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-P7-001
+
+- Issued: 2026-08-24 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-P6-001`
+- Objective: Make direct positive contact produce an immediate, state-dependent visible response while preserving CreatureCore's existing autonomous behavior authority.
+- Scope: one separate host-neutral transient `InteractionResponseIntent`; no more than three response semantics; CreatureCore response selection from existing bond/personality/current behavior; inspectable diagnostics; OpenPets adapter translation to existing reactions; race-safe transient restoration; rapid-click coalescing; deterministic state, preservation, learning, adapter, sleep, burst, offline, build, manifest, boundary, privacy, and diff validation.
+- Exclusions: no new autonomous actions, mood/emotion system, touch-location/cursor sensing, relationship dimensions, habits, location memory, feeding/hunger, development/evolution, new sounds/assets, LLM functionality, utility retuning, OpenPets core changes, or subsequent phase.
+- Live evidence policy: live physical-click observation is useful but not blocking; if unavailable, classify the response mechanism at its actual tested evidence level and do not claim `E5_OPERATIONALLY_OBSERVED`.
+- Acceptance: all 20 criteria in the Architect directive, including 31-test/P4-P6 regression, host-neutral response ownership, bounded vocabulary, autonomous-state preservation, adapter distinction/restoration, rapid-click safety, offline non-fabrication, privacy/boundary checks, and no Phase 8.
+- Discovery: not required unless OpenPets response semantics prove ambiguous; existing reaction mappings are sufficient for this bounded implementation.
+- Status at issuance: `AUTHORIZED`

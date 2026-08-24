@@ -292,3 +292,15 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: `node --test` 31/31; `node src/cli/experiments.js` BPDC-P6-001 PASS; quiet/normal equivalence PASS; six-hour absence PASS; relationship/habit decay PASS; midnight crossing PASS; idempotent restart PASS; backward clock PASS; legacy migration PASS; 24-hour/7-day/30-day timing PASS at approximately 13ms/81ms/340ms; OpenPets persistence harness PASS; manifest PASS; local-staged bundle PASS at 43,351 bytes; core wall-clock boundary scan PASS; privacy scan PASS; `git diff --check` PASS.
 - Persistence findings: legacy raw schema-3 storage receives zero invented catch-up and is migrated on its next save; negative elapsed time performs zero catch-up and logs a diagnostic; immediate restart at the new checkpoint applies zero additional elapsed time.
 - Reliability/limitations: deterministic target/regression evidence only. Live Windows/Electron elapsed-time observation is `UNKNOWN` and is not claimed; canonical UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
+
+## BPDC-E028 — Phase 7 transient contact expression
+
+- Created: 2026-08-24 America/New_York
+- Directive/outcome: `BPDC-P7-001` / pending Architect acceptance
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; after existing positive-contact learning, CreatureCore selects a separate non-persistent `InteractionResponseIntent` from bond, sociability, independence, and current behavior. The bounded vocabulary is `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, and `WITHDRAW_CONTACT`; diagnostics expose the contributing values and affinity thresholds.
+- Preservation: response selection does not call the autonomous utility selector, consume RNG, advance time, replace current behavior, alter behavior timing, or alter drives. Existing relationship, habit, and presence learning remains on the same interaction path.
+- Adapter: existing OpenPets reactions map enjoy → `celebrating`, acknowledge → `waving`, and withdraw → `failed`. A single generation-guarded restoration timer supersedes prior transient expressions and restores the supplied current autonomous intent; stale restorations are suppressed.
+- Validation: `node --test` 38/38; `node src/cli/experiments.js` BPDC-P7-001 PASS including response state, preservation, learning, and offline experiments; adapter response harness, sleep constraint, rapid-click stress, and offline regression PASS; manifest PASS; local-staged bundle PASS at 48,071 bytes; CreatureCore boundary PASS; privacy scan PASS; publication-safety scan PASS; `git diff --check` PASS.
+- Reliability/limitations: live Windows/Electron physical-click observation for the new transient response is `UNKNOWN`/not claimed and is non-blocking under the directive. Existing Phase 3 click seam remains accepted separately. Direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.

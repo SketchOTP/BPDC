@@ -38,3 +38,12 @@ This map covers the governance bootstrap only. It is not an exhaustive applicati
 - `assets/bpdc-test-pet/` — original temporary 8×9 sprite sheet and pet manifest.
 - `tests/desktop-adapter.test.js` — mapping and behavior-authority boundary tests.
 - `.agent/tasks/active/BPDC-P2-001.md` — current Architect handoff packet.
+
+## BPDC-P7-001 verified expression map
+
+- `src/creature-core/intent.js` — host-neutral `InteractionResponseIntent` and the bounded response vocabulary.
+- `src/creature-core/creature-core.js` — state-dependent transient response selection and diagnostics; autonomous behavior state remains separate.
+- `integrations/openpets/openpets-adapter.js` — existing reaction mapping, superseding expression timer, and current-behavior restoration.
+- `integrations/openpets/plugin/index.src.js` — physical interaction pipeline from relationship learning to transient response execution and persistence.
+- `tests/interaction-response.test.js` — state dependence, autonomous-state preservation, learning regression, sleep constraint, adapter mapping/restoration, rapid-click safety, and offline non-fabrication.
+- `.agent/tasks/active/BPDC-P7-001.md` — current Architect handoff packet.
