@@ -266,3 +266,15 @@
 - Acceptance: all 23 criteria in the Architect directive, with live visual observation useful but non-blocking and classified separately.
 - Discovery: not required; Architect discovery rejected a portable screen grid and authorized the minimal one-site design.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-SYNC-005
+
+- Issued: 2026-08-24 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-P8-001`
+- External directive: `BPDC-SYNC-005`
+- Objective: Publish the accepted Phase 8 implementation and Authority closure to canonical GitHub `main` without changing application behavior.
+- Scope: Authority read, clean-tree and commit verification, fresh fetch, remote-tip and ancestry proof, unpublished-content and publication-safety inspection, 45-test regression, P8 experiment suite, diff check, normal non-force push, final GitHub/local equality verification, clean-worktree verification, and Authority/Notion recording.
+- Exclusions: no REST_SITE changes, affinity retuning, SLEEP-targeting changes, additional sites, Phase 9 work, history rewrite, rebase, squash, force push, live-evidence fabrication, release, deployment, or OpenPets core change.
+- Acceptance: `0b7e70e` and `807d867` are the intended unpublished descendants of `b9d6b5d`; validation and publication-safety checks pass; normal push succeeds; final local `main == origin/main`; worktree clean; live P8 spatial observation remains `UNKNOWN`/not claimed.
+- Discovery: not required; repository durability only.
+- Status at issuance: `AUTHORIZED`; completed successfully.

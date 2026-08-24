@@ -297,3 +297,16 @@
 - Publication: not pushed; `origin/main` remains at accepted P7 publication `b9d6b5d` pending separate authorization.
 - Verification: post-commit `node --test` 45/45, P8 experiments, generated bundle syntax, and diff check passed; worktree clean before this records-only closure.
 - Evidence: `BPDC-E030`; live P8 visual spatial observation remains `UNKNOWN`/not claimed.
+
+## BPDC-SYNC-005 - PUBLISHED
+
+- Outcome ID: `BPDC-SYNC-005-PUBLISHED`
+- Published: 2026-08-24 America/New_York
+- Acceptance: `PASSED`
+- Local before: `main` at `807d867e898b784b2b0321e0c570db4ea9314ae5`, clean; remote before `origin/main` at `b9d6b5d10e83df54d9e039421d2b40aba1c0176d`.
+- Unpublished commits: `0b7e70e` (`feat: teach one persistent rest site`) and `807d867` (`chore: record Phase 8 authority handoff`); no unexpected source or generated files.
+- Ancestry: freshly fetched `origin/main` was an ancestor of local `HEAD`.
+- Validation: 45/45 tests; P8 experiment suite PASS; `git diff --check` PASS; publication-safety scan PASS with zero unexpected filenames, secret-pattern findings, or out-of-scope files.
+- Publication: normal `git push origin main` succeeded; final local `main == origin/main == 807d867e898b784b2b0321e0c570db4ea9314ae5`; worktree clean; no history rewrite.
+- Evidence boundary: live P8 drag/return/SLEEP visual observation remains `UNKNOWN`/not claimed.
+- Next boundary: Phase 8 is closed; await a new Architect directive; do not start Phase 9.

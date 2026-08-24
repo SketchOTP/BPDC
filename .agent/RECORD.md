@@ -310,3 +310,13 @@
 - Publication: no push performed; GitHub remains at `b9d6b5d` pending separate authorization.
 - Validation: post-commit 45/45 tests, P8 experiments, bundle syntax, and diff check passed; live spatial observation remains `UNKNOWN`/not claimed.
 - Supersession: `BPDC-P8-001-IMPLEMENTATION-COMPLETE` remains the implementation evidence record.
+
+## BPDC-SYNC-005-PUBLISHED
+
+- Date: 2026-08-24
+- Record ID: `BPDC-SYNC-005-PUBLISHED`
+- Status: `PASSED`
+- Decision: Publish the accepted Phase 8 implementation and Authority closure without application changes or history rewriting.
+- Publication: normal non-force push succeeded from `b9d6b5d10e83df54d9e039421d2b40aba1c0176d` to `807d867e898b784b2b0321e0c570db4ea9314ae5`; local `main == origin/main`; worktree clean.
+- Validation: 45/45 tests, P8 experiments, diff check, and publication-safety scan passed; zero unexpected filenames, secret-pattern findings, or out-of-scope files.
+- Boundary: live P8 drag/return/SLEEP visual observation remains `UNKNOWN`/not claimed; no Phase 9 work started.

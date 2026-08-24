@@ -7,15 +7,17 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P8-001`
-- External directive ID: `BPDC-P8-001`
-- Objective: Implement one persistent abstract `REST_SITE` preference from repeated user placement, with all raw geometry confined to the OpenPets integration.
-- Current status: `IMPLEMENTED_PENDING_ARCHITECT_ACCEPTANCE`
-- Acceptance: P8 implementation is target-tested and regression-protected; local live visual evidence is `UNKNOWN`/not claimed and is non-blocking under the directive.
-- Current phase: `Phase 8 — Spatial Habitat Familiarity` implementation complete for handoff; no Phase 9 work is authorized.
+- Local directive ID: `BPDC-SYNC-005`
+- External directive ID: `BPDC-SYNC-005`
+- Objective: Publish the accepted Phase 8 implementation and Authority closure to canonical GitHub `main` without changing application behavior.
+- Current status: `COMPLETED`
+- Acceptance: P8 is Architect-accepted and published; local `main == origin/main`; worktree is clean; live spatial observation remains `UNKNOWN`/not claimed.
+- Current phase: `Phase 8 — Spatial Habitat Familiarity` closed; awaiting a new Architect directive; no Phase 9 work is authorized.
 - Expected touched areas: CreatureCore schema/persistence, OpenPets integration tracker/adapter, generated plugin, tests, README, and Authority records.
-- Immediate next action: Architect review of `BPDC-P8-001`; do not add multiple sites, grids, pathfinding, new utility weights, or a subsequent phase.
-- Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); not pushed.
+- Immediate next action: await the next Architect directive; do not add multiple sites, grids, pathfinding, new utility weights, or a subsequent phase.
+- Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
+- Authority closure commit: `807d867` (`chore: record Phase 8 authority handoff`); published.
+- Publication result: normal non-force push succeeded; final SHA `807d867e898b784b2b0321e0c570db4ea9314ae5`.
 
 ## Temporary task-relevant facts
 
@@ -26,7 +28,7 @@
 ## Last validation
 
 - Command or check: `node --test`, `node src/cli/experiments.js`, adapter response harness, manifest validation, local-staged OpenPets build, dependency/privacy/publication-safety scans, and `git diff --check`
-- Result: `PASSED`; 45/45 tests, BPDC-P8-001 experiment suite PASS, spatial/adapter/state/persistence/migration/display/utility checks PASS, manifest PASS, staged bundle PASS at 59,600 bytes, boundary/privacy/secret scans PASS, and diff check PASS. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Live Windows/Electron spatial observation remains `UNKNOWN`/not claimed.
+- Result: `PASSED`; 45/45 tests, BPDC-P8-001 experiment suite PASS, spatial/adapter/state/persistence/migration/display/utility checks PASS, manifest PASS, staged bundle PASS at 59,600 bytes, boundary/privacy/secret scans PASS, diff check PASS, publication-safety scan PASS, normal push PASS, and local/remote equality verified at `807d867e898b784b2b0321e0c570db4ea9314ae5`. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Live Windows/Electron spatial observation remains `UNKNOWN`/not claimed.
 
 ## Risks and blockers
 
@@ -49,4 +51,4 @@
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, accepted `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, and `BPDC-SYNC-004`; `BPDC-P8-001` is implemented pending review and no Phase 9 work is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, and `BPDC-P8-001`; `BPDC-SYNC-005` is complete and no Phase 9 work is authorized.

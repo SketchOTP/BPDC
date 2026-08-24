@@ -325,3 +325,13 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - SLEEP: utility scoring is unchanged. Once affinity reaches 0.6 and a coordinate resolves, an already-selected SLEEP intent carries `habitatTarget=REST_SITE`; the adapter calls `moveTo` before the normal waiting reaction and falls back safely when geometry is absent.
 - Validation: `node --test` 45/45; `node src/cli/experiments.js` BPDC-P8-001 PASS; generated bundle syntax check PASS; local-staged plugin build PASS at 59,600 bytes; OpenPets manifest validation PASS; spatial concentration/scatter, saturation, decay/relocation, utility non-interference, dragEnd, REST_SITE moveTo, display invalidation, schema migration, envelope migration, persistence/reload, and P7 regression PASS; CreatureCore boundary scan 0 findings; privacy scan 0 findings; secret scan 0 findings; `git diff --check` PASS.
 - Reliability/limitations: target-tested/regression-protected only. No new live Windows/Electron drag → learned site → SLEEP visual observation was performed or claimed. Canonical UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. jCodemunch-MCP was unavailable and bounded direct reads were used for relevant files.
+
+## BPDC-E031 — Phase 8 accepted publication
+
+- Created: 2026-08-24 America/New_York
+- Directive/outcome: Architect acceptance `BPDC-P8-001` / `BPDC-SYNC-005`
+- Evidence level: `E4_REGRESSION_PROTECTED` for the accepted P8 mechanism; publication durability verified
+- Type: `REPOSITORY_DURABILITY`
+- Result: `PASSED`; local `0b7e70e` product and `807d867` Authority closure were the only unpublished descendants of `b9d6b5d`; freshly fetched `origin/main` was an ancestor; no unexpected files or publication-safety findings were present; 45/45 tests, P8 experiments, diff check, and safety scan passed; normal non-force push published `main` at `807d867e898b784b2b0321e0c570db4ea9314ae5`.
+- Final state: local `main == origin/main == 807d867e898b784b2b0321e0c570db4ea9314ae5`; worktree clean; no history rewrite; no Phase 9 work started.
+- Reliability/limitations: live Windows/Electron drag → learned site → SLEEP observation remains `UNKNOWN`/not claimed. Canonical UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds.
