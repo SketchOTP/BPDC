@@ -17,7 +17,7 @@
 - Immediate next action: await the next Architect directive; do not add multiple sites, grids, pathfinding, new utility weights, or a subsequent phase.
 - Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
 - Authority closure commit: `807d867` (`chore: record Phase 8 authority handoff`); published.
-- Publication result: normal non-force push succeeded; final SHA `807d867e898b784b2b0321e0c570db4ea9314ae5`.
+- Publication result: normal non-force push published the accepted P8 state at `807d867e898b784b2b0321e0c570db4ea9314ae5`; the records-only sync closure is final at `7e85eba25b9a9934ec74a53d7a94555d89ff6c85`.
 
 ## Temporary task-relevant facts
 
@@ -28,7 +28,7 @@
 ## Last validation
 
 - Command or check: `node --test`, `node src/cli/experiments.js`, adapter response harness, manifest validation, local-staged OpenPets build, dependency/privacy/publication-safety scans, and `git diff --check`
-- Result: `PASSED`; 45/45 tests, BPDC-P8-001 experiment suite PASS, spatial/adapter/state/persistence/migration/display/utility checks PASS, manifest PASS, staged bundle PASS at 59,600 bytes, boundary/privacy/secret scans PASS, diff check PASS, publication-safety scan PASS, normal push PASS, and local/remote equality verified at `807d867e898b784b2b0321e0c570db4ea9314ae5`. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Live Windows/Electron spatial observation remains `UNKNOWN`/not claimed.
+- Result: `PASSED`; 45/45 tests, BPDC-P8-001 experiment suite PASS, spatial/adapter/state/persistence/migration/display/utility checks PASS, manifest PASS, staged bundle PASS at 59,600 bytes, boundary/privacy/secret scans PASS, diff check PASS, publication-safety scan PASS, normal pushes PASS, and final local/remote equality verified at `7e85eba25b9a9934ec74a53d7a94555d89ff6c85`. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Live Windows/Electron spatial observation remains `UNKNOWN`/not claimed.
 
 ## Risks and blockers
 

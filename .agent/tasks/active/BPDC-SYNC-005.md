@@ -17,7 +17,8 @@ Publish the Architect-accepted Phase 8 implementation and Authority closure to c
 - `git diff --check`: PASS.
 - Publication-safety scan: PASS; zero unexpected filenames, secret-pattern findings, or out-of-scope files.
 - Normal `git push origin main`: PASS.
-- Final local and remote SHA: `807d867e898b784b2b0321e0c570db4ea9314ae5`.
+- Accepted P8 publication SHA: `807d867e898b784b2b0321e0c570db4ea9314ae5`.
+- Final local and remote SHA after records-only closure: `7e85eba25b9a9934ec74a53d7a94555d89ff6c85`.
 - Final worktree: clean.
 
 ## Evidence boundary

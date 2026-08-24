@@ -332,6 +332,6 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Directive/outcome: Architect acceptance `BPDC-P8-001` / `BPDC-SYNC-005`
 - Evidence level: `E4_REGRESSION_PROTECTED` for the accepted P8 mechanism; publication durability verified
 - Type: `REPOSITORY_DURABILITY`
-- Result: `PASSED`; local `0b7e70e` product and `807d867` Authority closure were the only unpublished descendants of `b9d6b5d`; freshly fetched `origin/main` was an ancestor; no unexpected files or publication-safety findings were present; 45/45 tests, P8 experiments, diff check, and safety scan passed; normal non-force push published `main` at `807d867e898b784b2b0321e0c570db4ea9314ae5`.
-- Final state: local `main == origin/main == 807d867e898b784b2b0321e0c570db4ea9314ae5`; worktree clean; no history rewrite; no Phase 9 work started.
+- Result: `PASSED`; local `0b7e70e` product and `807d867` Authority closure were the only unpublished descendants of `b9d6b5d`; freshly fetched `origin/main` was an ancestor; no unexpected files or publication-safety findings were present; 45/45 tests, P8 experiments, diff check, and safety scan passed; normal non-force push published `main` at `807d867e898b784b2b0321e0c570db4ea9314ae5`, followed by a records-only closure push.
+- Final state: local `main == origin/main == 7e85eba25b9a9934ec74a53d7a94555d89ff6c85`; worktree clean; no history rewrite; no Phase 9 work started.
 - Reliability/limitations: live Windows/Electron drag → learned site → SLEEP observation remains `UNKNOWN`/not claimed. Canonical UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds.

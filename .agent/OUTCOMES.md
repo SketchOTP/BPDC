@@ -307,6 +307,6 @@
 - Unpublished commits: `0b7e70e` (`feat: teach one persistent rest site`) and `807d867` (`chore: record Phase 8 authority handoff`); no unexpected source or generated files.
 - Ancestry: freshly fetched `origin/main` was an ancestor of local `HEAD`.
 - Validation: 45/45 tests; P8 experiment suite PASS; `git diff --check` PASS; publication-safety scan PASS with zero unexpected filenames, secret-pattern findings, or out-of-scope files.
-- Publication: normal `git push origin main` succeeded; final local `main == origin/main == 807d867e898b784b2b0321e0c570db4ea9314ae5`; worktree clean; no history rewrite.
+- Publication: normal `git push origin main` succeeded for the accepted P8 state, followed by a records-only closure push; final local `main == origin/main == 7e85eba25b9a9934ec74a53d7a94555d89ff6c85`; worktree clean; no history rewrite.
 - Evidence boundary: live P8 drag/return/SLEEP visual observation remains `UNKNOWN`/not claimed.
 - Next boundary: Phase 8 is closed; await a new Architect directive; do not start Phase 9.
