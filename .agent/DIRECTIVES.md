@@ -241,3 +241,14 @@
 - Acceptance: all 20 criteria in the Architect directive, including 31-test/P4-P6 regression, host-neutral response ownership, bounded vocabulary, autonomous-state preservation, adapter distinction/restoration, rapid-click safety, offline non-fabrication, privacy/boundary checks, and no Phase 8.
 - Discovery: not required unless OpenPets response semantics prove ambiguous; existing reaction mappings are sufficient for this bounded implementation.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-SYNC-004
+
+- Issued: 2026-08-24 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-P7-001`
+- Objective: Publish the already-accepted Phase 7 implementation and Authority closure to canonical GitHub `main` without changing application behavior.
+- Scope: current Authority read, clean-tree and commit verification, fresh fetch, ancestry/content/safety validation, 38-test regression, diff check, normal non-force push, exact local/remote equality verification, and Authority/Notion recording.
+- Exclusions: no P7 behavior edits, response retuning, spatial memory, new expression/behavior, utility changes, Phase 8, amend/rebase/squash, force push, live-evidence fabrication, release, deployment, or OpenPets core change.
+- Acceptance: accepted commits `98b506d` and `619b35e` are verified as the only unpublished descendants of `bdeffd9`; validation and publication-safety checks pass; normal push succeeds; local `main == origin/main`; worktree clean; live P7 observation remains `UNKNOWN`.
+- Discovery: not required; repository durability only.
+- Status at issuance: `AUTHORIZED`; completed successfully.

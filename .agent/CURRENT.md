@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P7-001`
-- External directive ID: `BPDC-P7-001`
-- Objective: Make direct positive contact produce an immediate, state-dependent visible response while preserving CreatureCore's autonomous behavior authority.
-- Current status: `COMPLETE_FOR_ARCHITECT_HANDOFF`
-- Acceptance: separate transient response intent, three bounded semantics, existing-state selection, inspectable diagnostics, autonomous-state preservation, adapter mapping/restoration, rapid-click coalescing, offline non-fabrication, regression, build, manifest, boundary, privacy, and diff checks are implemented and target-tested; live new-response observation remains `UNKNOWN` and is not claimed.
-- Current phase: `Phase 7 — Immediate Touch Response` complete for Architect review; no subsequent phase is authorized.
-- Expected touched areas: CreatureCore interaction response intent/selection, OpenPets adapter response mapping/restoration, plugin interaction pipeline, deterministic experiments/tests, README, generated plugin, and Authority records only.
-- Immediate next action: wait for Architect review. Do not start Phase 8 or add new emotional, memory, sensing, or autonomous-behavior categories.
+- Local directive ID: `BPDC-SYNC-004`
+- External directive ID: `BPDC-SYNC-004`
+- Objective: Publish the Architect-accepted Phase 7 implementation and Authority closure without changing application behavior.
+- Current status: `SYNCHRONIZED`
+- Acceptance: Architect accepted P7; the accepted product and Authority closure were published by normal non-force push under `BPDC-SYNC-004`; local `main == origin/main` at `619b35e1e2020ba9157d16d5241628f73a83395c` and the worktree is clean. Live new-response observation remains `UNKNOWN` and is not claimed.
+- Current phase: `Phase 7 — Immediate Touch Response` closed and synchronized; no Phase 8 work is authorized.
+- Expected touched areas: Authority records and Notion synchronization only; no application changes.
+- Immediate next action: wait for a new Architect directive. Do not start Phase 8 or add new emotional, memory, sensing, or autonomous-behavior categories.
 
 ## Temporary task-relevant facts
 
@@ -44,8 +44,8 @@
 - Phase 6 validation: `node --test` 31/31, `node src/cli/experiments.js` BPDC-P6-001 PASS, OpenPets manifest PASS, local-staged bundle PASS at 43,351 bytes, core wall-clock boundary scan PASS, privacy scan PASS, and `git diff --check` PASS. Canonical UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds. Live desktop elapsed-time observation is `UNKNOWN`/not claimed.
 - Phase 6 publication: product and Authority implementation commit `2e4ff7eb261b1df1c8db57392cfa4bbee9b99b61` was pushed normally; final Authority closure verification is recorded after the follow-up records-only commit.
 - Phase 7 implementation: `InteractionResponseIntent` is transient and non-persistent; `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, and `WITHDRAW_CONTACT` are selected from existing bond/personality/current behavior. The adapter maps them to existing reactions and uses one generation-guarded restoration timer; no autonomous behavior/timing/RNG/drive state is replaced.
-- Phase 7 publication: local commit `98b506d` (`feat: express immediate contact response`) contains product, generated plugin, tests, README, and Authority records. It is not pushed; GitHub remains at accepted Phase 6 head `bdeffd9` pending separate authorization.
+- Phase 7 publication: product commit `98b506d` (`feat: express immediate contact response`) and Authority closure `619b35e` were published normally under `BPDC-SYNC-004`; GitHub `main`, local `main`, and `origin/main` now equal `619b35e1e2020ba9157d16d5241628f73a83395c`.
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, accepted `BPDC-P5-001`, accepted `BPDC-P6-001`, and issued `BPDC-P7-001`; P7 is complete for Architect handoff and no subsequent phase is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, accepted `BPDC-P5-001`, accepted `BPDC-P6-001`, accepted `BPDC-P7-001`, and accepted `BPDC-SYNC-004`; no subsequent phase is authorized.

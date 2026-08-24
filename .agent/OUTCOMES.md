@@ -254,3 +254,24 @@
 - Publication: not pushed; local `main` is intentionally one commit ahead of `origin/main` at accepted Phase 6 head `bdeffd9` because the directive did not separately authorize remote publication.
 - Notion: canonical BPDC page updated with the P7 handoff and evidence boundary.
 - Supersession: `BPDC-P7-001-TRANSIENT-CONTACT-EXPRESSION` handoff record remains the implementation evidence record.
+
+## BPDC-P7-001 - ARCHITECT ACCEPTED
+
+- Outcome ID: `BPDC-P7-001-ACCEPTED`
+- Accepted: 2026-08-24 America/New_York
+- Acceptance: `ACCEPTED`; Phase 7 is closed.
+- Decision: The transient contact-expression layer satisfies the bounded P7 boundary; live visual response remains `UNKNOWN`/not claimed.
+- Supersession: `BPDC-P7-001-TRANSIENT-CONTACT-EXPRESSION` and `BPDC-P7-001-LOCAL-COMMIT` are accepted implementation records.
+
+## BPDC-SYNC-004 - PUBLISHED
+
+- Outcome ID: `BPDC-SYNC-004-PUBLISHED`
+- Published: 2026-08-24 America/New_York
+- Acceptance: `PASSED`
+- Local before: `main` at `619b35e1e2020ba9157d16d5241628f73a83395c`, clean; remote before `origin/main` at `bdeffd909ef7c993dc4daf9d97837a14e36742d1`.
+- Unpublished commits: `98b506d` (`feat: express immediate contact response`) and `619b35e` (`chore: close Phase 7 authority handoff`); no unexpected source changes.
+- Ancestry: `origin/main` was an ancestor of local `HEAD`.
+- Validation: `node --test` 38/38 PASS; `git diff --check` PASS; publication-safety scan PASS with zero filename/content findings.
+- Publication: normal `git push origin main` succeeded; final local `main == origin/main == 619b35e1e2020ba9157d16d5241628f73a83395c`; worktree clean; no history rewrite.
+- Evidence boundary: live P7 visual observation remains `UNKNOWN`/not claimed.
+- Next boundary: wait for a new Architect directive; do not start Phase 8.

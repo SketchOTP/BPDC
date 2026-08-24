@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 7 — Immediate Touch Response; Architect authorized on 2026-08-24 after acceptance of Phase 6.
+- Current phase: Phase 7 — Immediate Touch Response; accepted and synchronized on 2026-08-24 after Architect acceptance of P7.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–3 state is synchronized to GitHub `main`; no subsequent phase is authorized.
+- Deployment: no deployment authorized; accepted Phase 1–7 state is synchronized to GitHub `main`; no subsequent phase is authorized.

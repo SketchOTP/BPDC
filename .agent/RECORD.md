@@ -268,3 +268,21 @@
 - Publication: no push performed; GitHub remains at accepted Phase 6 head `bdeffd9` pending separate authorization.
 - Notion: canonical BPDC page updated and verified for the P7 handoff.
 - Supersession: `BPDC-P7-001-IMPLEMENTATION-COMPLETE` remains the implementation record.
+
+## BPDC-P7-001-ACCEPTED
+
+- Date: 2026-08-24
+- Record ID: `BPDC-P7-001-ACCEPTED`
+- Status: `ACCEPTED`
+- Decision: Architect accepted Phase 7 and closed the immediate touch-response phase. State-dependent transient response selection, autonomous-state preservation, bounded adapter restoration, and target-tested evidence were retained; live visual observation remains `UNKNOWN`/not claimed.
+- Supersession: `BPDC-P7-001-LOCAL-COMMIT` and `BPDC-P7-001-IMPLEMENTATION-COMPLETE` are accepted records.
+
+## BPDC-SYNC-004-PUBLISHED
+
+- Date: 2026-08-24
+- Record ID: `BPDC-SYNC-004-PUBLISHED`
+- Status: `PASSED`
+- Decision: Publish the accepted P7 implementation and Authority closure without application changes or history rewriting.
+- Publication: normal non-force push succeeded from `bdeffd909ef7c993dc4daf9d97837a14e36742d1` to `619b35e1e2020ba9157d16d5241628f73a83395c`; local `main == origin/main`; worktree clean.
+- Validation: 38/38 tests, diff check, and publication-safety scan passed; zero filename/content safety findings; live P7 visual response remains `UNKNOWN`/not claimed.
+- Boundary: no Phase 8 work started; await a new Architect directive.

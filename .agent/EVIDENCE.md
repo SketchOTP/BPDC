@@ -304,3 +304,12 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Adapter: existing OpenPets reactions map enjoy → `celebrating`, acknowledge → `waving`, and withdraw → `failed`. A single generation-guarded restoration timer supersedes prior transient expressions and restores the supplied current autonomous intent; stale restorations are suppressed.
 - Validation: `node --test` 38/38; `node src/cli/experiments.js` BPDC-P7-001 PASS including response state, preservation, learning, and offline experiments; adapter response harness, sleep constraint, rapid-click stress, and offline regression PASS; manifest PASS; local-staged bundle PASS at 48,071 bytes; CreatureCore boundary PASS; privacy scan PASS; publication-safety scan PASS; `git diff --check` PASS.
 - Reliability/limitations: live Windows/Electron physical-click observation for the new transient response is `UNKNOWN`/not claimed and is non-blocking under the directive. Existing Phase 3 click seam remains accepted separately. Direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
+
+## BPDC-E029 — Phase 7 accepted publication
+
+- Created: 2026-08-24 America/New_York
+- Directive/outcome: Architect acceptance `BPDC-P7-001`; `BPDC-SYNC-004`
+- Evidence level: `E4_REGRESSION_PROTECTED` for the accepted P7 mechanism; publication durability verified
+- Type: `REPOSITORY_DURABILITY`
+- Result: `PASSED`; local `98b506d` product implementation and `619b35e` Authority closure were the only unpublished commits, `origin/main` at `bdeffd9` was their ancestor, 38/38 tests passed, `git diff --check` passed, publication-safety scan found no filename or content findings, and normal non-force push published `main` at `619b35e1e2020ba9157d16d5241628f73a83395c`.
+- Final state: local `main == origin/main == 619b35e1e2020ba9157d16d5241628f73a83395c`; worktree clean; no history rewrite; no Phase 8 work; live P7 physical response observation remains `UNKNOWN`/not claimed.
