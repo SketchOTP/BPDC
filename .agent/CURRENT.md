@@ -10,11 +10,11 @@
 - Local directive ID: `BPDC-SYNC-003`
 - External directive ID: `BPDC-SYNC-003`
 - Objective: Commit and publish the Architect-accepted Phase 4 habit implementation without changing application behavior.
-- Current status: `IN_PROGRESS_DURABILITY_SYNC`
-- Acceptance: Phase 4 is accepted on deterministic and target-tested evidence; habit-specific live click reinforcement remains explicitly `UNKNOWN`/deferred and is not a blocker.
+- Current status: `COMPLETE_FOR_ARCHITECT_HANDOFF`
+- Acceptance: Phase 4 is accepted on deterministic and target-tested evidence; habit-specific live click reinforcement remains explicitly `UNKNOWN`/deferred and is not a blocker. Product commit `cb5d6ad` was pushed normally; final Authority closure is recorded below.
 - Current phase: `Phase 4 — Minimal Time-of-Day Habit` accepted; no subsequent phase is authorized.
 - Expected touched areas: accepted P4 source/plugin/tests plus Authority records only.
-- Immediate next action: create one coherent Phase 4 commit, push normally, verify local `main == origin/main`, then record the final SHA and update Notion.
+- Immediate next action: wait for the next explicit Architect directive. Do not start Phase 5 or any additional habit/environment capability.
 
 ## Temporary task-relevant facts
 
@@ -25,7 +25,7 @@
 ## Last validation
 
 - Command or check: `node --test`, P4 experiment suite, manifest validation, local-staged OpenPets build, dependency/time scan, and `git diff --check`
-- Result: `PASSED`; 17/17 tests, experiment suite PASS, manifest PASS, staged bundle PASS at 34,901 bytes, core scan clean, migration review PASS, publication-safety scan PASS, and diff check PASS. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Habit-specific live evidence remains `UNKNOWN`/deferred.
+- Result: `PASSED`; 17/17 tests, experiment suite PASS, manifest PASS, staged bundle PASS at 34,901 bytes, core scan clean, migration review PASS, publication-safety scan PASS, and diff check PASS. Canonical UNC esbuild remains `BLOCKED` by known `spawn EPERM`; staged build succeeds. Product commit `cb5d6ad1b61a3833582781a9f169ea53954b7d67` and final Authority closure commit are published; local `main == origin/main`. Habit-specific live evidence remains `UNKNOWN`/deferred.
 
 ## Risks and blockers
 
@@ -40,4 +40,4 @@
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, and issued `BPDC-SYNC-003`; no subsequent phase is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, and issued `BPDC-SYNC-003`; `BPDC-SYNC-003` is complete and no subsequent phase is authorized.

@@ -171,3 +171,17 @@
 - Live evidence: `BLOCKED`; no host launch/click/restart claim, synthetic event, direct learner call, manual habit mutation, or snapshot edit was used.
 - Repository state: local `main` and `origin/main` both remain `b40232c691adeb9c376ef9b88ae7618db9022ecb`; Phase 4 implementation and records remain uncommitted; no push performed.
 - Recommendation: `CONTINUE` P4-002 when callable desktop automation is available; do not begin Phase 5 or any broader habit work.
+
+## BPDC-SYNC-003 - PASSED
+
+- Outcome ID: `BPDC-SYNC-003-PHASE4-PUBLISHED`
+- Closed: 2026-08-23 America/New_York
+- Acceptance: `MET`
+- Summary: The Architect-accepted Phase 4 habit implementation and corresponding Authority records were committed and published to canonical GitHub `main` without application redesign or history rewrite.
+- Dirty-tree review: all 26 staged files were accepted P4 source/plugin/tests or matching Authority/task records. No unrelated application change was found.
+- Validation: `node --test` PASSED 17/17; P4 experiment suite PASSED; OpenPets manifest validation PASSED; local-staged plugin build PASSED at 34,901 bytes; CreatureCore boundary scan PASSED; schema 2 → 3 migration review PASSED; newly added-line publication-safety scan PASSED; `git diff --check` PASSED. Canonical UNC esbuild remains a known `spawn EPERM`; the prescribed staging workaround passed.
+- Migration: schema 2 snapshots retain identity, personality, drives, relationship, bounded interaction history, RNG state, and current behavior while receiving zeroed habit state; schema 3 persists the accepted habit.
+- Product commit: `cb5d6ad1b61a3833582781a9f169ea53954b7d67` (`feat: add time-of-day attention habit`).
+- Publication: normal `git push origin main` succeeded from remote `b40232c` to product commit `cb5d6ad`.
+- Deferred evidence: habit-specific physical click → current-hour reinforcement → restart remains `UNKNOWN`/deferred. The Phase 3 underlying click/persistence seam remains accepted at E5; no synthetic live evidence was manufactured.
+- Boundary: no Phase 5 or additional habit/environment capability started.

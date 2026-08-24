@@ -190,3 +190,15 @@
 - Decision: Durably synchronize the accepted Phase 4 implementation to canonical GitHub `main`.
 - Evidence: dirty-tree classification found accepted P4 source/plugin/tests and Authority records only; required validation passed; canonical UNC esbuild is blocked by known `spawn EPERM`, while the local-staged build passed at 34,901 bytes.
 - Boundary: no application behavior change or subsequent phase is authorized; final commit/push and equality verification remain pending.
+
+## BPDC-SYNC-003-PUBLISHED
+
+- Date: 2026-08-23
+- Record ID: `BPDC-SYNC-003-PUBLISHED`
+- Status: `PASSED`
+- Decision: Publish the accepted Phase 4 habit implementation and close the durability checkpoint.
+- Product commit: `cb5d6ad1b61a3833582781a9f169ea53954b7d67` (`feat: add time-of-day attention habit`).
+- Validation: 17/17 tests, P4 experiments, manifest, staged build, boundary scan, migration review, publication-safety scan, and diff check passed; canonical UNC esbuild `spawn EPERM` remained non-blocking.
+- Publication: normal non-force push succeeded; final Authority closure is recorded in a follow-up records-only commit; local `main == origin/main` and worktree are clean after final verification.
+- Deferred evidence: habit-specific live click reinforcement remains `UNKNOWN`; no synthetic or manually edited evidence was used.
+- Supersession: `BPDC-SYNC-003-STARTED`.

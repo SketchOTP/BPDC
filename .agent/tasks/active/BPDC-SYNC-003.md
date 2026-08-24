@@ -2,7 +2,7 @@
 
 ## Status
 
-`IN_PROGRESS`
+`COMPLETE`
 
 ## Entry decision
 
@@ -35,4 +35,4 @@ The habit-specific physical OpenPets click → current-hour reinforcement → pe
 
 ## Completion boundary
 
-Do not start Phase 5 or any additional habit/environment capability. Close this task only after normal push, local/remote equality, clean worktree, Authority closure, and Notion update.
+Do not start Phase 5 or any additional habit/environment capability. Product commit `cb5d6ad1b61a3833582781a9f169ea53954b7d67` was pushed normally. Final Authority closure and Notion update are part of the records-only follow-up; local/remote equality and clean-worktree verification follow that closure.

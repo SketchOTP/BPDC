@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 4 — Minimal Time-of-Day Habit (accepted; habit-specific live evidence deferred as UNKNOWN)
-- Active directive: BPDC-SYNC-003
+- Current stage: Phase 4 — Minimal Time-of-Day Habit (accepted; habit-specific live evidence deferred as UNKNOWN; sync complete)
+- Active directive: BPDC-SYNC-003 (complete)
 - Active task packet: `.agent/tasks/active/BPDC-SYNC-003.md`
-- Last Codex outcome: BPDC-SYNC-003 (validation passed; commit/push pending)
-- Last state sync: 2026-08-23 America/New_York
+- Last Codex outcome: BPDC-SYNC-003 (PASS; product commit and Authority closure published)
+- Last state sync: 2026-08-23 America/New_York; final remote `main` verified after closure commit
 
 ## Mandatory kernel
 
