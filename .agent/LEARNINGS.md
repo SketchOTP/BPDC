@@ -211,3 +211,12 @@
 - Confidence: `VERIFIED` for deterministic core/integration behavior and bounded expression arbitration; live desktop reunion remains `UNKNOWN`/not claimed.
 - Scope: BPDC-P12-001 reunion response.
 - Supersedes: `NONE`
+
+## BPDC-L024 — host-native cursor following
+
+- Date: 2026-08-26
+- Fact: A desktop-native autonomous action can remain host-neutral when the core selects only a semantic action and reuses an existing bounded active-presence signal; cursor coordinates and movement execution stay entirely in the adapter.
+- Evidence: `BPDC-E039`; P13 active/absent eligibility, state directionality, non-domination, transition cleanup, transient restoration, offline, persistence, REST_SITE, shutdown, and deterministic generated-bundle experiments.
+- Confidence: `VERIFIED` for deterministic core/adapter behavior, regression, and generated-artifact correspondence; live desktop following remains `UNKNOWN`/not claimed.
+- Scope: BPDC-P13-001 `FOLLOW_CURSOR`.
+- Supersedes: `NONE`

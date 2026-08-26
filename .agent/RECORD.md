@@ -409,3 +409,13 @@
 - Validation: `BPDC-E038`; 76/76 tests, P4–P12 experiments, staged build, manifest, syntax, boundary/privacy, and diff checks passed.
 - Product commit: `4cd6099` (`feat: add reunion response`); local only, no push authorized.
 - Boundary: Phase 13 not authorized.
+
+## 2026-08-26 — BPDC-P13-001 implementation handoff
+
+- Decision: implement exactly one desktop-native autonomous action, `FOLLOW_CURSOR`, selected by the existing utility authority only when active user presence is established.
+- Core: 30–45 second interruptible behavior with 180-second cooldown; contributors are active presence, social pressure, curiosity, playfulness, sociability, bond, socialization imprint, independence penalty, and fatigue penalty. No cursor data or host dependency crosses the core boundary.
+- Adapter: OpenPets `followCursor({ enabled: true, lag: 0.35 })`; disable before non-follow embodiment, transient responses, and shutdown; redundant calls suppressed; P7/P12 use the single existing restoration slot.
+- Persistence: no new cursor field or schema; existing current-behavior persistence remains authoritative; offline absence cannot select follow.
+- Validation: `BPDC-E039`; 85/85 tests; combined P4–P13 experiments; staged build A/B identical at 74,401 bytes with SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`; manifest unchanged; syntax/boundary/privacy/safety/diff checks passed.
+- Product commit: `aba30b150a670a068c9011ecf9b05d65e42751b8` (`feat: add autonomous cursor following`); local only, no push.
+- Boundary: live desktop follow remains `UNKNOWN / NOT CLAIMED`; Phase 14 not started or authorized.

@@ -67,3 +67,12 @@ This map covers the governance bootstrap only. It is not an exhaustive applicati
 - `tests/reunion-response.test.js` — duration, state dependence, autonomous preservation, sleep, startup, deduplication, P7 arbitration, and P5 regression checks.
 - `src/cli/experiments.js` — deterministic P12 reunion experiment suite included with the prior regression aggregate.
 - `integrations/openpets/plugin/core/` and `index.js` — generated bundled runtime equivalents.
+
+## BPDC-P13-001 verified cursor-follow map
+
+- `src/creature-core/behavior.js` — `FOLLOW_CURSOR` action definition, bounded timing, utility contributors, and active-user eligibility ordering.
+- `integrations/openpets/openpets-adapter.js` — host-specific `followCursor` enable/disable mapping, fixed lag, redundant-call suppression, transient pause, and shutdown cleanup.
+- `integrations/openpets/plugin/core/behavior.js`, `integrations/openpets/plugin/openpets-adapter.js`, and `integrations/openpets/plugin/index.js` — generated runtime equivalents; deterministic staged bundle output.
+- `tests/follow-cursor.test.js` — action definition, eligibility, directionality, non-domination, persistence, adapter lifecycle, transient arbitration, and shutdown checks.
+- `src/cli/experiments.js` — deterministic P13 experiment suite included in the combined runner.
+- `.agent/tasks/active/BPDC-P13-001.md` — Architect handoff packet and evidence boundary.

@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P12-001`
-- External directive ID: `BPDC-P12-001`
-- Objective: Implement one transient, state-dependent reunion response after an observed idle or locked absence, reusing the bounded P7 expression slot.
+- Local directive ID: `BPDC-P13-001`
+- External directive ID: `BPDC-P13-001`
+- Objective: Add one bounded, utility-selected `FOLLOW_CURSOR` behavior using the existing active-user presence signal and OpenPets host operation.
 - Current status: `COMPLETE_FOR_ARCHITECT_REVIEW`
-- Acceptance: P12 implementation and deterministic evidence are complete for Architect review; no Phase 13 work has started.
-- Current phase: `Phase 12 — Reunion Response` implemented; awaiting Architect review.
-- Expected touched areas: transient presence return metadata, host-neutral reunion intent, bounded OpenPets expression arbitration, tests, experiments, generated plugin, and Authority records.
-- Immediate next action: await Architect review; do not begin Phase 13 or push.
+- Acceptance: P13 implementation and deterministic evidence are complete for Architect review; no Phase 14 work has started.
+- Current phase: `Phase 13 — Follow Cursor` implemented; awaiting Architect review.
+- Expected touched areas: behavior vocabulary/scoring, OpenPets adapter lifecycle, deterministic experiments/tests, generated plugin, and Authority records.
+- Immediate next action: await Architect review; do not begin Phase 14 or push.
 - Local P12 implementation commit: `4cd6099` (`feat: add reunion response`); local only.
 - Local implementation commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); published.
 - Authority closure commit: `7b039ae80de50113c0b84e399fddf0fbfb863c1c` (`chore: record Phase 11 authority handoff`); published.
@@ -58,7 +58,10 @@
 - Phase 7 publication: product commit `98b506d` (`feat: express immediate contact response`) and Authority closure `619b35e` were published normally under `BPDC-SYNC-004`; GitHub `main`, local `main`, and `origin/main` now equal `619b35e1e2020ba9157d16d5241628f73a83395c`.
 - Phase 11 implementation: one persistent numeric `socializationImprint` was added with schema 5 → 6 zero migration, continuous `1 - maturity` plasticity, `0.03` saturating learning, and a maximum `0.12` `SEEK_ATTENTION.developmentalSocialization` contributor. Innate sociability, bond, P7 response, P8 REST_SITE, P9 play preference, and P10 maturation remain separate.
 - Phase 12 implementation: observed IDLE/LOCKED → ACTIVE return metadata feeds a host-neutral `ReunionResponseIntent`; five-minute minimum absence, saturating duration contribution, `ACKNOWLEDGE_RETURN`/`GREET_RETURN`, unchanged SLEEP/autonomous state, no persistence, and one shared generation-guarded P7 transient slot are implemented and target-tested.
+- Phase 13 implementation: `FOLLOW_CURSOR` is a single utility-selected semantic action with active-user eligibility, 30–45 second bounded duration, 180-second cooldown, no cursor data in CreatureCore, no persistence/schema/permission changes, and OpenPets `followCursor` enable/disable lifecycle using fixed lag `0.35`.
+- Phase 13 validation: 85/85 tests; combined P4–P13 experiments PASS; two independent staged bundles are byte/hash-identical at 74,401 bytes; tracked generated bundle equals the fresh staged build; manifest permissions unchanged; syntax/boundary/privacy/safety/diff checks PASS. Direct UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds. Live desktop follow evidence remains `UNKNOWN / NOT CLAIMED`.
+- Phase 13 local commits: product `aba30b1` (`feat: add autonomous cursor following`) and pending Authority closure; neither pushed.
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, `BPDC-SYNC-007`, `BPDC-P11-001`, and `BPDC-SYNC-008`; `BPDC-P12-001` is authorized and pending review. Phase 13 is not authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, `BPDC-SYNC-007`, `BPDC-P11-001`, `BPDC-SYNC-008`, `BPDC-SYNC-009R1`, `BPDC-P12-001`; `BPDC-P13-001` is authorized and complete for review. Phase 14 is not authorized.

@@ -371,3 +371,18 @@
 - Acceptance: expected product `9045fb7a61a29917405e3d1d53174aec63246dfb` and Authority `edff9031a90a1420552ab4d51cdbc03d9d8a05d5` commits verified; `origin/main` ancestor; delta limited to accepted P10 and Authority files; 60/60 tests and P10 experiments pass; `pet:animate` is the only permission expansion; normal push succeeds; local `main == origin/main`; worktree clean; live visual growth remains `UNKNOWN` and Phase 11 untouched.
 - Discovery: not required; repository durability only.
 - Status at issuance: `AUTHORIZED`; completed successfully.
+
+## BPDC-P13-001
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via Architect review accepting `BPDC-SYNC-009R1`
+- External directive: `BPDC-P13-001`
+- Objective: Add exactly one utility-selected autonomous `FOLLOW_CURSOR` behavior that uses existing active-user presence and OpenPets `pet.followCursor()` without exposing cursor data to CreatureCore.
+- Scope: one semantic action; 30–45 second interruptible duration; 180-second cooldown; active-user eligibility; existing-state utility contributors; fixed host lag; disable-on-transition, transient arbitration, restart, shutdown, deterministic experiments, generated-bundle, regression, manifest, boundary, privacy, safety, and diff validation.
+- Exclusions: no cursor coordinates/history/sensing in CreatureCore, navigation/pathfinding, cursor memory, new drives/preferences/persistence/schema/permissions, host-side selection, P4–P12 retuning, new assets, LLM, or Phase 14.
+- Model: `FOLLOW_CURSOR` uses active presence, social pressure, curiosity, playfulness, sociability, bond, socialization imprint, independence penalty, and fatigue penalty; adapter maps it to `followCursor({ enabled: true, lag: 0.35 })` and disables it when leaving the action.
+- Persistence rule: existing `currentBehavior` snapshot semantics remain authoritative; no cursor-specific field or schema change.
+- Acceptance: existing 76-test/P4–P12 regression remains green; one action is selected by CreatureCore; absent/unknown users cannot newly select it; transient and shutdown cleanup are bounded; generated builds are deterministic; no Phase 14.
+- Discovery: not required; Architect research complete; Petz cursor/shared-space principle is adaptable and pinned OpenPets `followCursor` is directly reusable.
+- Live evidence policy: live desktop observation is useful but non-blocking and was not claimed.
+- Status at issuance: `AUTHORIZED`; implementation complete for Architect review.

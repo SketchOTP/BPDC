@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 12 — Reunion Response (implemented; pending Architect review)
-- Active directive: BPDC-P12-001
-- Active task packet: `.agent/tasks/active/BPDC-P12-001.md`
-- Last Codex outcome: BPDC-P12-001 (implementation complete for Architect review)
-- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; P12 implementation commit `4cd6099` is local and `origin/main` remains `c9a262f781e9d39fd16eb9982dc00c2279adf211`; worktree contains only P12 Authority updates; Phase 13 not authorized.
+- Current stage: Phase 13 — Follow Cursor (implemented; pending Architect review)
+- Active directive: BPDC-P13-001
+- Active task packet: `.agent/tasks/active/BPDC-P13-001.md`
+- Last Codex outcome: BPDC-P13-001 (implementation complete for Architect review)
+- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local P13 product commit `aba30b150a670a068c9011ecf9b05d65e42751b8` is not pushed and `origin/main` remains `0d8dde1961d2fcda4f9f03d6af50c11846ff18fb`; Authority closure is local; Phase 14 not authorized.
 
 ## Mandatory kernel
 

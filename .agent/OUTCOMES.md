@@ -414,3 +414,19 @@
 - Evidence: `BPDC-E038`, `E4_REGRESSION_PROTECTED`; live desktop evidence is useful but not required and remains unclaimed.
 - Local implementation commit: `4cd6099` (`feat: add reunion response`); not pushed.
 - Next boundary: Architect review; do not push and do not begin Phase 13.
+
+## BPDC-P13-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P13-001-LOCAL-COMMIT`
+- Closed for Codex handoff: 2026-08-26 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Summary: Added one utility-selected `FOLLOW_CURSOR` action. CreatureCore owns semantic selection and active-user eligibility; the OpenPets adapter owns cursor-follow execution and cleanup.
+- Parameters: 30–45 second interruptible duration; 180-second cooldown; fixed OpenPets lag `0.35`; no curiosity relief or new drive evolution.
+- State boundary: active presence is derived from existing `userPresent` and `userIdleDuration < 300`; absent, locked, idle, and unknown environments cannot newly select `FOLLOW_CURSOR`. No cursor coordinates, velocity, history, or host dependency enters CreatureCore.
+- Adapter boundary: enabling calls `pet.followCursor({ enabled: true, lag: 0.35 })`; leaving the action, transient responses, and shutdown disable following; unchanged-state calls are suppressed; P7/P12 reuse the single transient restoration slot.
+- Persistence boundary: no new field or schema change; existing current-behavior persistence and restart semantics remain in force.
+- Validation: 85/85 tests; combined P4–P13 experiments PASS; active/absent eligibility, directionality, non-domination, transition cleanup, transient restore, offline absence, persistence, REST_SITE, and shutdown experiments PASS; syntax/manifest/boundary/privacy/safety/diff checks PASS.
+- Generated artifact: two independent staged builds produced identical 74,401-byte bundle SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`; tracked bundle equals fresh build. Direct UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds.
+- Evidence: `BPDC-E039`, `E4_REGRESSION_PROTECTED`; live Windows/Electron follow behavior remains `UNKNOWN / NOT CLAIMED`.
+- Local product commit: `aba30b150a670a068c9011ecf9b05d65e42751b8` (`feat: add autonomous cursor following`); not pushed.
+- Next boundary: Architect review; do not push and do not begin Phase 14.

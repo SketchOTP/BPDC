@@ -427,3 +427,17 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Arbitration: reunion and P7 contact share one generation-guarded restoration slot; contact supersedes reunion and leaves one bounded timer.
 - Validation: 76/76 tests; combined P4–P12 experiments PASS; staged OpenPets bundle PASS at 72,886 bytes; generated syntax, unchanged manifest, boundary/privacy, and diff checks PASS.
 - Reliability/limitations: direct UNC build remains blocked by the known UNC working-directory/`spawn EPERM` limitation; local staging succeeds. Live desktop evidence is useful but not required and remains `UNKNOWN / NOT CLAIMED`.
+
+## BPDC-E039 — Phase 13 Follow Cursor implementation
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-P13-001` / implementation handoff
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; one new `FOLLOW_CURSOR` action is utility-selected only under established active presence, remains subordinate to strong fatigue, and maps through the adapter to bounded OpenPets cursor following.
+- Model: 30–45 second interruptible duration; 180-second cooldown; fixed lag `0.35`; no curiosity-relief mutation or new drive evolution.
+- Boundaries: no cursor coordinates/history/host dependencies in CreatureCore; no new persistence/schema/permission; offline and unknown/idle/locked environments cannot select follow; P7/P12 share the existing bounded transient restoration slot; shutdown disables following.
+- Experiments: active-versus-absent eligibility, relationship/personality/development directionality, fatigue non-domination, deterministic selection, transition disable ordering, redundant-call suppression, P7/P12 transient restore, P6 offline absence, restart persistence, P8 REST_SITE, and shutdown cleanup all passed. P4–P12 aggregate experiments remained passing.
+- Validation: `node --test` 85/85; combined `node src/cli/experiments.js` PASS; syntax/manifest/permission/boundary/privacy/safety checks PASS; `git diff --check` PASS.
+- Generated artifact: independent staged builds A and B both produced 74,401 bytes and SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`; tracked generated bundle is byte/hash-identical to a fresh staged build.
+- Reliability/limitations: direct UNC esbuild was not run because the known UNC `spawn EPERM` limitation remains; local staged builds pass. Live Windows/Electron follow behavior is `UNKNOWN / NOT CLAIMED`.
