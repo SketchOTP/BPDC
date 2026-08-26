@@ -5,6 +5,7 @@ export const ACTIONS = [
   "PLAY",
   "SEEK_ATTENTION",
   "AVOID",
+  "FOLLOW_CURSOR",
   "SLEEP",
 ];
 
@@ -15,6 +16,7 @@ export const BEHAVIOR_DEFINITIONS = {
   PLAY: { minDuration: 60, maxDuration: 240, interruptible: true, cooldown: 120 },
   SEEK_ATTENTION: { minDuration: 45, maxDuration: 180, interruptible: true, cooldown: 120 },
   AVOID: { minDuration: 30, maxDuration: 90, interruptible: false, cooldown: 90 },
+  FOLLOW_CURSOR: { minDuration: 30, maxDuration: 45, interruptible: true, cooldown: 180 },
   SLEEP: { minDuration: 600, maxDuration: 1800, interruptible: false, cooldown: 300 },
 };
 
@@ -82,6 +84,17 @@ export class BehaviorScorer {
         recentBond: -relationship.recentInfluence * 0.2,
         novelty: environment.novelty * 0.2,
       },
+      FOLLOW_CURSOR: {
+        activeUser: activeUser * 0.55,
+        socialPressure: drives.social * 0.16,
+        curiosity: drives.curiosity * 0.2,
+        playfulness: personality.playfulness * 0.08,
+        sociability: personality.sociability * 0.08,
+        bond: (relationship.bond - 0.5) * 0.12,
+        developmentalSocialization: developmentalSocialization * 0.25,
+        independencePenalty: -personality.independence * 0.12,
+        fatiguePenalty: -drives.energy * 0.25,
+      },
       SLEEP: {
         fatiguePressure: drives.energy * 2.2,
         sleepiness: personality.sleepiness * 0.85,
@@ -97,7 +110,8 @@ export class BehaviorScorer {
 
     const contributors = scores[action];
     const score = Object.values(contributors).reduce((sum, value) => sum + value, 0);
-    return { action, score, contributors: { ...contributors } };
+    const eligible = action !== "FOLLOW_CURSOR" || activeUser === 1;
+    return { action, score, contributors: { ...contributors }, eligible };
   }
 }
 
@@ -120,7 +134,9 @@ export class BehaviorSelector {
       };
     });
 
-    candidates.sort((left, right) => right.score - left.score || left.action.localeCompare(right.action));
+    candidates.sort((left, right) => Number(right.eligible) - Number(left.eligible)
+      || right.score - left.score
+      || left.action.localeCompare(right.action));
     return { selected: candidates[0], candidates };
   }
 }

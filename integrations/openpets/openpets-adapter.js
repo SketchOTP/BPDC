@@ -1,6 +1,8 @@
 const ACTIONS = new Set([
-  "IDLE", "OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "SLEEP",
+  "IDLE", "OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "FOLLOW_CURSOR", "SLEEP",
 ]);
+
+const FOLLOW_CURSOR_LAG = 0.35;
 
 const REACTION_BY_ACTION = {
   IDLE: "idle",
@@ -59,6 +61,7 @@ export class OpenPetsAdapter {
     this.interactionExpressionTimer = null;
     this.interactionExpressionGeneration = 0;
     this.lastAppliedSizeFactor = null;
+    this.cursorFollowing = false;
   }
 
   async applyDevelopment(development) {
@@ -88,6 +91,8 @@ export class OpenPetsAdapter {
     const durationMs = clampDurationMs(intent.duration ?? 1);
     const startedAt = new Date().toISOString();
     this.log("ADAPT", startedAt, intent, "pending");
+
+    await this.applyCursorFollowing(intent.action === "FOLLOW_CURSOR");
 
     // Disable optional host physics for this pet so OpenPets cannot add a
     // second movement decision behind BPDC.
@@ -137,6 +142,7 @@ export class OpenPetsAdapter {
       throw new TypeError(`Unsupported ${intentName} kind: ${intent?.kind}`);
     }
     this.cancelInteractionResponse();
+    await this.applyCursorFollowing(false);
     const generation = this.interactionExpressionGeneration;
     const reaction = reactionMap[intent.kind];
     await this.ctx.pet.react(reaction, { showMessage: false });
@@ -169,6 +175,19 @@ export class OpenPetsAdapter {
 
   async getExecutionState() {
     return this.ctx.pet.getState();
+  }
+
+  async applyCursorFollowing(enabled) {
+    if (this.cursorFollowing === enabled) {
+      return { changed: false, enabled };
+    }
+    if (typeof this.ctx.pet.followCursor !== "function") {
+      throw new TypeError("OpenPets host does not provide pet.followCursor().");
+    }
+    const options = enabled ? { enabled: true, lag: FOLLOW_CURSOR_LAG } : { enabled: false };
+    await this.ctx.pet.followCursor(options);
+    this.cursorFollowing = enabled;
+    return { changed: true, enabled, options };
   }
 
   subscribeInteraction(handler) {
@@ -213,6 +232,7 @@ export class OpenPetsAdapter {
 
   async shutdown() {
     this.cancelInteractionResponse();
+    await this.applyCursorFollowing(false);
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
   }
 }

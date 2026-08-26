@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import {
+  BehaviorIntent,
   CreatureCore,
   MATURATION_DURATION_SECONDS,
   SOCIALIZATION_LEARNING_RATE,
@@ -81,10 +82,19 @@ const reunionStartup = runReunionStartupExperiment();
 const reunionDedup = runReunionDedupExperiment();
 const reunionArbitration = await runReunionArbitrationExperiment();
 const reunionPresence = runReunionPresenceExperiment();
+const followCursorActive = runFollowCursorActiveExperiment();
+const followCursorState = runFollowCursorStateExperiment();
+const followCursorNonDomination = runFollowCursorNonDominationExperiment();
+const followCursorTransition = await runFollowCursorTransitionExperiment();
+const followCursorTransient = await runFollowCursorTransientExperiment();
+const followCursorOffline = runFollowCursorOfflineExperiment();
+const followCursorPersistence = runFollowCursorPersistenceExperiment();
+const followCursorRestSite = await runFollowCursorRestSiteExperiment();
+const followCursorShutdown = await runFollowCursorShutdownExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P12-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence]
+  directive: "BPDC-P13-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence, followCursorActive, followCursorState, followCursorNonDomination, followCursorTransition, followCursorTransient, followCursorOffline, followCursorPersistence, followCursorRestSite, followCursorShutdown]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -106,6 +116,9 @@ console.log(JSON.stringify({
     socializationPersistence, socializationOffline, socializationAdultContact,
     reunionDuration, reunionState, reunionPreservation, reunionSleep,
     reunionStartup, reunionDedup, reunionArbitration, reunionPresence,
+    followCursorActive, followCursorState, followCursorNonDomination,
+    followCursorTransition, followCursorTransient, followCursorOffline,
+    followCursorPersistence, followCursorRestSite, followCursorShutdown,
   },
   trace24h,
 }, null, 2));
@@ -1182,6 +1195,169 @@ function runReunionPresenceExperiment() {
   };
 }
 
+function runFollowCursorActiveExperiment() {
+  const core = CreatureCore.create({ seed: 1301 });
+  const active = getCandidate(core, "FOLLOW_CURSOR", activeFollowEnvironment());
+  const absent = getCandidate(core, "FOLLOW_CURSOR", absentFollowEnvironment());
+  core.currentBehavior = null;
+  const absentSelection = core.advance(0, absentFollowEnvironment())[0].action;
+  const motivated = CreatureCore.create({ seed: 1301 });
+  motivated.drives = { energy: 0.1, social: 0.05, curiosity: 0.05, stimulation: 0.05 };
+  motivated.personality = {
+    curiosity: 0.3, sociability: 0.2, playfulness: 0.2, boldness: 1, independence: 0.1, sleepiness: 0.2,
+  };
+  const activeSelection = motivated.advance(0, activeFollowEnvironment())[0].action;
+  return {
+    status: active.eligible && !absent.eligible && absentSelection !== "FOLLOW_CURSOR" && activeSelection === "FOLLOW_CURSOR" ? "PASS" : "FAIL",
+    activeEligible: active.eligible,
+    absentEligible: absent.eligible,
+    absentSelection,
+    activeSelection,
+  };
+}
+
+function runFollowCursorStateExperiment() {
+  const low = CreatureCore.create({ seed: 1302 });
+  low.clock.advance(MATURATION_DURATION_SECONDS);
+  const high = CreatureCore.fromSnapshot(low.toSnapshot());
+  low.relationship.bond = 0.1;
+  low.personality.sociability = 0.1;
+  high.relationship.bond = 0.9;
+  high.personality.sociability = 0.9;
+  high.socializationImprint = 1;
+  const lowCandidate = getCandidate(low, "FOLLOW_CURSOR", activeFollowEnvironment());
+  const highCandidate = getCandidate(high, "FOLLOW_CURSOR", activeFollowEnvironment());
+  return {
+    status: highCandidate.score > lowCandidate.score
+      && highCandidate.contributors.bond > lowCandidate.contributors.bond
+      && highCandidate.contributors.sociability > lowCandidate.contributors.sociability
+      && highCandidate.contributors.developmentalSocialization > lowCandidate.contributors.developmentalSocialization
+      ? "PASS" : "FAIL",
+    lowScore: lowCandidate.score,
+    highScore: highCandidate.score,
+  };
+}
+
+function runFollowCursorNonDominationExperiment() {
+  const core = CreatureCore.create({ seed: 1303 });
+  core.drives = { energy: 1, social: 0.05, curiosity: 0.05, stimulation: 0.05 };
+  const selected = core.advance(0, activeFollowEnvironment())[0].action;
+  return { status: selected === "SLEEP" ? "PASS" : "FAIL", selected };
+}
+
+async function runFollowCursorTransitionExperiment() {
+  const calls = [];
+  const adapter = new OpenPetsAdapter({ pet: {
+    async followCursor(options) { calls.push(["followCursor", options]); },
+    async physics() { calls.push(["physics"]); },
+    async react(reaction) { calls.push(["react", reaction]); },
+    async getState() { return {}; },
+  } });
+  await adapter.execute(followCursorIntent());
+  await adapter.execute({ action: "IDLE", duration: 30 });
+  await adapter.execute({ action: "IDLE", duration: 30 });
+  const followCalls = calls.filter(([name]) => name === "followCursor");
+  const disableIndex = calls.findIndex(([name, options]) => name === "followCursor" && options.enabled === false);
+  const nextPhysicsIndex = calls.findIndex((entry, index) => index > disableIndex && entry[0] === "physics");
+  return {
+    status: followCalls.length === 2
+      && followCalls[0][1].enabled === true
+      && followCalls[0][1].lag === 0.35
+      && followCalls[1][1].enabled === false
+      && nextPhysicsIndex > disableIndex
+      ? "PASS" : "FAIL",
+    calls,
+  };
+}
+
+async function runFollowCursorTransientExperiment() {
+  const calls = [];
+  const timers = new Map();
+  let nextTimer = 0;
+  const adapter = new OpenPetsAdapter({
+    pet: {
+      async followCursor(options) { calls.push(["followCursor", options]); },
+      async physics() {},
+      async react(reaction) { calls.push(["react", reaction]); },
+      async getState() { return {}; },
+    },
+  }, {
+    setTimeoutFn(callback) { const id = ++nextTimer; timers.set(id, callback); return id; },
+    clearTimeoutFn(id) { timers.delete(id); },
+  });
+  await adapter.execute(followCursorIntent());
+  await adapter.executeInteractionResponse({ kind: "ACKNOWLEDGE_CONTACT", duration: 0.6 }, followCursorIntent());
+  const [timerId, timer] = timers.entries().next().value;
+  timers.delete(timerId);
+  await timer();
+  await Promise.resolve();
+  const followCalls = calls.filter(([name]) => name === "followCursor");
+  return {
+    status: timers.size === 0 && followCalls.length === 3 && followCalls[1][1].enabled === false && followCalls[2][1].enabled === true
+      ? "PASS" : "FAIL",
+    timers: timers.size,
+    calls,
+  };
+}
+
+function runFollowCursorOfflineExperiment() {
+  const core = CreatureCore.create({ seed: 1306 });
+  core.reconcileElapsed(6 * 3600, absentFollowEnvironment);
+  core.currentBehavior = null;
+  const selected = core.advance(0, absentFollowEnvironment)[0].action;
+  return { status: selected !== "FOLLOW_CURSOR" ? "PASS" : "FAIL", selected };
+}
+
+function runFollowCursorPersistenceExperiment() {
+  const core = CreatureCore.create({ seed: 1307 });
+  commitControlledBehavior(core, "FOLLOW_CURSOR");
+  const restored = CreatureCore.fromSnapshot(core.serialize());
+  return {
+    status: restored.currentBehavior?.action === "FOLLOW_CURSOR"
+      && restored.toSnapshot().schemaVersion === 6
+      && !Object.hasOwn(restored.toSnapshot(), "cursor")
+      ? "PASS" : "FAIL",
+    action: restored.currentBehavior?.action ?? null,
+    schema: restored.toSnapshot().schemaVersion,
+  };
+}
+
+async function runFollowCursorRestSiteExperiment() {
+  const calls = [];
+  const adapter = new OpenPetsAdapter({
+    pet: {
+      async followCursor(options) { calls.push(["followCursor", options]); },
+      async physics() { calls.push(["physics"]); },
+      async moveTo(position) { calls.push(["moveTo", position]); },
+      async react(reaction) { calls.push(["react", reaction]); },
+      async getState() { return {}; },
+    },
+  }, { spatialTracker: { resolveTarget: () => ({ x: 10, y: 20 }) } });
+  await adapter.execute(followCursorIntent());
+  await adapter.execute({ action: "SLEEP", duration: 600, habitatTarget: "REST_SITE" });
+  return {
+    status: calls.some(([name, options]) => name === "followCursor" && options.enabled === false)
+      && calls.some(([name]) => name === "moveTo") ? "PASS" : "FAIL",
+    calls,
+  };
+}
+
+async function runFollowCursorShutdownExperiment() {
+  const calls = [];
+  const adapter = new OpenPetsAdapter({
+    pet: {
+      async followCursor(options) { calls.push(["followCursor", options]); },
+      async physics() {},
+      async react() {},
+      async getState() { return {}; },
+    },
+  });
+  await adapter.execute(followCursorIntent());
+  await adapter.shutdown();
+  const lastFollow = calls.filter(([name]) => name === "followCursor").at(-1);
+  return { status: lastFollow?.[1]?.enabled === false ? "PASS" : "FAIL", calls };
+}
+
 function socializationCoreAtMaturity(maturity, seed) {
   const core = CreatureCore.create({ seed, createdAt: 0 });
   return CreatureCore.fromSnapshot({
@@ -1234,7 +1410,7 @@ function runHours(core, hours, environment) {
 
 function countBehaviors(events) {
   return Object.fromEntries(
-    ["IDLE", "OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "SLEEP"].map((action) => [
+    ["IDLE", "OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "FOLLOW_CURSOR", "SLEEP"].map((action) => [
       action,
       events.filter((event) => event.action === action).length,
     ]),
@@ -1243,6 +1419,32 @@ function countBehaviors(events) {
 
 function getCandidate(core, action, environment) {
   return core.evaluate(environment).candidates.find((candidate) => candidate.action === action);
+}
+
+function activeFollowEnvironment() {
+  return createEnvironment({
+    localTime: 12,
+    userPresent: true,
+    userIdleDuration: 0,
+    novelty: 0.2,
+    interactionPressure: 0,
+  });
+}
+
+function absentFollowEnvironment() {
+  return createEnvironment({ localTime: 12, userPresent: false, userIdleDuration: 3_600 });
+}
+
+function followCursorIntent(duration = 30) {
+  return new BehaviorIntent({
+    action: "FOLLOW_CURSOR",
+    time: 0,
+    duration,
+    reason: "follow cursor experiment",
+    score: 0,
+    scoreBreakdown: { source: "FOLLOW_CURSOR_EXPERIMENT" },
+    interruptible: true,
+  });
 }
 
 function environmentAt(localTime) {

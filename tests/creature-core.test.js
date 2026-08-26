@@ -28,7 +28,7 @@ function behaviorCounts(events) {
   );
 }
 
-test("seven behaviors and machine-readable score diagnostics are exposed", () => {
+test("eight behaviors and machine-readable score diagnostics are exposed", () => {
   const core = CreatureCore.create({ seed: 1234 });
   const events = core.advance(0, SHARED_ENVIRONMENT);
   const diagnostic = core.diagnosticSnapshot(SHARED_ENVIRONMENT);
@@ -37,10 +37,10 @@ test("seven behaviors and machine-readable score diagnostics are exposed", () =>
   assert.ok(events[0] instanceof BehaviorIntent);
   assert.deepEqual(
     diagnostic.candidates.map((candidate) => candidate.action),
-    ["IDLE", "OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "SLEEP"],
+    ["IDLE", "OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "FOLLOW_CURSOR", "SLEEP"],
   );
   assert.ok(Object.keys(events[0].scoreBreakdown.selected.contributors).length > 0);
-  assert.equal(events[0].scoreBreakdown.candidates.length, 7);
+  assert.equal(events[0].scoreBreakdown.candidates.length, 8);
 });
 
 test("same seed and inputs produce identical replay", () => {
@@ -112,7 +112,7 @@ test("accelerated 24-hour run emits enough structured trace for inspection", () 
   const trace = runHours(core, 24, timedEnvironment);
   assert.ok(trace.length >= 10);
   assert.ok(trace.every((event) => Number.isFinite(event.time)));
-  assert.ok(trace.every((event) => event.scoreBreakdown.candidates.length === 7));
+  assert.ok(trace.every((event) => event.scoreBreakdown.candidates.length === 8));
   assert.equal(core.toSnapshot().simulationTimestamp, 24 * 3600);
 });
 

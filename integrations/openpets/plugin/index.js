@@ -139,6 +139,7 @@ var ACTIONS = [
   "PLAY",
   "SEEK_ATTENTION",
   "AVOID",
+  "FOLLOW_CURSOR",
   "SLEEP"
 ];
 var BEHAVIOR_DEFINITIONS = {
@@ -148,6 +149,7 @@ var BEHAVIOR_DEFINITIONS = {
   PLAY: { minDuration: 60, maxDuration: 240, interruptible: true, cooldown: 120 },
   SEEK_ATTENTION: { minDuration: 45, maxDuration: 180, interruptible: true, cooldown: 120 },
   AVOID: { minDuration: 30, maxDuration: 90, interruptible: false, cooldown: 90 },
+  FOLLOW_CURSOR: { minDuration: 30, maxDuration: 45, interruptible: true, cooldown: 180 },
   SLEEP: { minDuration: 600, maxDuration: 1800, interruptible: false, cooldown: 300 }
 };
 var BehaviorScorer = class {
@@ -219,6 +221,17 @@ var BehaviorScorer = class {
         recentBond: -relationship.recentInfluence * 0.2,
         novelty: environment.novelty * 0.2
       },
+      FOLLOW_CURSOR: {
+        activeUser: activeUser * 0.55,
+        socialPressure: drives.social * 0.16,
+        curiosity: drives.curiosity * 0.2,
+        playfulness: personality.playfulness * 0.08,
+        sociability: personality.sociability * 0.08,
+        bond: (relationship.bond - 0.5) * 0.12,
+        developmentalSocialization: developmentalSocialization * 0.25,
+        independencePenalty: -personality.independence * 0.12,
+        fatiguePenalty: -drives.energy * 0.25
+      },
       SLEEP: {
         fatiguePressure: drives.energy * 2.2,
         sleepiness: personality.sleepiness * 0.85,
@@ -232,7 +245,8 @@ var BehaviorScorer = class {
     }
     const contributors = scores[action];
     const score = Object.values(contributors).reduce((sum, value) => sum + value, 0);
-    return { action, score, contributors: { ...contributors } };
+    const eligible = action !== "FOLLOW_CURSOR" || activeUser === 1;
+    return { action, score, contributors: { ...contributors }, eligible };
   }
 };
 var BehaviorSelector = class {
@@ -258,7 +272,7 @@ var BehaviorSelector = class {
         contributors: { ...candidate.contributors, noise }
       };
     });
-    candidates.sort((left, right) => right.score - left.score || left.action.localeCompare(right.action));
+    candidates.sort((left, right) => Number(right.eligible) - Number(left.eligible) || right.score - left.score || left.action.localeCompare(right.action));
     return { selected: candidates[0], candidates };
   }
 };
@@ -1144,8 +1158,10 @@ var ACTIONS2 = /* @__PURE__ */ new Set([
   "PLAY",
   "SEEK_ATTENTION",
   "AVOID",
+  "FOLLOW_CURSOR",
   "SLEEP"
 ]);
+var FOLLOW_CURSOR_LAG = 0.35;
 var REACTION_BY_ACTION = {
   IDLE: "idle",
   OBSERVE: "thinking",
@@ -1196,6 +1212,7 @@ var OpenPetsAdapter = class {
     this.interactionExpressionTimer = null;
     this.interactionExpressionGeneration = 0;
     this.lastAppliedSizeFactor = null;
+    this.cursorFollowing = false;
   }
   async applyDevelopment(development) {
     const sizeFactor = quantizeSizeFactor(
@@ -1222,6 +1239,7 @@ var OpenPetsAdapter = class {
     const durationMs = clampDurationMs(intent.duration ?? 1);
     const startedAt = (/* @__PURE__ */ new Date()).toISOString();
     this.log("ADAPT", startedAt, intent, "pending");
+    await this.applyCursorFollowing(intent.action === "FOLLOW_CURSOR");
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
     if (generation !== null && generation !== this.interactionExpressionGeneration) {
       return { command: "stale interaction restoration suppressed", stale: true };
@@ -1263,6 +1281,7 @@ var OpenPetsAdapter = class {
       throw new TypeError(`Unsupported ${intentName} kind: ${intent?.kind}`);
     }
     this.cancelInteractionResponse();
+    await this.applyCursorFollowing(false);
     const generation = this.interactionExpressionGeneration;
     const reaction = reactionMap[intent.kind];
     await this.ctx.pet.react(reaction, { showMessage: false });
@@ -1292,6 +1311,18 @@ var OpenPetsAdapter = class {
   }
   async getExecutionState() {
     return this.ctx.pet.getState();
+  }
+  async applyCursorFollowing(enabled) {
+    if (this.cursorFollowing === enabled) {
+      return { changed: false, enabled };
+    }
+    if (typeof this.ctx.pet.followCursor !== "function") {
+      throw new TypeError("OpenPets host does not provide pet.followCursor().");
+    }
+    const options = enabled ? { enabled: true, lag: FOLLOW_CURSOR_LAG } : { enabled: false };
+    await this.ctx.pet.followCursor(options);
+    this.cursorFollowing = enabled;
+    return { changed: true, enabled, options };
   }
   subscribeInteraction(handler) {
     if (!this.ctx.events?.on) return () => {
@@ -1335,6 +1366,7 @@ var OpenPetsAdapter = class {
   }
   async shutdown() {
     this.cancelInteractionResponse();
+    await this.applyCursorFollowing(false);
     await this.ctx.pet.physics({ gravity: false, bounce: 0 });
   }
 };
