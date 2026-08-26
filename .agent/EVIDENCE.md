@@ -403,3 +403,14 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: `node --test` 68/68; combined CLI experiment runner PASS; local-staged bundle PASS at 68,010 bytes; generated syntax/manifest PASS; no new permission beyond accepted `pet:animate`; boundary/privacy scans PASS; `git diff --check` PASS.
 - Local commit: `536abe67e724437dc969e1e27736bd08af9edea1`; not pushed.
 - Reliability/limitations: live desktop evidence was not required and was not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
+
+## BPDC-E037 — Phase 11 accepted publication
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: Architect acceptance `BPDC-P11-001` / `BPDC-SYNC-008`
+- Evidence level: `E4_REGRESSION_PROTECTED` for the accepted P11 mechanism; publication durability verified
+- Type: `REPOSITORY_DURABILITY`
+- Result: `PASSED`; freshly fetched `origin/main` at `4b3890cece60289ac48bf3d5791cfe96bea5ac14` was an ancestor of local `HEAD`; the only unpublished commits were the accepted P11 product commit `536abe67e724437dc969e1e27736bd08af9edea1` and Authority closure `7b039ae80de50113c0b84e399fddf0fbfb863c1c`.
+- Validation: `node --test` 68/68; combined `node src/cli/experiments.js` PASS; `git diff --check` PASS; publication-safety scan PASS with no bounded secret findings; generated plugin syntax/markers PASS; manifest permission set unchanged with no new permissions.
+- Publication: normal non-force `git push origin main` succeeded from `4b3890cece60289ac48bf3d5791cfe96bea5ac14` to `7b039ae80de50113c0b84e399fddf0fbfb863c1c`; final local `main == origin/main`; worktree clean; no history rewrite.
+- Evidence boundary: live Windows/Electron P11 evidence remains `UNKNOWN / NOT CLAIMED`; Phase 12 did not start.

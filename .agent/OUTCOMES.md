@@ -386,3 +386,17 @@
 - Publication: not pushed; `origin/main` remains at accepted Phase 8 publication `1feeb4c` pending a separate Architect publication decision.
 - Verification: 53/53 tests, P9 experiments, staged bundle, manifest, boundary/privacy/secret/publication-safety scans, and diff check passed.
 - Evidence: `BPDC-E032`, `E4_REGRESSION_PROTECTED`; live observation is not required and is not claimed.
+
+## BPDC-SYNC-008 - PUBLISHED
+
+- Outcome ID: `BPDC-SYNC-008-PUBLISHED`
+- Published: 2026-08-26 America/New_York
+- Acceptance: `PASSED`
+- Decision: Publish the Architect-accepted Phase 11 implementation and Authority closure without application changes or history rewriting.
+- Repository: canonical `\\atlas\\ATLAS\\100_ACTIVE\\Projects\\BPDC`; branch `main`.
+- Local before: `main` at `7b039ae80de50113c0b84e399fddf0fbfb863c1c`, clean; remote before `origin/main` at `4b3890cece60289ac48bf3d5791cfe96bea5ac14`.
+- Unpublished commits: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`) and `7b039ae80de50113c0b84e399fddf0fbfb863c1c` (`chore: record Phase 11 authority handoff`); no unexpected source/generated files.
+- Ancestry: freshly fetched `origin/main` was an ancestor of local `HEAD`; normal fast-forward publication was safe.
+- Validation: 68/68 tests; combined P4–P11 experiments PASS; manifest unchanged; generated plugin syntax/markers PASS; publication-safety scan PASS; `git diff --check` PASS.
+- Publication: normal non-force push succeeded from `4b3890cece60289ac48bf3d5791cfe96bea5ac14` to `7b039ae80de50113c0b84e399fddf0fbfb863c1c`; final local `main == origin/main`; worktree clean; no history rewrite.
+- Boundary: live P11 evidence remains `UNKNOWN / NOT CLAIMED`; Phase 12 did not start.

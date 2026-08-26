@@ -3,19 +3,20 @@
 ## Lifecycle
 
 - Status: `ACTIVE`
-- Last updated: 2026-08-25 America/New_York
+- Last updated: 2026-08-26 America/New_York
 
 ## Active state
 
-- Local directive ID: `BPDC-P11-001`
-- External directive ID: `BPDC-P11-001`
-- Objective: Implement exactly one persistent juvenile socialization imprint learned from positive contact during continuous maturation and exposed only as a bounded `SEEK_ATTENTION` developmental contributor.
-- Current status: `COMPLETE_FOR_ARCHITECT_REVIEW`
-- Acceptance: implementation and deterministic evidence satisfy the authorized Phase 11 boundary; no Phase 12 work has started.
-- Current phase: `Phase 11 — Juvenile Socialization Imprint` complete for Architect review.
+- Local directive ID: `BPDC-SYNC-008`
+- External directive ID: `BPDC-SYNC-008`
+- Objective: Publish the Architect-accepted Phase 11 product and Authority commits to canonical GitHub `main` without changing application behavior.
+- Current status: `COMPLETE`
+- Acceptance: Phase 11 is Architect-accepted and its product plus Authority closure are published by normal non-force fast-forward; no Phase 12 work has started.
+- Current phase: `Phase 11 — Juvenile Socialization Imprint` closed; awaiting a new Architect directive.
 - Expected touched areas: CreatureCore scalar and schema migration, behavior scoring contributor, generated OpenPets core, tests, experiments, README, and Authority records.
-- Immediate next action: Architect review of `BPDC-P11-001`; do not begin Phase 12 or push.
-- Local implementation commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); not pushed.
+- Immediate next action: await the next Architect directive; do not begin Phase 12.
+- Local implementation commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); published.
+- Authority closure commit: `7b039ae80de50113c0b84e399fddf0fbfb863c1c` (`chore: record Phase 11 authority handoff`); published.
 - Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
 - Authority closure commit: `807d867` (`chore: record Phase 8 authority handoff`); published.
 - Local P9 implementation commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); published.
@@ -23,6 +24,7 @@
 - Local P10 implementation commit: `9045fb7a61a29917405e3d1d53174aec63246dfb` (`feat: add continuous physical maturation`); published.
 - P10 Authority closure commit: `edff9031a90a1420552ab4d51cdbc03d9d8a05d5` (`chore: record Phase 10 authority handoff`); published.
 - Publication result: `BPDC-SYNC-007` pushed normally and non-force; final local `main == origin/main == edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; worktree clean.
+- Publication result: `BPDC-SYNC-008` pushed normally and non-force; final local `main == origin/main == 7b039ae80de50113c0b84e399fddf0fbfb863c1c`; worktree clean.
 
 ## Temporary task-relevant facts
 
@@ -57,4 +59,4 @@
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, and `BPDC-SYNC-007`; `BPDC-P11-001` is implemented and awaiting review. Phase 12 is not authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, `BPDC-SYNC-007`, and `BPDC-P11-001`; `BPDC-SYNC-008` is complete. Phase 12 is not authorized.

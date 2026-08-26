@@ -253,6 +253,18 @@
 - Discovery: not required; repository durability only.
 - Status at issuance: `AUTHORIZED`; completed successfully.
 
+## BPDC-SYNC-008
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-P11-001`
+- External directive: `BPDC-SYNC-008`
+- Objective: Publish the accepted Phase 11 juvenile socialization imprint product and Authority commits to canonical GitHub `main` without changing application behavior.
+- Scope: Authority read, clean-tree and commit verification, fresh fetch, ancestry/content/safety validation, 68-test regression, P4–P11 experiment suite, manifest permission review, diff check, normal non-force push, final local/remote equality verification, and Authority/Notion recording.
+- Exclusions: no imprint or maturity changes, additional developmental consequences, new permissions, Phase 12, history rewrite, amend/rebase/squash, force push, live-evidence fabrication, release, deployment, or OpenPets core change.
+- Acceptance: expected product `536abe67e724437dc969e1e27736bd08af9edea1` and Authority `7b039ae80de50113c0b84e399fddf0fbfb863c1c` commits verified; `origin/main` ancestor; delta limited to accepted P11 and Authority files; 68/68 tests and P4–P11 experiments pass; no permission expansion; normal push succeeds; local `main == origin/main`; worktree clean; live P11 evidence remains unclaimed and Phase 12 untouched.
+- Discovery: not required; repository durability only.
+- Status at issuance: `AUTHORIZED`; completed successfully.
+
 ## BPDC-P11-001
 
 - Issued: 2026-08-25 America/New_York

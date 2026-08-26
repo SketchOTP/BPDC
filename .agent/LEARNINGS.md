@@ -193,3 +193,12 @@
 - Deriving plasticity from the accepted maturity projection avoids an arbitrary day boundary; adult contact can continue normal relationship learning without changing the imprint.
 - A single `0.03` saturating scalar is measurable after repeated contact without allowing a few clicks to dominate; a `0.12` utility cap remains subordinate to fatigue and core social pressure.
 - Existing mature creatures must migrate with zero imprint. Inferring juvenile care from current bond, interaction history, habits, preference, or age would fabricate history.
+
+## BPDC-L022
+
+- Date: 2026-08-26
+- Fact: Accepted Phase 11 work can be published safely as a two-commit fast-forward when the fetched remote is an ancestor, the delta contains only the accepted product/Authority records, validation remains green, and the permission set is unchanged.
+- Evidence: `BPDC-E037`; `BPDC-SYNC-008`.
+- Confidence: `VERIFIED` for this publication.
+- Scope: BPDC repository durability after Phase 11.
+- Supersedes: `NONE`

@@ -391,3 +391,11 @@
 - Validation: `BPDC-E036`; 68/68 tests; P4–P11 experiments; staged plugin 68,010 bytes; syntax/manifest/boundary/privacy/diff checks passed.
 - Product commit: `536abe67e724437dc969e1e27736bd08af9edea1`; local only, no push.
 - Boundary: no negative development, multiple traits, XP/levels, mutable personality, evolution, new permissions, Phase 12, or live desktop claim.
+
+## 2026-08-26 — BPDC-SYNC-008 Phase 11 publication
+
+- Decision: publish the Architect-accepted Phase 11 product and Authority closure to canonical GitHub `main` by normal non-force fast-forward.
+- Verification: product `536abe67e724437dc969e1e27736bd08af9edea1` and Authority closure `7b039ae80de50113c0b84e399fddf0fbfb863c1c` were the expected unpublished commits; remote `4b3890cece60289ac48bf3d5791cfe96bea5ac14` was their ancestor.
+- Validation: 68/68 tests, P4–P11 experiments, manifest review, generated syntax/markers, bounded secret scan, and `git diff --check` passed.
+- Publication: normal push succeeded; final local `main == origin/main == 7b039ae80de50113c0b84e399fddf0fbfb863c1c`; worktree clean; no history rewrite.
+- Boundary: live P11 evidence remains unclaimed; Phase 12 did not start.
