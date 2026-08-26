@@ -1366,7 +1366,8 @@ var PresenceTracker = class {
   markActive() {
     const previousState = this.state;
     const returnedFromAbsence = previousState === "IDLE" || previousState === "LOCKED";
-    const absenceSeconds = returnedFromAbsence ? this.snapshot().userIdleDuration : 0;
+    const now = this.clock();
+    const absenceSeconds = returnedFromAbsence ? this.snapshot(now).userIdleDuration : 0;
     this.state = "ACTIVE";
     this.idleSinceMs = null;
     this.lastIdleDuration = 0;
