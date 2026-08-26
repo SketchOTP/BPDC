@@ -56,7 +56,7 @@ test("development is derived without schema or stored development state", () => 
   const restored = CreatureCore.fromSnapshot(snapshot);
 
   assert.equal(snapshot.schemaVersion, SNAPSHOT_SCHEMA_VERSION);
-  assert.equal(SNAPSHOT_SCHEMA_VERSION, 5);
+  assert.equal(SNAPSHOT_SCHEMA_VERSION, 6);
   assert.equal(Object.hasOwn(snapshot, "development"), false);
   assert.deepEqual(restored.developmentSnapshot(), core.developmentSnapshot());
 });

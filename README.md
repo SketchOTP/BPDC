@@ -63,7 +63,7 @@ Phase 9 adds exactly one learned activity preference: `playPreference`. It is a 
 
 The preference uses a `0.06` saturating learning rate, a deterministic 21-day half-life, and a maximum `0.3` `PLAY.learnedPreference` utility contribution. The contributor appears in normal score diagnostics and remains subordinate to stronger competing drives such as fatigue. Innate `personality.playfulness` is never mutated, and no general reinforcement or preference map is introduced.
 
-CreatureCore snapshots now use schema 5. Schema 4 and earlier snapshots migrate with `playPreference = 0` while preserving the accepted relationship, time-habit, elapsed-life, contact-response, and spatial state. P6 offline reconciliation may decay the preference but cannot reinforce it. P7 contact response and P8 REST_SITE targeting remain independent.
+CreatureCore snapshots now use schema 6. Schema 5 and earlier snapshots migrate with `playPreference = 0` where needed and `socializationImprint = 0`, preserving accepted relationship, time-habit, elapsed-life, contact-response, spatial, and play-preference state. P6 offline reconciliation may decay the play preference but cannot reinforce it; it never fabricates socialization imprint. P7 contact response and P8 REST_SITE targeting remain independent.
 
 ## Continuous physical maturation
 
@@ -75,7 +75,17 @@ maturity = clamp(ageSeconds / 14 simulated days, 0, 1)
 sizeFactor = 0.8 + 0.2 * maturity
 ```
 
-The projection is not persisted and does not affect utility, personality, drives, relationships, habits, preferences, behavior timing, RNG, or interaction responses. Existing schema-5 snapshots therefore load unchanged, and P6 elapsed-time reconciliation naturally advances maturity while the application is closed. The OpenPets adapter applies the bounded factor through `pet.setScale()` on startup and only when the quantized `0.01` value changes; this presentation path requires the single additional `pet:animate` permission. No levels, XP, alternate forms, evolution branches, or care-history development system are present.
+The projection is not persisted and does not affect utility, personality, drives, relationships, habits, preferences, behavior timing, RNG, or interaction responses. Existing schema-5 snapshots migrate unchanged except for a zero-initialized Phase 11 imprint, and P6 elapsed-time reconciliation naturally advances maturity while the application is closed. The OpenPets adapter applies the bounded factor through `pet.setScale()` on startup and only when the quantized `0.01` value changes; this presentation path requires the single additional `pet:animate` permission. No levels, XP, alternate forms, evolution branches, or care-history development system are present in Phase 10.
+
+## Juvenile socialization imprint
+
+Phase 11 adds exactly one persistent developmental scalar: `socializationImprint`. Positive contact received while the creature is still maturing reinforces this scalar with continuous remaining plasticity:
+
+```text
+delta = 0.03 * interactionIntensity * (1 - maturity) * (1 - socializationImprint)
+```
+
+The imprint saturates in `0..1`, never decays, and stops changing at full maturity. It is distinct from current `bond` and immutable innate `personality.sociability`; low early interaction causes no penalty. At adulthood it contributes only `socializationImprint * maturity * 0.12` to `SEEK_ATTENTION.developmentalSocialization`, remaining subordinate to core drives and fatigue. Adult contact continues to update the already-accepted bond, time habit, play preference, and transient response systems but cannot change the imprint. Schema 5 and earlier snapshots migrate with zero imprint so no prior juvenile care history is invented. No negative imprint, XP, levels, evolution branches, additional developmental traits, or new OpenPets permissions are introduced.
 
 ## Boundary
 

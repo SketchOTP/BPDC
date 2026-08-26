@@ -22,6 +22,7 @@ const coreFiles = [
   "spatial.js",
   "play-preference.js",
   "development.js",
+  "socialization.js",
 ];
 
 await mkdir(coreTarget, { recursive: true });

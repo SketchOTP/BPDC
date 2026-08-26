@@ -151,14 +151,15 @@ var BEHAVIOR_DEFINITIONS = {
   SLEEP: { minDuration: 600, maxDuration: 1800, interruptible: false, cooldown: 300 }
 };
 var BehaviorScorer = class {
-  scoreAll({ drives, personality, environment, relationship, habit, learnedPreference = 0 }) {
+  scoreAll({ drives, personality, environment, relationship, habit, learnedPreference = 0, developmentalSocialization = 0 }) {
     return ACTIONS.map((action) => this.score(action, {
       drives,
       personality,
       environment,
       relationship,
       habit,
-      learnedPreference
+      learnedPreference,
+      developmentalSocialization
     }));
   }
   score(action, {
@@ -167,7 +168,8 @@ var BehaviorScorer = class {
     environment,
     relationship = { bond: 0.5, recentInfluence: 0 },
     habit = { timeHabit: 0 },
-    learnedPreference = 0
+    learnedPreference = 0,
+    developmentalSocialization = 0
   }) {
     const night = environment.localTime >= 22 || environment.localTime < 7 ? 1 : 0;
     const activeUser = environment.userPresent && environment.userIdleDuration < 300 ? 1 : 0;
@@ -205,6 +207,7 @@ var BehaviorScorer = class {
         userPresent: activeUser * 0.35,
         interaction: environment.interactionPressure * 0.25,
         timeHabit: habit.timeHabit ?? 0,
+        developmentalSocialization,
         independencePenalty: -personality.independence * 0.35,
         fatiguePenalty: -drives.energy * 0.35
       },
@@ -237,14 +240,15 @@ var BehaviorSelector = class {
     this.scorer = scorer;
     this.noiseAmplitude = noiseAmplitude;
   }
-  select({ drives, personality, environment, relationship, habit, learnedPreference, rng }) {
+  select({ drives, personality, environment, relationship, habit, learnedPreference, developmentalSocialization, rng }) {
     const candidates = this.scorer.scoreAll({
       drives,
       personality,
       environment,
       relationship,
       habit,
-      learnedPreference
+      learnedPreference,
+      developmentalSocialization
     }).map((candidate) => {
       const noise = rng.nextRange(-this.noiseAmplitude, this.noiseAmplitude);
       return {
@@ -486,7 +490,7 @@ function learnedPlayPreferenceForScoring(preference, timestamp) {
 }
 
 // integrations/openpets/plugin/core/persistence.js
-var SNAPSHOT_SCHEMA_VERSION = 5;
+var SNAPSHOT_SCHEMA_VERSION = 6;
 function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
 }
@@ -499,7 +503,8 @@ function deserializeSnapshot(serialized) {
       relationship: createInitialRelationship(snapshot.simulationTimestamp ?? 0),
       habit: createInitialHabit(snapshot.simulationTimestamp ?? 0),
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
-      playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0)
+      playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
+      socializationImprint: 0
     };
   }
   if (snapshot?.schemaVersion === 2) {
@@ -508,7 +513,8 @@ function deserializeSnapshot(serialized) {
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       habit: createInitialHabit(snapshot.simulationTimestamp ?? 0),
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
-      playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0)
+      playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
+      socializationImprint: 0
     };
   }
   if (snapshot?.schemaVersion === 3) {
@@ -516,14 +522,23 @@ function deserializeSnapshot(serialized) {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
-      playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0)
+      playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
+      socializationImprint: 0
     };
   }
   if (snapshot?.schemaVersion === 4) {
     return {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
-      playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0)
+      playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
+      socializationImprint: 0
+    };
+  }
+  if (snapshot?.schemaVersion === 5) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      socializationImprint: 0
     };
   }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {
@@ -619,6 +634,26 @@ function assertFiniteNonNegative2(value, name) {
   }
 }
 
+// integrations/openpets/plugin/core/socialization.js
+var SOCIALIZATION_LEARNING_RATE = 0.03;
+var SOCIALIZATION_UTILITY_WEIGHT = 0.12;
+function validateSocializationImprint(value) {
+  if (value === void 0 || value === null) return 0;
+  if (!Number.isFinite(value)) {
+    throw new TypeError("Socialization imprint must be finite.");
+  }
+  return clamp01(value);
+}
+function reinforceSocializationImprint(imprint, intensity, maturity) {
+  const boundedIntensity = clamp01(intensity);
+  const juvenilePlasticity = 1 - clamp01(maturity);
+  const delta = SOCIALIZATION_LEARNING_RATE * boundedIntensity * juvenilePlasticity * (1 - clamp01(imprint));
+  return clamp01(imprint + delta);
+}
+function developmentalSocializationForScoring(imprint, maturity) {
+  return validateSocializationImprint(imprint) * clamp01(maturity) * SOCIALIZATION_UTILITY_WEIGHT;
+}
+
 // integrations/openpets/plugin/core/creature-core.js
 var CreatureCore = class _CreatureCore {
   constructor({
@@ -633,6 +668,7 @@ var CreatureCore = class _CreatureCore {
     habit,
     spatial = createInitialSpatial(simulationTimestamp),
     playPreference = createInitialPlayPreference(simulationTimestamp),
+    socializationImprint = 0,
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer()
   }) {
@@ -647,6 +683,7 @@ var CreatureCore = class _CreatureCore {
     this.habit = validateHabit(habit, this.clock.now());
     this.spatial = validateSpatial(spatial, this.clock.now());
     this.playPreference = validatePlayPreference(playPreference, this.clock.now());
+    this.socializationImprint = validateSocializationImprint(socializationImprint);
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -725,7 +762,8 @@ var CreatureCore = class _CreatureCore {
       environment,
       relationship: this.relationshipForScoring(),
       habit: this.habitForScoring(environment),
-      learnedPreference: this.learnedPlayPreferenceForScoring()
+      learnedPreference: this.learnedPlayPreferenceForScoring(),
+      developmentalSocialization: this.developmentalSocializationForScoring()
     });
     return {
       simulationTime: this.clock.now(),
@@ -748,6 +786,8 @@ var CreatureCore = class _CreatureCore {
       habit: this.habitSnapshot(environment),
       spatial: this.spatialSnapshot(),
       playPreference: this.playPreferenceSnapshot(),
+      socializationImprint: this.socializationImprint,
+      developmentalSocialization: this.developmentalSocializationForScoring(),
       development: this.developmentSnapshot(),
       rngState: this.rng.getState()
     };
@@ -771,6 +811,7 @@ var CreatureCore = class _CreatureCore {
       habit: this.habitStateSnapshot(),
       spatial: this.spatialStateSnapshot(),
       playPreference: this.playPreferenceStateSnapshot(),
+      socializationImprint: this.socializationImprint,
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming
     };
@@ -797,7 +838,8 @@ var CreatureCore = class _CreatureCore {
       relationship: snapshot.relationship,
       habit: snapshot.habit,
       spatial: snapshot.spatial,
-      playPreference: snapshot.playPreference
+      playPreference: snapshot.playPreference,
+      socializationImprint: snapshot.socializationImprint
     });
   }
   commitBehavior(environment) {
@@ -808,6 +850,7 @@ var CreatureCore = class _CreatureCore {
       relationship: this.relationshipForScoring(),
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
+      developmentalSocialization: this.developmentalSocializationForScoring(),
       rng: this.rng
     });
     const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
@@ -864,6 +907,12 @@ var CreatureCore = class _CreatureCore {
       if (committedBehavior === "PLAY") {
         reinforcePlayPreference(this.playPreference, interaction.intensity, this.clock.now());
       }
+      const maturity = this.developmentSnapshot().maturity;
+      this.socializationImprint = reinforceSocializationImprint(
+        this.socializationImprint,
+        interaction.intensity,
+        maturity
+      );
     }
     return clone(bounded);
   }
@@ -920,6 +969,12 @@ var CreatureCore = class _CreatureCore {
   }
   learnedPlayPreferenceForScoring() {
     return learnedPlayPreferenceForScoring(this.playPreference, this.clock.now());
+  }
+  developmentalSocializationForScoring() {
+    return developmentalSocializationForScoring(
+      this.socializationImprint,
+      this.developmentSnapshot().maturity
+    );
   }
   habitSnapshot(environment = this.lastEnvironment) {
     this.decayHabit();

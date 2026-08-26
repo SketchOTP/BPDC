@@ -1,5 +1,12 @@
 export { CreatureCore } from "./creature-core.js";
 export {
+  SOCIALIZATION_LEARNING_RATE,
+  SOCIALIZATION_UTILITY_WEIGHT,
+  developmentalSocializationForScoring,
+  reinforceSocializationImprint,
+  validateSocializationImprint,
+} from "./socialization.js";
+export {
   INITIAL_SIZE_FACTOR,
   MATURATION_DURATION_SECONDS,
   MATURE_SIZE_FACTOR,

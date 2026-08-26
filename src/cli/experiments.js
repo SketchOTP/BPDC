@@ -1,5 +1,12 @@
 #!/usr/bin/env node
-import { CreatureCore, createEnvironment, developmentSnapshot } from "../creature-core/index.js";
+import {
+  CreatureCore,
+  MATURATION_DURATION_SECONDS,
+  SOCIALIZATION_LEARNING_RATE,
+  SOCIALIZATION_UTILITY_WEIGHT,
+  createEnvironment,
+  developmentSnapshot,
+} from "../creature-core/index.js";
 import { PresenceTracker } from "../../integrations/openpets/presence-tracker.js";
 import { RestSiteTracker, distanceBetween } from "../../integrations/openpets/rest-site-tracker.js";
 import { offlineEnvironmentAt, restoreAndReconcile } from "../../integrations/openpets/elapsed-reconciliation.js";
@@ -57,10 +64,19 @@ const developmentOffline = runDevelopmentOfflineExperiment();
 const developmentPersistence = runDevelopmentPersistenceExperiment();
 const developmentAdapter = await runDevelopmentAdapterExperiment();
 const developmentCallBoundedness = await runDevelopmentCallBoundednessExperiment();
+const juvenilePlasticity = runJuvenilePlasticityExperiment();
+const socializationSaturation = runSocializationSaturationExperiment();
+const socializationNoContact = runSocializationNoContactExperiment();
+const socializationBondIndependence = runSocializationBondIndependenceExperiment();
+const socializationUtility = runSocializationUtilityExperiment();
+const socializationNonDomination = runSocializationNonDominationExperiment();
+const socializationPersistence = runSocializationPersistenceExperiment();
+const socializationOffline = runSocializationOfflineExperiment();
+const socializationAdultContact = runSocializationAdultContactExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P10-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness]
+  directive: "BPDC-P11-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -77,6 +93,9 @@ console.log(JSON.stringify({
     playPreferenceOffline, playPreferenceResponse,
     developmentCurve, developmentNonInterference, developmentOffline,
     developmentPersistence, developmentAdapter, developmentCallBoundedness,
+    juvenilePlasticity, socializationSaturation, socializationNoContact,
+    socializationBondIndependence, socializationUtility, socializationNonDomination,
+    socializationPersistence, socializationOffline, socializationAdultContact,
   },
   trace24h,
 }, null, 2));
@@ -721,7 +740,7 @@ function runPlayPreferencePersistenceExperiment() {
   const migrated = CreatureCore.fromSnapshot(schema4);
   return {
     status: JSON.stringify(restored.toSnapshot()) === JSON.stringify(core.toSnapshot())
-      && migrated.toSnapshot().schemaVersion === 5
+      && migrated.toSnapshot().schemaVersion === 6
       && migrated.playPreference.playPreference === 0 ? "PASS" : "FAIL",
     schema: restored.toSnapshot().schemaVersion,
     migratedPreference: migrated.playPreference.playPreference,
@@ -845,7 +864,7 @@ function runDevelopmentPersistenceExperiment() {
   const snapshot = JSON.parse(core.serialize());
   const restored = CreatureCore.fromSnapshot(core.serialize());
   return {
-    status: snapshot.schemaVersion === 5
+    status: snapshot.schemaVersion === 6
       && !Object.hasOwn(snapshot, "development")
       && JSON.stringify(before) === JSON.stringify(restored.developmentSnapshot()) ? "PASS" : "FAIL",
     schema: snapshot.schemaVersion,
@@ -887,6 +906,159 @@ function runDevelopmentCallBoundednessExperiment() {
         calls: calls.length,
       };
     });
+}
+
+function runJuvenilePlasticityExperiment() {
+  const values = [0, 0.25, 0.5, 0.75, 1].map((maturity, index) => {
+    const core = socializationCoreAtMaturity(maturity, 1101 + index);
+    core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, playPreferenceEnvironment());
+    return core.socializationImprint;
+  });
+  const expected = [
+    SOCIALIZATION_LEARNING_RATE,
+    SOCIALIZATION_LEARNING_RATE * 0.75,
+    SOCIALIZATION_LEARNING_RATE * 0.5,
+    SOCIALIZATION_LEARNING_RATE * 0.25,
+    0,
+  ];
+  return {
+    status: values.every((value, index) => Math.abs(value - expected[index]) < 1e-12)
+      && values[0] > values[1] && values[1] > values[2] && values[2] > values[3]
+      ? "PASS" : "FAIL",
+    values,
+  };
+}
+
+function runSocializationSaturationExperiment() {
+  const core = socializationCoreAtMaturity(0, 1108);
+  for (let index = 0; index < 40; index += 1) {
+    core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, playPreferenceEnvironment());
+  }
+  return {
+    status: core.socializationImprint > 0.6 && core.socializationImprint < 0.8 ? "PASS" : "FAIL",
+    imprint: core.socializationImprint,
+  };
+}
+
+function runSocializationNoContactExperiment() {
+  const core = CreatureCore.create({ seed: 1109, createdAt: 0 });
+  core.reconcileElapsed(MATURATION_DURATION_SECONDS, () => createEnvironment({ localTime: 12 }));
+  return {
+    status: core.socializationImprint === 0 && core.developmentSnapshot().maturity === 1 ? "PASS" : "FAIL",
+    imprint: core.socializationImprint,
+    maturity: core.developmentSnapshot().maturity,
+  };
+}
+
+function runSocializationBondIndependenceExperiment() {
+  const neutral = socializationCoreAtMaturity(1, 1110);
+  const imprinted = CreatureCore.fromSnapshot({ ...neutral.toSnapshot(), socializationImprint: 0.8 });
+  const neutralCandidate = getCandidate(neutral, "SEEK_ATTENTION", playPreferenceEnvironment());
+  const imprintedCandidate = getCandidate(imprinted, "SEEK_ATTENTION", playPreferenceEnvironment());
+  const delta = imprintedCandidate.score - neutralCandidate.score;
+  return {
+    status: neutral.relationship.bond === imprinted.relationship.bond
+      && neutral.personality.sociability === imprinted.personality.sociability
+      && neutralCandidate.contributors.developmentalSocialization === 0
+      && Math.abs(delta - 0.8 * SOCIALIZATION_UTILITY_WEIGHT) < 1e-12
+      ? "PASS" : "FAIL",
+    delta,
+    bond: neutral.relationship.bond,
+  };
+}
+
+function runSocializationUtilityExperiment() {
+  const core = socializationCoreAtMaturity(1, 1111);
+  core.socializationImprint = 1;
+  const attention = getCandidate(core, "SEEK_ATTENTION", playPreferenceEnvironment());
+  return {
+    status: attention.contributors.developmentalSocialization === SOCIALIZATION_UTILITY_WEIGHT
+      && attention.contributors.developmentalSocialization <= 0.15 ? "PASS" : "FAIL",
+    contributor: attention.contributors.developmentalSocialization,
+  };
+}
+
+function runSocializationNonDominationExperiment() {
+  const core = socializationCoreAtMaturity(1, 1112);
+  core.socializationImprint = 1;
+  core.drives = { energy: 1, social: 0.05, curiosity: 0.05, stimulation: 0.05 };
+  core.currentBehavior = null;
+  const selected = core.advance(0, playPreferenceEnvironment())[0];
+  return { status: selected.action === "SLEEP" ? "PASS" : "FAIL", selected: selected.action };
+}
+
+function runSocializationPersistenceExperiment() {
+  const core = socializationCoreAtMaturity(0.25, 1113);
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.8 }, playPreferenceEnvironment());
+  const snapshot = core.toSnapshot();
+  const restored = CreatureCore.fromSnapshot(core.serialize());
+  const schema5 = { ...snapshot, schemaVersion: 5 };
+  delete schema5.socializationImprint;
+  const migrated = CreatureCore.fromSnapshot(schema5);
+  return {
+    status: snapshot.schemaVersion === 6
+      && restored.socializationImprint === core.socializationImprint
+      && migrated.socializationImprint === 0
+      ? "PASS" : "FAIL",
+    schema: snapshot.schemaVersion,
+    imprint: core.socializationImprint,
+    migrated: migrated.socializationImprint,
+  };
+}
+
+function runSocializationOfflineExperiment() {
+  const day = 24 * 60 * 60;
+  const savedAt = 12_000_000;
+  const core = socializationCoreAtMaturity(0.5, 1114);
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 0.8 }, playPreferenceEnvironment());
+  const before = core.socializationImprint;
+  const restored = restoreAndReconcile(
+    serializePersistenceEnvelope(core.serialize(), savedAt),
+    { nowEpochMs: savedAt + 7 * day * 1_000, coreFactory: CreatureCore.fromSnapshot },
+  );
+  return {
+    status: restored.elapsedSeconds === 7 * day
+      && restored.core.developmentSnapshot().maturity === 1
+      && restored.core.socializationImprint === before
+      ? "PASS" : "FAIL",
+    before,
+    after: restored.core.socializationImprint,
+    maturity: restored.core.developmentSnapshot().maturity,
+  };
+}
+
+function runSocializationAdultContactExperiment() {
+  const core = socializationCoreAtMaturity(1, 1115);
+  const before = {
+    imprint: core.socializationImprint,
+    bond: core.relationship.bond,
+    playPreference: core.playPreference.playPreference,
+    habit: core.habit.attentionByHour[12],
+  };
+  commitControlledBehavior(core, "PLAY");
+  core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity: 1 }, playPreferenceEnvironment());
+  return {
+    status: core.socializationImprint === before.imprint
+      && core.relationship.bond > before.bond
+      && core.playPreference.playPreference > before.playPreference
+      && core.habit.attentionByHour[12] > before.habit
+      ? "PASS" : "FAIL",
+    before,
+    after: {
+      imprint: core.socializationImprint,
+      bond: core.relationship.bond,
+      playPreference: core.playPreference.playPreference,
+      habit: core.habit.attentionByHour[12],
+    },
+  };
+}
+
+function socializationCoreAtMaturity(maturity, seed) {
+  const core = CreatureCore.create({ seed, createdAt: 0 });
+  return CreatureCore.fromSnapshot({
+    ...core.toSnapshot(),
+    simulationTimestamp: maturity * MATURATION_DURATION_SECONDS,
+  });
 }
 
 function commitControlledBehavior(core, action) {

@@ -41,6 +41,11 @@ import {
   validatePlayPreference,
 } from "./play-preference.js";
 import { developmentSnapshot as deriveDevelopmentSnapshot } from "./development.js";
+import {
+  developmentalSocializationForScoring,
+  reinforceSocializationImprint,
+  validateSocializationImprint,
+} from "./socialization.js";
 
 export class CreatureCore {
   constructor({
@@ -55,6 +60,7 @@ export class CreatureCore {
     habit,
     spatial = createInitialSpatial(simulationTimestamp),
     playPreference = createInitialPlayPreference(simulationTimestamp),
+    socializationImprint = 0,
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer(),
   }) {
@@ -69,6 +75,7 @@ export class CreatureCore {
     this.habit = validateHabit(habit, this.clock.now());
     this.spatial = validateSpatial(spatial, this.clock.now());
     this.playPreference = validatePlayPreference(playPreference, this.clock.now());
+    this.socializationImprint = validateSocializationImprint(socializationImprint);
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -158,6 +165,7 @@ export class CreatureCore {
       relationship: this.relationshipForScoring(),
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
+      developmentalSocialization: this.developmentalSocializationForScoring(),
     });
     return {
       simulationTime: this.clock.now(),
@@ -183,6 +191,8 @@ export class CreatureCore {
       habit: this.habitSnapshot(environment),
       spatial: this.spatialSnapshot(),
       playPreference: this.playPreferenceSnapshot(),
+      socializationImprint: this.socializationImprint,
+      developmentalSocialization: this.developmentalSocializationForScoring(),
       development: this.developmentSnapshot(),
       rngState: this.rng.getState(),
     };
@@ -210,6 +220,7 @@ export class CreatureCore {
       habit: this.habitStateSnapshot(),
       spatial: this.spatialStateSnapshot(),
       playPreference: this.playPreferenceStateSnapshot(),
+      socializationImprint: this.socializationImprint,
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming,
     };
@@ -240,6 +251,7 @@ export class CreatureCore {
       habit: snapshot.habit,
       spatial: snapshot.spatial,
       playPreference: snapshot.playPreference,
+      socializationImprint: snapshot.socializationImprint,
     });
   }
 
@@ -251,6 +263,7 @@ export class CreatureCore {
       relationship: this.relationshipForScoring(),
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
+      developmentalSocialization: this.developmentalSocializationForScoring(),
       rng: this.rng,
     });
     const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
@@ -308,6 +321,12 @@ export class CreatureCore {
       if (committedBehavior === "PLAY") {
         reinforcePlayPreference(this.playPreference, interaction.intensity, this.clock.now());
       }
+      const maturity = this.developmentSnapshot().maturity;
+      this.socializationImprint = reinforceSocializationImprint(
+        this.socializationImprint,
+        interaction.intensity,
+        maturity,
+      );
     }
     return clone(bounded);
   }
@@ -384,6 +403,13 @@ export class CreatureCore {
 
   learnedPlayPreferenceForScoring() {
     return learnedPlayPreferenceForScoring(this.playPreference, this.clock.now());
+  }
+
+  developmentalSocializationForScoring() {
+    return developmentalSocializationForScoring(
+      this.socializationImprint,
+      this.developmentSnapshot().maturity,
+    );
   }
 
   habitSnapshot(environment = this.lastEnvironment) {
