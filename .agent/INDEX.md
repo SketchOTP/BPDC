@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 15 — Behavior Cooldown Activation (accepted and published)
-- Active directive: BPDC-SYNC-012 (completed)
-- Active task packet: `.agent/tasks/active/BPDC-P15-002.md`
-- Last Codex outcome: BPDC-SYNC-012 (Phase 15 publication)
-- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; final `main == origin/main == 1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; worktree clean; Phase 16 is not authorized.
+- Current stage: Phase 16 — Learned Coarse Daily Activity Routine (implemented locally; pending Architect review)
+- Active directive: BPDC-P16-001
+- Active task packet: `.agent/tasks/active/BPDC-P16-001.md`
+- Last Codex outcome: BPDC-P16-001 (local implementation handoff)
+- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == 42a77996143548e5bd022a82a2f823da5596fd3`, remote remains `7b8f249985c54d752d4cc87a5862b43553222298`; worktree clean; Phase 17 is not authorized.
 
 ## Mandatory kernel
 

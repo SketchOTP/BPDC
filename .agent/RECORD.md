@@ -466,3 +466,12 @@
 - Generated artifact: two independent staged builds and tracked output matched at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
 - Result: GitHub `main` advanced normally to `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; final local `main == origin/main`; worktree clean; no records-only closure; no history rewrite.
 - Evidence boundary: P15 remains `E4_REGRESSION_PROTECTED`; live cooldown behavior remains `UNKNOWN / NOT CLAIMED`; Phase 16 not started.
+
+## 2026-08-26 — BPDC-P16-001 local implementation
+
+- Decision: Execute the explicitly authorized Phase 16 directive as a bounded extension of the existing habit model; do not begin Phase 17.
+- Product commit: `42a77996143548e5bd022a82a2f823da5596fd3a` (`feat: add coarse daily activity routine`); local only.
+- Semantics: four coarse local-time periods, natural-completion learning only, five authorized routine actions, saturating `0.04` learning, 14-simulated-day half-life, maximum `0.12` utility contribution, no routine learning from abandoned/overlay/legacy active commitments.
+- Persistence: snapshot schema `7 → 8`; habit schema `1 → 2`; legacy routine matrix zero-initialized; no fabricated history.
+- Validation: 119/119 tests and P16/P4–P15 experiments PASS; generated A/B/tracked correspondence is 84,153 bytes with SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`; no new permissions or host/core boundary violations.
+- Governance: evidence level `E3_TARGET_TESTED` pending Architect acceptance; live routine behavior `UNKNOWN / NOT CLAIMED`; push not authorized; Phase 17 not authorized.

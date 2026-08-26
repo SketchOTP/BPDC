@@ -9,6 +9,17 @@
 - Scope: repository bootstrap and Phase 0 planning.
 - Supersedes: `NONE`
 
+## BPDC-L028 — coarse daily routine boundary
+
+- Date: 2026-08-26
+- Fact: One four-period action-affinity matrix can add recognizable daily regularity without a scheduler or new behavior authority when it learns only from naturally completed actions and contributes only a small positive utility bias.
+- Evidence: `BPDC-E045`; 119/119 tests, P16 experiments, and P4–P15 regressions passed. Same-period learning, distributed-history contrast, completion-only semantics, continuous 14-day decay, save/reload, offline equivalence, eligibility composition, non-domination, and anti-lock behavior are verified.
+- Boundary: only `OBSERVE`, `WANDER`, `PLAY`, `FOLLOW_CURSOR`, and `SLEEP` learn; `IDLE`, `SEEK_ATTENTION`, and `AVOID` remain excluded. P14 abandonment and P7/P12 overlays do not learn.
+- Persistence: schema 7 → 8 and habit 1 → 2 migration zero-initializes routine history; no prior behavior is inferred. Routine uses simulation time and local-time period labels only.
+- Confidence: `VERIFIED` for deterministic core behavior and staged artifact correspondence; live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`.
+- Scope: `BPDC-P16-001`.
+- Supersedes: `NONE`
+
 ## BPDC-L028 — Phase 15 cooldown publication
 
 - Date: 2026-08-26

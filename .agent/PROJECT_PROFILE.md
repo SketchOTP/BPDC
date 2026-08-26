@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 15 — Behavior Cooldown Activation; Architect-accepted and published under `BPDC-SYNC-012`; canonical SHA `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; Phase 16 is not authorized.
+- Current phase: Phase 16 — Learned Coarse Daily Activity Routine; implementation locally committed under `BPDC-P16-001`; local SHA `42a77996143548e5bd022a82a2f823da5596fd3a`; canonical remote remains Phase 15 at `7b8f249985c54d752d4cc87a5862b43553222298`; Phase 17 is not authorized.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–15 state is synchronized to GitHub `main` at `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; live P15 desktop cooldown evidence remains `UNKNOWN / NOT CLAIMED`; Phase 16 is not authorized.
+- Deployment: no deployment authorized; Phase 16 is local-only pending Architect review; live P15 desktop cooldown evidence remains `UNKNOWN / NOT CLAIMED`; Phase 17 is not authorized.

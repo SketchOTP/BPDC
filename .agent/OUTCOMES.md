@@ -499,3 +499,15 @@
 - Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` matched at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
 - Publication: normal non-force `git push origin main` advanced GitHub from `6f6b3dd51b76ad352664e0bb5b9af24547420e70` to `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; final fetch verified local `main == origin/main`; worktree clean; no records-only closure and no history rewrite.
 - Evidence: P15 remains `E4_REGRESSION_PROTECTED`; live desktop cooldown behavior remains `UNKNOWN / NOT CLAIMED`; Phase 16 was not started.
+
+## BPDC-P16-001 - Learned coarse daily activity routine
+
+- Outcome ID: `BPDC-P16-001-LOCAL`
+- Closed for Codex handoff: 2026-08-26 America/New_York
+- Verdict: `COMPLETE FOR ARCHITECT REVIEW`
+- Entry: local/remote `main` `7b8f249985c54d752d4cc87a5862b43553222298`; clean worktree; 106/106 baseline tests and P4–P15 experiments passed.
+- Product: local commit `42a77996143548e5bd022a82a2f823da5596fd3a` adds exactly one four-period coarse activity routine within the existing habit model. Natural completion is the only learning trigger; P14 abandonment, P7/P12 overlays, and legacy active commitments without period metadata do not learn.
+- Model: periods are `floor(localTime / 6)`; only `OBSERVE`, `WANDER`, `PLAY`, `FOLLOW_CURSOR`, and `SLEEP` learn; routine learning is saturating at `0.04`, decays with a 14-simulated-day half-life, and contributes at most `0.12` to eligible action utility. Existing P4 attention habit remains separate.
+- Persistence: snapshot schema 7 → 8; habit schema 1 → 2; legacy routines initialize to zero without invented history. Save/reload and offline reconciliation converge deterministically.
+- Validation: `node --test` 119/119; combined experiments PASS; syntax, manifest/permissions, boundary/privacy, safety, and `git diff --check` PASS. Two independent staged builds and tracked generated output match at 84,153 bytes/SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
+- Evidence: `E3_TARGET_TESTED` pending Architect acceptance. Live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`; Phase 17 was not started. Push was not authorized.

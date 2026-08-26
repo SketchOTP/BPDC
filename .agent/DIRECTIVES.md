@@ -453,3 +453,15 @@
 - Validation: 106/106 tests; P15 A–K and P4–P14 experiments PASS; syntax, manifest/permission, boundary/privacy, safety, and `git diff --check` PASS; two staged builds match tracked output at 80,238 bytes/SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
 - Environment: direct UNC esbuild execution remains blocked by known `spawn EPERM`; independent local staged builds are the validated artifact route. jCodemunch-MCP was unavailable and is recorded as an inspection limitation.
 - Status: `IMPLEMENTED — PENDING ARCHITECT REVIEW`; local commit required; do not push; Phase 16 remains on hold.
+
+## BPDC-P16-001
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via active directive; P15 publication is superseded by the explicit P16 authorization.
+- Objective: Implement one bounded learned coarse daily activity routine so repeated completed activities become modestly more likely during the same coarse local-time period.
+- Entry: canonical local and `origin/main` `7b8f249985c54d752d4cc87a5862b43553222298`; clean worktree; 106/106 tests and P4–P15 experiments passed.
+- Scope: extend the existing habit with one four-period activity matrix; learn only `OBSERVE`, `WANDER`, `PLAY`, `FOLLOW_CURSOR`, and `SLEEP` after natural completion; use continuous same-period utility contribution with bounded learning and decay; migrate schema 7 → 8 and habit 1 → 2; preserve deterministic persistence/offline behavior and generated correspondence.
+- Exclusions: no new behavior, drive, sensor, permission, scheduler, planner, negative habit, care-history system, generic memory, or Phase 17 work; midpoint abandonment and transient overlays do not teach the routine.
+- Validation: 119/119 tests; P16 experiments and P4–P15 regressions PASS; syntax, manifest/permission, boundary/privacy, safety, and `git diff --check` PASS; two staged builds and tracked output match at 84,153 bytes/SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
+- Environment: direct UNC esbuild remains blocked by known `spawn EPERM`; independent local staged builds are the validated artifact route. jCodemunch-MCP was unavailable and remains an inspection limitation.
+- Status: `IMPLEMENTED — PENDING ARCHITECT REVIEW`; product commit `42a77996143548e5bd022a82a2f823da5596fd3a`; do not push; Phase 17 remains unauthorized.

@@ -61,3 +61,9 @@ No material prior-art investigation has been completed in this bootstrap. The ne
 - Finding: the host tick provides timing and visibility; host behavior selection was not observed. Gravity is an explicit host feature and was disabled by the BPDC adapter. Plugin-declared source is snapshotted, so BPDC ships a self-contained generated entry.
 - Disposition: `WRAP` / `ADOPT`; no fork or upstream modification.
 - Recheck trigger: a required BPDC behavior needs raw geometry, animation completion, high-frequency control, or host capabilities outside the current SDK seam.
+
+## BPDC-EXT-003 — Phase 16 routine classification
+
+- Date: 2026-08-26
+- Finding: Architect-selected daily-life regularity is `ADAPTABLE`; full cyclic schedules and scripted daily plans remain `REFERENCE-ONLY` and were not implemented.
+- Disposition: no new external discovery performed; the phase stayed within the existing habit and utility architecture. No LLM planning, scheduler, or generic routine system was introduced.

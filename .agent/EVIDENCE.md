@@ -506,3 +506,15 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: 106/106 tests; combined P15 A–K and P4–P14 experiments; schema migration, persistence/offline/RNG, protective actions, syntax, manifest, boundary/privacy, safety, and `git diff --check` passed.
 - Generated artifact: two independent staged builds and tracked output were byte/hash-identical at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
 - Boundary: live desktop cooldown behavior remains `UNKNOWN / NOT CLAIMED`; Phase 16 was not started.
+
+## BPDC-E045 — Phase 16 local validation
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-P16-001` / local implementation handoff
+- Evidence level: `E3_TARGET_TESTED` pending Architect acceptance
+- Type: `IMPLEMENTATION_VALIDATION`
+- Result: `PASSED`; exactly one bounded coarse daily activity routine was implemented within the existing habit architecture.
+- Product: commit `42a77996143548e5bd022a82a2f823da5596fd3a`; snapshot schema 7 → 8 and habit schema 1 → 2; no new action, drive, sensor, permission, scheduler, planner, or Phase 17 work.
+- Validation: 119/119 tests; P16 experiments and P4–P15 regressions PASS; schema/migration, persistence/offline, eligibility, anti-lock, syntax, manifest, boundary/privacy, safety, and `git diff --check` passed.
+- Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were byte/hash-identical at 84,153 bytes with SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
+- Boundary: direct UNC esbuild remains blocked by known `spawn EPERM`; local staging is the validated build route. Live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`; no push performed; Phase 17 not started.
