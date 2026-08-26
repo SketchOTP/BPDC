@@ -91,10 +91,19 @@ const followCursorOffline = runFollowCursorOfflineExperiment();
 const followCursorPersistence = runFollowCursorPersistenceExperiment();
 const followCursorRestSite = await runFollowCursorRestSiteExperiment();
 const followCursorShutdown = await runFollowCursorShutdownExperiment();
+const midpointStable = runMidpointStableExperiment();
+const midpointSwitch = runMidpointSwitchExperiment();
+const midpointEligibility = runMidpointEligibilityExperiment();
+const midpointHysteresis = runMidpointHysteresisExperiment();
+const midpointNonInterruptible = runMidpointNonInterruptibleExperiment();
+const midpointPartition = runMidpointPartitionExperiment();
+const midpointPersistence = runMidpointPersistenceExperiment();
+const midpointOffline = runMidpointOfflineExperiment();
+const midpointTransient = await runMidpointTransientExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P13-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence, followCursorActive, followCursorState, followCursorNonDomination, followCursorTransition, followCursorTransient, followCursorOffline, followCursorPersistence, followCursorRestSite, followCursorShutdown]
+  directive: "BPDC-P14-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence, followCursorActive, followCursorState, followCursorNonDomination, followCursorTransition, followCursorTransient, followCursorOffline, followCursorPersistence, followCursorRestSite, followCursorShutdown, midpointStable, midpointSwitch, midpointEligibility, midpointHysteresis, midpointNonInterruptible, midpointPartition, midpointPersistence, midpointOffline, midpointTransient]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -119,6 +128,9 @@ console.log(JSON.stringify({
     followCursorActive, followCursorState, followCursorNonDomination,
     followCursorTransition, followCursorTransient, followCursorOffline,
     followCursorPersistence, followCursorRestSite, followCursorShutdown,
+    midpointStable, midpointSwitch, midpointEligibility, midpointHysteresis,
+    midpointNonInterruptible, midpointPartition, midpointPersistence, midpointOffline,
+    midpointTransient,
   },
   trace24h,
 }, null, 2));
@@ -1356,6 +1368,276 @@ async function runFollowCursorShutdownExperiment() {
   await adapter.shutdown();
   const lastFollow = calls.filter(([name]) => name === "followCursor").at(-1);
   return { status: lastFollow?.[1]?.enabled === false ? "PASS" : "FAIL", calls };
+}
+
+function runMidpointStableExperiment() {
+  const core = midpointCore(1501);
+  commitMidpointBehavior(core, "OBSERVE");
+  const before = core.toSnapshot();
+  const events = core.advance(60, midpointStableEnvironment);
+  const after = core.toSnapshot();
+  return {
+    status: events.length === 0
+      && after.currentBehavior.action === "OBSERVE"
+      && after.currentBehavior.startedAt === before.currentBehavior.startedAt
+      && after.currentBehavior.endsAt === before.currentBehavior.endsAt
+      && after.rngState === before.rngState ? "PASS" : "FAIL",
+    events: events.length,
+    action: after.currentBehavior.action,
+    rngUnchanged: after.rngState === before.rngState,
+  };
+}
+
+function runMidpointSwitchExperiment() {
+  const core = midpointCore(1502);
+  commitMidpointBehavior(core, "WANDER");
+  const events = core.advance(60, midpointChangedEnvironment);
+  const reconsideration = events[0]?.scoreBreakdown?.reconsideration;
+  return {
+    status: events.length === 1
+      && events[0].action === "OBSERVE"
+      && events[0].time === 50
+      && reconsideration?.source === "MIDPOINT_RECONSIDERATION"
+      && reconsideration.reason === "utility margin" ? "PASS" : "FAIL",
+    switchedAt: events[0]?.time ?? null,
+    previousAction: reconsideration?.previousAction ?? null,
+    challenger: reconsideration?.challenger ?? null,
+    reason: reconsideration?.reason ?? null,
+  };
+}
+
+function runMidpointEligibilityExperiment() {
+  const core = CreatureCore.create({ seed: 1503 });
+  commitMidpointBehavior(core, "FOLLOW_CURSOR");
+  const events = core.advance(60, midpointActiveThenAbsentEnvironment);
+  const reconsideration = events[0]?.scoreBreakdown?.reconsideration;
+  return {
+    status: events.length === 1
+      && events[0].action !== "FOLLOW_CURSOR"
+      && reconsideration?.reason === "ineligible"
+      && reconsideration.previousAction === "FOLLOW_CURSOR" ? "PASS" : "FAIL",
+    switchedAt: events[0]?.time ?? null,
+    action: events[0]?.action ?? null,
+    reason: reconsideration?.reason ?? null,
+  };
+}
+
+function runMidpointHysteresisExperiment() {
+  const below = CreatureCore.create({ seed: 1504 });
+  commitMidpointBehavior(below, "WANDER");
+  below.scorer = midpointFixedScorer([
+    midpointCandidate("WANDER", 1),
+    midpointCandidate("OBSERVE", 1.149),
+  ]);
+  below.clock.advance(50);
+  const belowResult = below.reconsiderAtMidpoint(midpointStableEnvironment(50));
+
+  const above = CreatureCore.create({ seed: 1505 });
+  commitMidpointBehavior(above, "WANDER");
+  above.scorer = midpointFixedScorer([
+    midpointCandidate("WANDER", 1),
+    midpointCandidate("OBSERVE", 1.151),
+  ]);
+  above.clock.advance(50);
+  const aboveResult = above.reconsiderAtMidpoint(midpointStableEnvironment(50));
+  return {
+    status: belowResult === null && aboveResult?.action === "OBSERVE" ? "PASS" : "FAIL",
+    below: belowResult?.action ?? null,
+    above: aboveResult?.action ?? null,
+    margin: aboveResult?.scoreBreakdown?.reconsideration?.margin ?? null,
+  };
+}
+
+function runMidpointNonInterruptibleExperiment() {
+  const results = ["SLEEP", "AVOID"].map((action, index) => {
+    const core = midpointCore(1510 + index);
+    commitMidpointBehavior(core, action);
+    const events = core.advance(60, midpointChangedEnvironment);
+    return events.length === 0 && core.currentBehavior.action === action;
+  });
+  return { status: results.every(Boolean) ? "PASS" : "FAIL", sleep: results[0], avoid: results[1] };
+}
+
+function runMidpointPartitionExperiment() {
+  const large = midpointCore(1515);
+  const partitioned = midpointCore(1515);
+  commitMidpointBehavior(large, "WANDER");
+  commitMidpointBehavior(partitioned, "WANDER");
+  const largeEvents = large.advance(60, midpointChangedEnvironment);
+  const partitionedEvents = [
+    ...partitioned.advance(20, midpointChangedEnvironment),
+    ...partitioned.advance(20, midpointChangedEnvironment),
+    ...partitioned.advance(20, midpointChangedEnvironment),
+  ];
+  return {
+    status: largeEvents.length === partitionedEvents.length
+      && midpointIntentEquivalent(largeEvents[0], partitionedEvents[0])
+      && midpointSnapshotsEquivalent(large.toSnapshot(), partitioned.toSnapshot()) ? "PASS" : "FAIL",
+    largeEvents: largeEvents.length,
+    partitionedEvents: partitionedEvents.length,
+    switchTime: largeEvents[0]?.time ?? null,
+  };
+}
+
+function runMidpointPersistenceExperiment() {
+  const uninterrupted = midpointCore(1520);
+  const split = midpointCore(1520);
+  commitMidpointBehavior(uninterrupted, "WANDER");
+  commitMidpointBehavior(split, "WANDER");
+  uninterrupted.advance(60, midpointChangedEnvironment);
+  split.advance(20, midpointChangedEnvironment);
+  const beforeReload = CreatureCore.fromSnapshot(JSON.parse(split.serialize()));
+  beforeReload.advance(40, midpointChangedEnvironment);
+  const beforeEquivalent = midpointSnapshotsEquivalent(beforeReload.toSnapshot(), uninterrupted.toSnapshot());
+
+  const afterSource = midpointCore(1521);
+  commitMidpointBehavior(afterSource, "WANDER");
+  afterSource.advance(60, midpointChangedEnvironment);
+  const afterReload = CreatureCore.fromSnapshot(JSON.parse(afterSource.serialize()));
+  const sourceFollowUp = afterSource.advance(10, midpointChangedEnvironment);
+  const reloadFollowUp = afterReload.advance(10, midpointChangedEnvironment);
+  const afterEquivalent = midpointSnapshotsEquivalent(afterReload.toSnapshot(), afterSource.toSnapshot())
+    && midpointIntentEquivalent(sourceFollowUp[0], reloadFollowUp[0]);
+  return {
+    status: beforeEquivalent && afterEquivalent && !Object.hasOwn(afterReload.currentBehavior, "midpoint") ? "PASS" : "FAIL",
+    beforeReload: beforeEquivalent,
+    afterReload: afterEquivalent,
+    checkpointStored: Object.hasOwn(afterReload.currentBehavior, "midpoint"),
+  };
+}
+
+function runMidpointOfflineExperiment() {
+  const online = midpointCore(1522);
+  const offline = midpointCore(1522);
+  commitMidpointBehavior(online, "FOLLOW_CURSOR");
+  commitMidpointBehavior(offline, "FOLLOW_CURSOR");
+  const onlineEvents = online.advance(60, midpointActiveThenAbsentEnvironment);
+  const offlineEvents = offline.reconcileElapsed(60, midpointActiveThenAbsentEnvironment);
+  return {
+    status: onlineEvents.length === 1 && offlineEvents.length === 0
+      && midpointSnapshotsEquivalent(online.toSnapshot(), offline.toSnapshot()) ? "PASS" : "FAIL",
+    onlineEvents: onlineEvents.length,
+    offlineEvents: offlineEvents.length,
+    finalAction: offline.currentBehavior?.action ?? null,
+  };
+}
+
+async function runMidpointTransientExperiment() {
+  const host = midpointFakeHost();
+  const adapter = new OpenPetsAdapter(host.ctx, host.scheduler);
+  await adapter.execute(midpointFollowIntent());
+  await adapter.executeReunionResponse({ kind: "GREET_RETURN", duration: 1.2 }, midpointFollowIntent());
+  const staleTimer = host.timers.values().next().value;
+  await adapter.execute({ action: "OBSERVE", duration: 30 });
+  await staleTimer.callback();
+  await Promise.resolve();
+  const followCalls = host.ctx.calls.filter(([name]) => name === "followCursor");
+  return {
+    status: host.timers.size === 0
+      && !adapter.cursorFollowing
+      && JSON.stringify(followCalls) === JSON.stringify([
+        ["followCursor", { enabled: true, lag: 0.35 }],
+        ["followCursor", { enabled: false }],
+      ]) ? "PASS" : "FAIL",
+    timers: host.timers.size,
+    followCalls,
+  };
+}
+
+function midpointCore(seed) {
+  const core = CreatureCore.create({ seed });
+  core.drives = { energy: 0.1, social: 0.1, curiosity: 0.8, stimulation: 0.1 };
+  core.personality = {
+    curiosity: 0.8, sociability: 0.2, playfulness: 0.2, boldness: 0.5, independence: 0.1, sleepiness: 0.1,
+  };
+  return core;
+}
+
+function commitMidpointBehavior(core, action, duration = 100) {
+  const startedAt = core.clock.now();
+  core.currentBehavior = {
+    action,
+    startedAt,
+    endsAt: startedAt + duration,
+    duration,
+    interruptible: !["SLEEP", "AVOID"].includes(action),
+    cooldown: 0,
+    reason: "controlled midpoint experiment",
+    score: 0,
+    scoreBreakdown: { source: "CONTROLLED_MIDPOINT_EXPERIMENT" },
+  };
+}
+
+function midpointStableEnvironment(timestamp = 0) {
+  return createEnvironment({ localTime: 12, userPresent: true, userIdleDuration: 0, novelty: 0.2 });
+}
+
+function midpointChangedEnvironment(timestamp) {
+  return createEnvironment({ localTime: 12, userPresent: true, userIdleDuration: 0, novelty: timestamp < 50 ? 0 : 1 });
+}
+
+function midpointActiveThenAbsentEnvironment(timestamp) {
+  const active = timestamp < 50;
+  return createEnvironment({ localTime: 12, userPresent: active, userIdleDuration: active ? 0 : 3_600, novelty: 0.2 });
+}
+
+function midpointCandidate(action, score, eligible = true) {
+  return { action, score, eligible, contributors: { score } };
+}
+
+function midpointFixedScorer(entries) {
+  return { scoreAll: () => entries.map((entry) => ({ ...entry })) };
+}
+
+function midpointIntentEquivalent(left, right) {
+  if (!left || !right) return left === right;
+  return left.action === right.action
+    && left.time === right.time
+    && left.interruptible === right.interruptible
+    && Math.abs(left.duration - right.duration) < 1e-12
+    && Math.abs(left.score - right.score) < 1e-12
+    && left.scoreBreakdown.reconsideration?.source === right.scoreBreakdown.reconsideration?.source
+    && left.scoreBreakdown.reconsideration?.previousAction === right.scoreBreakdown.reconsideration?.previousAction
+    && left.scoreBreakdown.reconsideration?.challenger === right.scoreBreakdown.reconsideration?.challenger;
+}
+
+function midpointSnapshotsEquivalent(left, right) {
+  if (left.schemaVersion !== right.schemaVersion
+    || left.creatureId !== right.creatureId
+    || left.simulationTimestamp !== right.simulationTimestamp
+    || left.rngState !== right.rngState) return false;
+  if (left.currentBehavior?.action !== right.currentBehavior?.action
+    || left.currentBehavior?.startedAt !== right.currentBehavior?.startedAt
+    || left.currentBehavior?.endsAt !== right.currentBehavior?.endsAt
+    || left.currentBehavior?.duration !== right.currentBehavior?.duration) return false;
+  return ["energy", "social", "curiosity", "stimulation"].every((name) =>
+    Math.abs(left.internalState[name] - right.internalState[name]) < 1e-12);
+}
+
+function midpointFollowIntent() {
+  return new BehaviorIntent({ action: "FOLLOW_CURSOR", time: 0, duration: 30, reason: "midpoint transient experiment", score: 0, scoreBreakdown: { source: "MIDPOINT_TRANSIENT_EXPERIMENT" }, interruptible: true });
+}
+
+function midpointFakeHost() {
+  const calls = [];
+  const timers = new Map();
+  let nextTimer = 0;
+  return {
+    ctx: {
+      calls,
+      pet: {
+        async followCursor(options) { calls.push(["followCursor", options]); },
+        async physics(options) { calls.push(["physics", options]); },
+        async react(reaction) { calls.push(["react", reaction]); },
+        async getState() { return {}; },
+      },
+    },
+    timers,
+    scheduler: {
+      setTimeoutFn(callback, delay) { const id = ++nextTimer; timers.set(id, { callback, delay }); return id; },
+      clearTimeoutFn(id) { timers.delete(id); },
+    },
+  };
 }
 
 function socializationCoreAtMaturity(maturity, seed) {

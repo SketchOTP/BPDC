@@ -731,6 +731,7 @@ var CreatureCore = class _CreatureCore {
   }
   advance(seconds, environmentInput = this.lastEnvironment, { collectIntents = true } = {}) {
     assertNonNegative(seconds, "seconds");
+    const targetTimestamp = this.clock.now() + seconds;
     this.decayRelationship();
     this.decayHabit();
     this.decayPlayPreference();
@@ -746,8 +747,12 @@ var CreatureCore = class _CreatureCore {
       const now = this.clock.now();
       const environment = resolveEnvironment(environmentInput, now);
       this.lastEnvironment = environment;
-      const end = this.currentBehavior?.endsAt ?? now;
-      const segment = Math.min(remaining, Math.max(0, end - now));
+      const behaviorAtSegmentStart = this.currentBehavior;
+      const end = behaviorAtSegmentStart?.endsAt ?? now;
+      const midpoint = behaviorMidpoint(behaviorAtSegmentStart);
+      const midpointDue = midpoint !== null && now < midpoint && midpoint <= now + remaining;
+      const boundary = midpointDue ? midpoint : end;
+      const segment = Math.min(remaining, Math.max(0, boundary - now));
       if (segment > 0) {
         this.evolveDrives(segment, environment);
         this.clock.advance(segment);
@@ -755,6 +760,12 @@ var CreatureCore = class _CreatureCore {
         this.decayHabit();
         this.decayPlayPreference();
         remaining -= segment;
+      }
+      if (midpointDue && behaviorAtSegmentStart === this.currentBehavior && this.clock.now() >= midpoint) {
+        const midpointEnvironment = resolveEnvironment(environmentInput, this.clock.now());
+        this.lastEnvironment = midpointEnvironment;
+        const intent = this.reconsiderAtMidpoint(midpointEnvironment);
+        if (collectIntents && intent) events.push(intent);
       }
       if (this.currentBehavior && this.clock.now() >= this.currentBehavior.endsAt - 1e-9) {
         this.currentBehavior = null;
@@ -767,6 +778,7 @@ var CreatureCore = class _CreatureCore {
         throw new Error("CreatureCore could not advance; behavior timing is invalid.");
       }
     }
+    this.clock.set(targetTimestamp);
     return events;
   }
   reconcileElapsed(seconds, environmentInput = this.lastEnvironment) {
@@ -873,8 +885,8 @@ var CreatureCore = class _CreatureCore {
       socializationImprint: snapshot.socializationImprint
     });
   }
-  commitBehavior(environment) {
-    const selection = this.selector.select({
+  commitBehavior(environment, { selection = null, reconsideration = null } = {}) {
+    const resolvedSelection = selection ?? this.selector.select({
       drives: this.drives,
       personality: this.personality,
       environment,
@@ -884,21 +896,22 @@ var CreatureCore = class _CreatureCore {
       developmentalSocialization: this.developmentalSocializationForScoring(),
       rng: this.rng
     });
-    const definition = BEHAVIOR_DEFINITIONS[selection.selected.action];
+    const definition = BEHAVIOR_DEFINITIONS[resolvedSelection.selected.action];
     const duration = this.rng.nextRange(definition.minDuration, definition.maxDuration);
     const startedAt = this.clock.now();
     const currentBehavior = {
-      action: selection.selected.action,
+      action: resolvedSelection.selected.action,
       startedAt,
       endsAt: startedAt + duration,
       duration,
       interruptible: definition.interruptible,
       cooldown: definition.cooldown,
-      reason: summarizeReason(selection.selected.contributors),
-      score: selection.selected.score,
+      reason: summarizeReason(resolvedSelection.selected.contributors),
+      score: resolvedSelection.selected.score,
       scoreBreakdown: {
-        selected: selection.selected,
-        candidates: selection.candidates
+        selected: resolvedSelection.selected,
+        candidates: resolvedSelection.candidates,
+        ...reconsideration ? { reconsideration } : {}
       }
     };
     this.currentBehavior = currentBehavior;
@@ -910,6 +923,39 @@ var CreatureCore = class _CreatureCore {
       score: currentBehavior.score,
       scoreBreakdown: clone(currentBehavior.scoreBreakdown),
       interruptible: currentBehavior.interruptible
+    });
+  }
+  reconsiderAtMidpoint(environment) {
+    const currentBehavior = this.currentBehavior;
+    if (!currentBehavior?.interruptible) return null;
+    const candidates = this.scoreBehaviorCandidates(environment);
+    const current = candidates.find((candidate) => candidate.action === currentBehavior.action);
+    if (!current) throw new Error(`Current behavior is not scoreable: ${currentBehavior.action}`);
+    const challenger = candidates.filter((candidate) => candidate.action !== current.action && candidate.eligible).sort((left, right) => right.score - left.score || left.action.localeCompare(right.action))[0] ?? null;
+    const reason = !current.eligible ? "ineligible" : challenger && challenger.score >= current.score + RECONSIDERATION_MARGIN ? "utility margin" : null;
+    if (!reason || !challenger) return null;
+    return this.commitBehavior(environment, {
+      selection: { selected: challenger, candidates },
+      reconsideration: {
+        source: "MIDPOINT_RECONSIDERATION",
+        previousAction: current.action,
+        currentScore: current.score,
+        challenger: challenger.action,
+        challengerScore: challenger.score,
+        margin: RECONSIDERATION_MARGIN,
+        reason
+      }
+    });
+  }
+  scoreBehaviorCandidates(environment) {
+    return this.scorer.scoreAll({
+      drives: this.drives,
+      personality: this.personality,
+      environment,
+      relationship: this.relationshipForScoring(),
+      habit: this.habitForScoring(environment),
+      learnedPreference: this.learnedPlayPreferenceForScoring(),
+      developmentalSocialization: this.developmentalSocializationForScoring()
     });
   }
   recordInteraction(event, environmentInput = this.lastEnvironment) {
@@ -1140,6 +1186,14 @@ var REUNION_LONG_ABSENCE_SECONDS = 7200;
 var REUNION_ABSENCE_SATURATION_SECONDS = 3600;
 var REUNION_RESPONSE_THRESHOLD = 0.32;
 var REUNION_GREETING_THRESHOLD = 0.58;
+var RECONSIDERATION_MARGIN = 0.15;
+function behaviorMidpoint(behavior) {
+  if (!behavior?.interruptible) return null;
+  if (!Number.isFinite(behavior.startedAt) || !Number.isFinite(behavior.duration) || behavior.duration <= 0) {
+    return null;
+  }
+  return behavior.startedAt + behavior.duration * 0.5;
+}
 function clone(value) {
   return value === null || value === void 0 ? value : JSON.parse(JSON.stringify(value));
 }

@@ -87,6 +87,10 @@ delta = 0.03 * interactionIntensity * (1 - maturity) * (1 - socializationImprint
 
 The imprint saturates in `0..1`, never decays, and stops changing at full maturity. It is distinct from current `bond` and immutable innate `personality.sociability`; low early interaction causes no penalty. At adulthood it contributes only `socializationImprint * maturity * 0.12` to `SEEK_ATTENTION.developmentalSocialization`, remaining subordinate to core drives and fatigue. Adult contact continues to update the already-accepted bond, time habit, play preference, and transient response systems but cannot change the imprint. Schema 5 and earlier snapshots migrate with zero imprint so no prior juvenile care history is invented. No negative imprint, XP, levels, evolution branches, additional developmental traits, or new OpenPets permissions are introduced.
 
+## Midpoint reconsideration
+
+Phase 14 gives each interruptible behavior one derived midpoint check at `startedAt + duration * 0.5`. CreatureCore re-scores the current situation without consuming RNG and switches only when the current action becomes ineligible or an eligible challenger exceeds it by the fixed `0.15` margin. `SLEEP` and `AVOID` remain non-interruptible; no checkpoint is persisted, no continuous replanning occurs, and offline reconciliation suppresses historical intents while preserving the same final core state. A switch emits the ordinary `BehaviorIntent` with `MIDPOINT_RECONSIDERATION` diagnostics, so the existing desktop adapter lifecycle and transient-expression restoration remain authoritative.
+
 ## Boundary
 
 ```text
