@@ -40,6 +40,7 @@ import {
   reinforcePlayPreference,
   validatePlayPreference,
 } from "./play-preference.js";
+import { developmentSnapshot as deriveDevelopmentSnapshot } from "./development.js";
 
 export class CreatureCore {
   constructor({
@@ -182,6 +183,7 @@ export class CreatureCore {
       habit: this.habitSnapshot(environment),
       spatial: this.spatialSnapshot(),
       playPreference: this.playPreferenceSnapshot(),
+      development: this.developmentSnapshot(),
       rngState: this.rng.getState(),
     };
   }
@@ -215,6 +217,13 @@ export class CreatureCore {
 
   serialize() {
     return serializeSnapshot(this.toSnapshot());
+  }
+
+  developmentSnapshot() {
+    return deriveDevelopmentSnapshot({
+      createdAt: this.createdAt,
+      simulationTimestamp: this.clock.now(),
+    });
   }
 
   static fromSnapshot(snapshotOrSerialized) {

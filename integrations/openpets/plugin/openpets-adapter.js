@@ -27,6 +27,12 @@ function clampDurationMs(seconds) {
   return Math.max(250, Math.min(1_500, Math.round(seconds * 1_000)));
 }
 
+function quantizeSizeFactor(sizeFactor) {
+  if (!Number.isFinite(sizeFactor)) throw new TypeError("sizeFactor must be finite.");
+  const bounded = Math.max(0.5, Math.min(2, sizeFactor));
+  return Math.round((bounded + Number.EPSILON) * 100) / 100;
+}
+
 /** OpenPets is the body adapter. It translates, never selects, behavior. */
 export class OpenPetsAdapter {
   constructor(ctx, {
@@ -42,6 +48,19 @@ export class OpenPetsAdapter {
     this.spatialTracker = spatialTracker;
     this.interactionExpressionTimer = null;
     this.interactionExpressionGeneration = 0;
+    this.lastAppliedSizeFactor = null;
+  }
+
+  async applyDevelopment(development) {
+    const sizeFactor = quantizeSizeFactor(
+      typeof development === "number" ? development : development?.sizeFactor,
+    );
+    if (sizeFactor === this.lastAppliedSizeFactor) {
+      return { command: "pet.setScale skipped", sizeFactor, changed: false };
+    }
+    await this.ctx.pet.setScale(sizeFactor);
+    this.lastAppliedSizeFactor = sizeFactor;
+    return { command: `pet.setScale(${sizeFactor})`, sizeFactor, changed: true };
   }
 
   async execute(intent) {

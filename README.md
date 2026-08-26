@@ -65,6 +65,18 @@ The preference uses a `0.06` saturating learning rate, a deterministic 21-day ha
 
 CreatureCore snapshots now use schema 5. Schema 4 and earlier snapshots migrate with `playPreference = 0` while preserving the accepted relationship, time-habit, elapsed-life, contact-response, and spatial state. P6 offline reconciliation may decay the preference but cannot reinforce it. P7 contact response and P8 REST_SITE targeting remain independent.
 
+## Continuous physical maturation
+
+Phase 10 derives a continuous physical maturity projection from the existing simulation-domain age:
+
+```text
+ageSeconds = max(0, simulationTimestamp - createdAt)
+maturity = clamp(ageSeconds / 14 simulated days, 0, 1)
+sizeFactor = 0.8 + 0.2 * maturity
+```
+
+The projection is not persisted and does not affect utility, personality, drives, relationships, habits, preferences, behavior timing, RNG, or interaction responses. Existing schema-5 snapshots therefore load unchanged, and P6 elapsed-time reconciliation naturally advances maturity while the application is closed. The OpenPets adapter applies the bounded factor through `pet.setScale()` on startup and only when the quantized `0.01` value changes; this presentation path requires the single additional `pet:animate` permission. No levels, XP, alternate forms, evolution branches, or care-history development system are present.
+
 ## Boundary
 
 ```text

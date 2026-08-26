@@ -98,6 +98,20 @@ export function register(OpenPetsPlugin) {
         await persist(true);
       };
 
+      const applyDevelopment = async (source) => {
+        const development = core.developmentSnapshot();
+        const result = await adapter.applyDevelopment(development);
+        if (result.changed) {
+          log(ctx, "DEVELOPMENT", new Date().toISOString(), `${source} maturation scale applied`, {
+            development,
+            sizeFactor: result.sizeFactor,
+            command: result.command,
+          });
+        }
+        return result;
+      };
+
+      await applyDevelopment("STARTUP");
       await persist(true);
       const resumeIntent = restored.resumeIntent ?? core.advance(0, environmentNow(presence, startupEpochMs))[0];
       if (resumeIntent) await executeIntent(resumeIntent, restored.resumeIntent ? "RESUME" : "AUTONOMOUS");
@@ -176,7 +190,9 @@ export function register(OpenPetsPlugin) {
       runtime.unsubscribe = ctx.pet.onTick((dtMs) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
           const seconds = Math.max(0, Math.min(5, dtMs / 1_000));
-          for (const intent of core.advance(seconds, environmentNow(presence))) await executeIntent(intent);
+          const intents = core.advance(seconds, environmentNow(presence));
+          await applyDevelopment("TICK");
+          for (const intent of intents) await executeIntent(intent);
           await persist(false);
         }).catch((error) => log(ctx, "ERROR", new Date().toISOString(), "autonomous tick failed", { message: String(error?.message ?? error) }));
       });

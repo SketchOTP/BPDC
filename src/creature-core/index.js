@@ -1,4 +1,10 @@
 export { CreatureCore } from "./creature-core.js";
+export {
+  INITIAL_SIZE_FACTOR,
+  MATURATION_DURATION_SECONDS,
+  MATURE_SIZE_FACTOR,
+  developmentSnapshot,
+} from "./development.js";
 export { BehaviorIntent, InteractionResponseIntent, INTERACTION_RESPONSE_KINDS } from "./intent.js";
 export { InteractionEvent, INTERACTION_KINDS, normalizeInteractionEvent } from "./interaction.js";
 export { SimulationClock } from "./clock.js";

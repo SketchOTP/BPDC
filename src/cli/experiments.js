@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-import { CreatureCore, createEnvironment } from "../creature-core/index.js";
+import { CreatureCore, createEnvironment, developmentSnapshot } from "../creature-core/index.js";
 import { PresenceTracker } from "../../integrations/openpets/presence-tracker.js";
 import { RestSiteTracker, distanceBetween } from "../../integrations/openpets/rest-site-tracker.js";
 import { offlineEnvironmentAt, restoreAndReconcile } from "../../integrations/openpets/elapsed-reconciliation.js";
+import { OpenPetsAdapter } from "../../integrations/openpets/openpets-adapter.js";
 import {
   deserializePersistenceEnvelope,
   serializePersistenceEnvelope,
@@ -50,10 +51,16 @@ const playPreferenceDecay = runPlayPreferenceDecayExperiment();
 const playPreferencePersistence = runPlayPreferencePersistenceExperiment();
 const playPreferenceOffline = runPlayPreferenceOfflineExperiment();
 const playPreferenceResponse = runPlayPreferenceResponseExperiment();
+const developmentCurve = runDevelopmentCurveExperiment();
+const developmentNonInterference = runDevelopmentNonInterferenceExperiment();
+const developmentOffline = runDevelopmentOfflineExperiment();
+const developmentPersistence = runDevelopmentPersistenceExperiment();
+const developmentAdapter = await runDevelopmentAdapterExperiment();
+const developmentCallBoundedness = await runDevelopmentCallBoundednessExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P9-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse]
+  directive: "BPDC-P10-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -68,6 +75,8 @@ console.log(JSON.stringify({
     playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement,
     playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence,
     playPreferenceOffline, playPreferenceResponse,
+    developmentCurve, developmentNonInterference, developmentOffline,
+    developmentPersistence, developmentAdapter, developmentCallBoundedness,
   },
   trace24h,
 }, null, 2));
@@ -758,6 +767,126 @@ function trainPlayPreference(core, count, intensity) {
   for (let index = 0; index < count; index += 1) {
     core.recordInteraction({ kind: "POSITIVE_CONTACT", intensity }, playPreferenceEnvironment());
   }
+}
+
+function runDevelopmentCurveExperiment() {
+  const day = 24 * 60 * 60;
+  const expected = [
+    [0, 0, 0.8],
+    [3.5, 0.25, 0.85],
+    [7, 0.5, 0.9],
+    [10.5, 0.75, 0.95],
+    [14, 1, 1],
+    [30, 1, 1],
+  ];
+  const observed = expected.map(([days]) => developmentSnapshot({
+    createdAt: 100,
+    simulationTimestamp: 100 + days * day,
+  }));
+  const matches = observed.every((value, index) => (
+    Math.abs(value.maturity - expected[index][1]) < 1e-12
+    && Math.abs(value.sizeFactor - expected[index][2]) < 1e-12
+  ));
+  const backward = developmentSnapshot({ createdAt: 100, simulationTimestamp: 0 });
+  return {
+    status: matches && backward.ageSeconds === 0 ? "PASS" : "FAIL",
+    observed,
+    backwardClockAge: backward.ageSeconds,
+  };
+}
+
+function runDevelopmentNonInterferenceExperiment() {
+  const matureAge = 14 * 24 * 60 * 60;
+  const young = CreatureCore.create({ seed: 901, createdAt: 0 });
+  const mature = CreatureCore.fromSnapshot({ ...young.toSnapshot(), simulationTimestamp: matureAge });
+  const environment = createEnvironment({ localTime: 12, userPresent: true, novelty: 0.2 });
+  const youngEvaluation = young.evaluate(environment);
+  const matureEvaluation = mature.evaluate(environment);
+  const youngIntent = young.commitBehavior(environment);
+  const matureIntent = mature.commitBehavior(environment);
+  return {
+    status: JSON.stringify(youngEvaluation.candidates) === JSON.stringify(matureEvaluation.candidates)
+      && youngIntent.action === matureIntent.action
+      && youngIntent.score === matureIntent.score
+      && young.developmentSnapshot().sizeFactor === 0.8
+      && mature.developmentSnapshot().sizeFactor === 1
+      ? "PASS" : "FAIL",
+    selected: youngIntent.action,
+    youngSizeFactor: young.developmentSnapshot().sizeFactor,
+    matureSizeFactor: mature.developmentSnapshot().sizeFactor,
+  };
+}
+
+function runDevelopmentOfflineExperiment() {
+  const day = 24 * 60 * 60;
+  const savedAt = 900_000;
+  const juvenile = CreatureCore.create({ seed: 902, createdAt: 0 });
+  const restored = restoreAndReconcile(
+    serializePersistenceEnvelope(juvenile.serialize(), savedAt),
+    { nowEpochMs: savedAt + 7 * day * 1_000, coreFactory: CreatureCore.fromSnapshot },
+  );
+  const continuous = CreatureCore.fromSnapshot(juvenile.toSnapshot());
+  continuous.reconcileElapsed(7 * day, (timestamp) => offlineEnvironmentAt(savedAt + timestamp * 1_000, savedAt));
+  const restoredDevelopment = restored.core.developmentSnapshot();
+  const continuousDevelopment = continuous.developmentSnapshot();
+  return {
+    status: restored.elapsedSeconds === 7 * day
+      && JSON.stringify(restoredDevelopment) === JSON.stringify(continuousDevelopment)
+      && restoredDevelopment.maturity === 0.5 ? "PASS" : "FAIL",
+    elapsedSeconds: restored.elapsedSeconds,
+    development: restoredDevelopment,
+  };
+}
+
+function runDevelopmentPersistenceExperiment() {
+  const core = CreatureCore.create({ seed: 903, createdAt: 100 });
+  core.reconcileElapsed(10 * 24 * 60 * 60, createEnvironment({ localTime: 8, userPresent: false }));
+  const before = core.developmentSnapshot();
+  const snapshot = JSON.parse(core.serialize());
+  const restored = CreatureCore.fromSnapshot(core.serialize());
+  return {
+    status: snapshot.schemaVersion === 5
+      && !Object.hasOwn(snapshot, "development")
+      && JSON.stringify(before) === JSON.stringify(restored.developmentSnapshot()) ? "PASS" : "FAIL",
+    schema: snapshot.schemaVersion,
+    storedDevelopment: Object.hasOwn(snapshot, "development"),
+    development: before,
+  };
+}
+
+function runDevelopmentAdapterExperiment() {
+  const calls = [];
+  const adapter = new OpenPetsAdapter({ pet: {
+    async setScale(sizeFactor) { calls.push(sizeFactor); },
+  } });
+  return Promise.resolve()
+    .then(async () => {
+      const first = await adapter.applyDevelopment({ sizeFactor: 0.9 });
+      const skipped = await adapter.applyDevelopment({ sizeFactor: 0.904 });
+      const final = await adapter.applyDevelopment({ sizeFactor: 1 });
+      return {
+        status: first.changed && !skipped.changed && final.changed
+          && JSON.stringify(calls) === JSON.stringify([0.9, 1]) ? "PASS" : "FAIL",
+        calls,
+      };
+    });
+}
+
+function runDevelopmentCallBoundednessExperiment() {
+  const calls = [];
+  const adapter = new OpenPetsAdapter({ pet: {
+    async setScale(sizeFactor) { calls.push(sizeFactor); },
+  } });
+  return Promise.resolve()
+    .then(async () => {
+      for (let index = 0; index <= 1_000; index += 1) {
+        await adapter.applyDevelopment({ sizeFactor: 0.8 + (0.2 * index) / 1_000 });
+      }
+      return {
+        status: calls.length === 21 ? "PASS" : "FAIL",
+        calls: calls.length,
+      };
+    });
 }
 
 function commitControlledBehavior(core, action) {

@@ -11,6 +11,7 @@
   "permissions": [
     "pet:move",
     "pet:reaction",
+    "pet:animate",
     "pets:read",
     "pets:manage",
     "events",

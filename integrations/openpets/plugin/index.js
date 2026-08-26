@@ -601,6 +601,24 @@ function defaultValence(kind) {
   return 0;
 }
 
+// integrations/openpets/plugin/core/development.js
+var MATURATION_DURATION_SECONDS = 14 * 24 * 60 * 60;
+var INITIAL_SIZE_FACTOR = 0.8;
+var MATURE_SIZE_FACTOR = 1;
+function developmentSnapshot({ createdAt, simulationTimestamp } = {}) {
+  assertFiniteNonNegative2(createdAt, "createdAt");
+  assertFiniteNonNegative2(simulationTimestamp, "simulationTimestamp");
+  const ageSeconds = Math.max(0, simulationTimestamp - createdAt);
+  const maturity = clamp01(ageSeconds / MATURATION_DURATION_SECONDS);
+  const sizeFactor = INITIAL_SIZE_FACTOR + (MATURE_SIZE_FACTOR - INITIAL_SIZE_FACTOR) * maturity;
+  return { ageSeconds, maturity, sizeFactor };
+}
+function assertFiniteNonNegative2(value, name) {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new RangeError(`${name} must be a finite non-negative number.`);
+  }
+}
+
 // integrations/openpets/plugin/core/creature-core.js
 var CreatureCore = class _CreatureCore {
   constructor({
@@ -730,6 +748,7 @@ var CreatureCore = class _CreatureCore {
       habit: this.habitSnapshot(environment),
       spatial: this.spatialSnapshot(),
       playPreference: this.playPreferenceSnapshot(),
+      development: this.developmentSnapshot(),
       rngState: this.rng.getState()
     };
   }
@@ -758,6 +777,12 @@ var CreatureCore = class _CreatureCore {
   }
   serialize() {
     return serializeSnapshot(this.toSnapshot());
+  }
+  developmentSnapshot() {
+    return developmentSnapshot({
+      createdAt: this.createdAt,
+      simulationTimestamp: this.clock.now()
+    });
   }
   static fromSnapshot(snapshotOrSerialized) {
     const snapshot = deserializeSnapshot(snapshotOrSerialized);
@@ -1025,6 +1050,11 @@ var REACTION_BY_INTERACTION_RESPONSE = {
 function clampDurationMs(seconds) {
   return Math.max(250, Math.min(1500, Math.round(seconds * 1e3)));
 }
+function quantizeSizeFactor(sizeFactor) {
+  if (!Number.isFinite(sizeFactor)) throw new TypeError("sizeFactor must be finite.");
+  const bounded = Math.max(0.5, Math.min(2, sizeFactor));
+  return Math.round((bounded + Number.EPSILON) * 100) / 100;
+}
 var OpenPetsAdapter = class {
   constructor(ctx, {
     log: log2 = () => {
@@ -1040,6 +1070,18 @@ var OpenPetsAdapter = class {
     this.spatialTracker = spatialTracker;
     this.interactionExpressionTimer = null;
     this.interactionExpressionGeneration = 0;
+    this.lastAppliedSizeFactor = null;
+  }
+  async applyDevelopment(development) {
+    const sizeFactor = quantizeSizeFactor(
+      typeof development === "number" ? development : development?.sizeFactor
+    );
+    if (sizeFactor === this.lastAppliedSizeFactor) {
+      return { command: "pet.setScale skipped", sizeFactor, changed: false };
+    }
+    await this.ctx.pet.setScale(sizeFactor);
+    this.lastAppliedSizeFactor = sizeFactor;
+    return { command: `pet.setScale(${sizeFactor})`, sizeFactor, changed: true };
   }
   async execute(intent) {
     this.cancelInteractionResponse();
@@ -1569,6 +1611,19 @@ function register(OpenPetsPlugin) {
         await adapter.execute(bodyIntent);
         await persist(true);
       };
+      const applyDevelopment = async (source) => {
+        const development = core.developmentSnapshot();
+        const result = await adapter.applyDevelopment(development);
+        if (result.changed) {
+          log(ctx, "DEVELOPMENT", (/* @__PURE__ */ new Date()).toISOString(), `${source} maturation scale applied`, {
+            development,
+            sizeFactor: result.sizeFactor,
+            command: result.command
+          });
+        }
+        return result;
+      };
+      await applyDevelopment("STARTUP");
       await persist(true);
       const resumeIntent = restored.resumeIntent ?? core.advance(0, environmentNow(presence, startupEpochMs))[0];
       if (resumeIntent) await executeIntent(resumeIntent, restored.resumeIntent ? "RESUME" : "AUTONOMOUS");
@@ -1647,7 +1702,9 @@ function register(OpenPetsPlugin) {
       runtime.unsubscribe = ctx.pet.onTick((dtMs) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
           const seconds = Math.max(0, Math.min(5, dtMs / 1e3));
-          for (const intent of core.advance(seconds, environmentNow(presence))) await executeIntent(intent);
+          const intents = core.advance(seconds, environmentNow(presence));
+          await applyDevelopment("TICK");
+          for (const intent of intents) await executeIntent(intent);
           await persist(false);
         }).catch((error) => log(ctx, "ERROR", (/* @__PURE__ */ new Date()).toISOString(), "autonomous tick failed", { message: String(error?.message ?? error) }));
       });
