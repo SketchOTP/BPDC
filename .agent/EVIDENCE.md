@@ -378,3 +378,14 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Publication: normal non-force `git push origin main` succeeded from `1feeb4c8079e823cb365a1016536f7dc655f5362` to `58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; no history rewrite.
 - Final state: local `main == origin/main == 58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; worktree clean; Phase 10 untouched.
 - Reliability/limitations: live observation was not required and remains unclaimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
+
+## BPDC-E035 — Phase 10 accepted publication
+
+- Created: 2026-08-25 America/New_York
+- Directive/outcome: Architect acceptance `BPDC-P10-001` / `BPDC-SYNC-007`
+- Evidence level: `E4_REGRESSION_PROTECTED` for the accepted P10 mechanism; publication durability verified
+- Type: `REPOSITORY_DURABILITY`
+- Result: `PASSED`; freshly fetched `origin/main` at `9f38bb0db40332c6f3d2524dd889877523778a4d` was an ancestor of local `HEAD`; the only unpublished commits were the accepted P10 product commit `9045fb7a61a29917405e3d1d53174aec63246dfb` and Authority closure `edff9031a90a1420552ab4d51cdbc03d9d8a05d5`.
+- Validation: `node --test` 60/60; `node src/cli/experiments.js` P10 PASS; `git diff --check` PASS; publication-safety scan PASS with 23 expected files, zero unexpected files, zero added secret findings; manifest permission delta was exactly `pet:animate`.
+- Publication: normal non-force push succeeded; final local `main == origin/main == edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; worktree clean; no history rewrite.
+- Reliability/limitations: live Windows/Electron visual growth remains `UNKNOWN` / not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds. No Phase 11 work started.

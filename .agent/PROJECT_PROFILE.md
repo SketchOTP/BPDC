@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 10 — Continuous Physical Maturation; implementation complete for Architect review.
+- Current phase: Phase 10 — Continuous Physical Maturation; accepted and published.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–9 state remains synchronized to GitHub `main`; P10 is local-only pending Architect publication authorization; no Phase 11 is authorized.
+- Deployment: no deployment authorized; accepted Phase 1–10 state is synchronized to GitHub `main`; no Phase 11 is authorized.

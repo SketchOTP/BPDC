@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 10 — Continuous Physical Maturation (implementation complete for review)
-- Active directive: BPDC-P10-001
+- Current stage: Phase 10 — Continuous Physical Maturation (closed and published)
+- Active directive: BPDC-SYNC-007 (completed)
 - Active task packet: `.agent/tasks/active/BPDC-P10-001.md`
-- Last Codex outcome: BPDC-P10-001 (implementation complete for Architect review)
-- Last state sync: 2026-08-25 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; entry `main == origin/main == 9f38bb0db40332c6f3d2524dd889877523778a4d`; P10 changes are local-only pending commit and review.
+- Last Codex outcome: BPDC-SYNC-007 (Phase 10 published)
+- Last state sync: 2026-08-25 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == origin/main == edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; worktree clean.
 
 ## Mandatory kernel
 

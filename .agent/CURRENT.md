@@ -3,24 +3,25 @@
 ## Lifecycle
 
 - Status: `ACTIVE`
-- Last updated: 2026-08-24 America/New_York
+- Last updated: 2026-08-25 America/New_York
 
 ## Active state
 
-- Local directive ID: `BPDC-P10-001`
-- External directive ID: `BPDC-P10-001`
-- Objective: Implement continuous physical maturation derived solely from existing simulation age and present it through bounded OpenPets scaling.
-- Current status: `IMPLEMENTED_PENDING_ARCHITECT_ACCEPTANCE`
-- Acceptance: Phase 10 implementation is deterministic and regression-protected for Architect review; no new persistent development state, behavior consequence, evolution system, or Phase 11 work was added.
-- Current phase: `Phase 10 — Continuous Physical Maturation` implementation complete for handoff.
+- Local directive ID: `BPDC-SYNC-007`
+- External directive ID: `BPDC-SYNC-007`
+- Objective: Publish the Architect-accepted Phase 10 maturation implementation and Authority closure to canonical GitHub `main` without changing application behavior.
+- Current status: `COMPLETED`
+- Acceptance: Phase 10 is closed and durably published; no new persistent development state, behavior consequence, evolution system, or Phase 11 work was added.
+- Current phase: `Phase 10 — Continuous Physical Maturation` closed; synchronization complete.
 - Expected touched areas: derived CreatureCore development projection, OpenPets adapter presentation, generated plugin, manifest permission, tests, experiments, README, and Authority records.
-- Immediate next action: commit the validated Phase 10 implementation locally and await Architect review; do not push or begin Phase 11.
+- Immediate next action: await a new Architect directive; do not begin Phase 11.
 - Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
 - Authority closure commit: `807d867` (`chore: record Phase 8 authority handoff`); published.
 - Local P9 implementation commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); published.
 - Authority closure commit: `58acab9a85fefeb7b79d130b3ceb0e75d7aada89` (`chore: record Phase 9 authority handoff`); published.
-- Local P10 implementation commit: `9045fb7a61a29917405e3d1d53174aec63246dfb` (`feat: add continuous physical maturation`); not pushed.
-- Publication result: `BPDC-SYNC-006` remains durable at `9f38bb0db40332c6f3d2524dd889877523778a4d`; Phase 10 is local-only pending Architect publication authorization.
+- Local P10 implementation commit: `9045fb7a61a29917405e3d1d53174aec63246dfb` (`feat: add continuous physical maturation`); published.
+- P10 Authority closure commit: `edff9031a90a1420552ab4d51cdbc03d9d8a05d5` (`chore: record Phase 10 authority handoff`); published.
+- Publication result: `BPDC-SYNC-007` pushed normally and non-force; final local `main == origin/main == edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; worktree clean.
 
 ## Temporary task-relevant facts
 
@@ -54,4 +55,4 @@
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-P4-001`, superseded `BPDC-P4-002` as a blocking gate, accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, and `BPDC-SYNC-006`; `BPDC-P10-001` is authorized and no Phase 11 work is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, and `BPDC-P10-001`; `BPDC-SYNC-007` is complete and no Phase 11 work is authorized.

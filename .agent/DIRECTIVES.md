@@ -322,3 +322,14 @@
 - Discovery: not required; Architect research complete; Petz maturation is directly adaptable design principle and OpenPets `setScale` is directly reusable.
 - Live evidence policy: live visual observation is not required for this handoff and was not performed or claimed.
 - Status at issuance: `AUTHORIZED`
+
+## BPDC-SYNC-007
+
+- Issued: 2026-08-25 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-P10-001`
+- Objective: Publish the accepted Phase 10 maturation implementation and Authority closure to canonical GitHub `main` without changing application behavior.
+- Scope: Authority read, clean-tree and commit verification, fresh fetch, ancestry/content/safety validation, 60-test regression, P10 experiment suite, manifest permission review, diff check, normal non-force push, final local/remote equality verification, and Authority/Notion recording.
+- Exclusions: no maturation changes, evolution, care-history development, additional permissions, Phase 11, history rewrite, amend/rebase/squash, force push, live-evidence fabrication, release, deployment, or OpenPets core change.
+- Acceptance: expected product `9045fb7a61a29917405e3d1d53174aec63246dfb` and Authority `edff9031a90a1420552ab4d51cdbc03d9d8a05d5` commits verified; `origin/main` ancestor; delta limited to accepted P10 and Authority files; 60/60 tests and P10 experiments pass; `pet:animate` is the only permission expansion; normal push succeeds; local `main == origin/main`; worktree clean; live visual growth remains `UNKNOWN` and Phase 11 untouched.
+- Discovery: not required; repository durability only.
+- Status at issuance: `AUTHORIZED`; completed successfully.

@@ -335,6 +335,17 @@
 - Limitation: live observation is not required and is not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
 - Publication: local commit authorized; push not authorized; stop before Phase 10.
 
+## BPDC-SYNC-007-PUBLISHED
+
+- Date: 2026-08-25
+- Record ID: `BPDC-SYNC-007-PUBLISHED`
+- Status: `PASSED`
+- Decision: Publish the Architect-accepted Phase 10 maturation implementation and Authority closure without application changes or history rewriting.
+- Publication: normal non-force push succeeded from `9f38bb0db40332c6f3d2524dd889877523778a4d` to `edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; local `main == origin/main`; worktree clean.
+- Unpublished commits: `9045fb7a61a29917405e3d1d53174aec63246dfb` and `edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; freshly fetched remote was an ancestor; no unexpected files.
+- Validation: 60/60 tests, P10 experiments, diff check, and publication-safety scan passed; `pet:animate` was the only permission expansion and no added secret findings were present.
+- Boundary: live visual growth remains `UNKNOWN` / not claimed; Phase 11 was not started and remains unauthorized.
+
 ## BPDC-P9-001-LOCAL-COMMIT
 
 - Date: 2026-08-24

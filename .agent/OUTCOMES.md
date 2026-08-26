@@ -322,6 +322,19 @@
 - Validation: 53/53 tests; P9 CLI experiments; P4-P8 regression; migration, persistence, offline, no-self-reinforcement, non-domination, P7 response, and P8 REST_SITE checks; manifest; staged bundle at 63,376 bytes; boundary/privacy/secret/publication-safety scans; and diff check all passed.
 - Evidence: `BPDC-E032`, `E4_REGRESSION_PROTECTED`; live observation is not required and is not claimed.
 
+## BPDC-SYNC-007 - PUBLISHED
+
+- Outcome ID: `BPDC-SYNC-007-PUBLISHED`
+- Published: 2026-08-25 America/New_York
+- Acceptance: `PASSED`
+- Local before: `main` at `edff9031a90a1420552ab4d51cdbc03d9d8a05d5`, clean; remote before `origin/main` at `9f38bb0db40332c6f3d2524dd889877523778a4d`.
+- Unpublished commits: `9045fb7a61a29917405e3d1d53174aec63246dfb` (`feat: add continuous physical maturation`) and `edff9031a90a1420552ab4d51cdbc03d9d8a05d5` (`chore: record Phase 10 authority handoff`); no unexpected source or generated files.
+- Ancestry: freshly fetched `origin/main` was an ancestor of local `HEAD`.
+- Validation: 60/60 tests; P10 experiment suite PASS; `git diff --check` PASS; publication-safety scan PASS with 23 expected files, zero unexpected files, zero added secret findings; manifest delta contains only `pet:animate`.
+- Publication: normal non-force `git push origin main` succeeded from `9f38bb0db40332c6f3d2524dd889877523778a4d` to `edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; final local `main == origin/main`; worktree clean; no history rewrite.
+- Evidence boundary: live Windows/Electron visual growth remains `UNKNOWN` / not claimed.
+- Next boundary: Phase 10 is closed; await a new Architect directive; do not start Phase 11.
+
 ## BPDC-SYNC-006 - PUBLISHED
 
 - Outcome ID: `BPDC-SYNC-006-PUBLISHED`
