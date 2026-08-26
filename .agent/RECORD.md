@@ -475,3 +475,13 @@
 - Persistence: snapshot schema `7 → 8`; habit schema `1 → 2`; legacy routine matrix zero-initialized; no fabricated history.
 - Validation: 119/119 tests and P16/P4–P15 experiments PASS; generated A/B/tracked correspondence is 84,153 bytes with SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`; no new permissions or host/core boundary violations.
 - Governance: evidence level `E3_TARGET_TESTED` pending Architect acceptance; live routine behavior `UNKNOWN / NOT CLAIMED`; push not authorized; Phase 17 not authorized.
+
+## 2026-08-26 — BPDC-SYNC-013 Phase 16 publication
+
+- Decision: publish Architect-accepted Phase 16 through a normal non-force fast-forward push; do not begin Phase 17.
+- Verification: freshly fetched `origin/main` was `7b8f249985c54d752d4cc87a5862b43553222298`; it was an ancestor of local `HEAD` `df12dd0f2b0a5985d87b29aea245e76f04d361d0`.
+- Unpublished history: accepted product `42a77996143548e5bd022a82a2f823da5596fd3a`; Authority-only closure `156c3e8718f2483179ffa13d69b892e12d2a780f`; pointer/records-only reconciliation `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; no other commits.
+- Scope/validation: accepted P16 scope only; `119/119` tests, P4–P16 experiments, migrations, P4/P14/P15 integration, manifest/permissions, syntax, boundary/privacy, safety, and `git diff --check` passed.
+- Artifact: two independent staged builds and tracked bundle matched at `84,153` bytes with SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
+- Result: GitHub `main` advanced normally to `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; final local `main == origin/main`; worktree clean; history rewritten `NO`; no closure commit required.
+- Evidence boundary: P16 remains `E4_REGRESSION_PROTECTED`; live routine behavior remains `UNKNOWN / NOT CLAIMED`; Phase 17 remains unauthorized.

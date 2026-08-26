@@ -518,3 +518,15 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: 119/119 tests; P16 experiments and P4–P15 regressions PASS; schema/migration, persistence/offline, eligibility, anti-lock, syntax, manifest, boundary/privacy, safety, and `git diff --check` passed.
 - Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were byte/hash-identical at 84,153 bytes with SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
 - Boundary: direct UNC esbuild remains blocked by known `spawn EPERM`; local staging is the validated build route. Live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`; no push performed; Phase 17 not started.
+
+## BPDC-E046 — Phase 16 publication verification
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-SYNC-013`
+- Evidence level: `E4_REGRESSION_PROTECTED` by prior Architect acceptance
+- Type: `PUBLICATION_VERIFICATION`
+- Result: `PASSED`; accepted P16 product and Authority history published by normal non-force fast-forward.
+- History: product `42a77996143548e5bd022a82a2f823da5596fd3a`; Authority-only `156c3e8718f2483179ffa13d69b892e12d2a780f`; pointer/records-only `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; remote before `7b8f249985c54d752d4cc87a5862b43553222298`; final local/remote `df12dd0f2b0a5985d87b29aea245e76f04d361d0`.
+- Validation: `119/119` tests, P4–P16 experiments, migrations, P4/P14/P15 integration, syntax, manifest/permissions, boundary/privacy, safety, and `git diff --check` passed.
+- Generated artifact: two independent staged builds and tracked output byte/hash-identical at `84,153` bytes, SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
+- Boundary: live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`; no Phase 17 work; no history rewrite.

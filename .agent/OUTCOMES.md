@@ -511,3 +511,14 @@
 - Persistence: snapshot schema 7 → 8; habit schema 1 → 2; legacy routines initialize to zero without invented history. Save/reload and offline reconciliation converge deterministically.
 - Validation: `node --test` 119/119; combined experiments PASS; syntax, manifest/permissions, boundary/privacy, safety, and `git diff --check` PASS. Two independent staged builds and tracked generated output match at 84,153 bytes/SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
 - Evidence: `E3_TARGET_TESTED` pending Architect acceptance. Live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`; Phase 17 was not started. Push was not authorized.
+
+## BPDC-SYNC-013 - Phase 16 publication
+
+- **Outcome:** `PASS` / complete.
+- **Entry:** canonical `origin/main` `7b8f249985c54d752d4cc87a5862b43553222298`; local `HEAD` `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; clean worktree; remote freshly fetched and ancestor of local.
+- **Unpublished history:** product `42a77996143548e5bd022a82a2f823da5596fd3a`; Authority-only `156c3e8718f2483179ffa13d69b892e12d2a780f`; pointer/records-only `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; no other unpublished commits.
+- **Scope:** accepted P16 product delta only: coarse routine state, migrations, natural-completion reinforcement, routine scoring/diagnostics, tests/experiments, generated bundle, and Authority records. No unexpected files or behavior changes.
+- **Validation:** `node --test` `119/119 PASS`; `node src/cli/experiments.js` PASS; migrations, P4 isolation, P14/P15 integration, permissions, syntax, boundary/privacy, safety, and `git diff --check` PASS.
+- **Generated artifact:** fresh staged builds A/B and tracked output are byte-identical at `84,153` bytes with SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
+- **Publication:** normal non-force fast-forward advanced GitHub `main` to `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; final local `main == origin/main`; worktree clean; no history rewrite; no post-publication closure was required.
+- **Evidence:** P16 is Architect-accepted `E4_REGRESSION_PROTECTED`; live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`; Phase 17 was not started or authorized.

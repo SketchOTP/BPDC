@@ -454,6 +454,15 @@
 - Environment: direct UNC esbuild execution remains blocked by known `spawn EPERM`; independent local staged builds are the validated artifact route. jCodemunch-MCP was unavailable and is recorded as an inspection limitation.
 - Status: `IMPLEMENTED — PENDING ARCHITECT REVIEW`; local commit required; do not push; Phase 16 remains on hold.
 
+## BPDC-SYNC-013
+
+- Issued: 2026-08-26 America/New_York
+- Objective: Publish the Architect-accepted Phase 16 learned coarse daily activity routine to canonical GitHub `main` without product changes.
+- Verified unpublished history: product `42a77996143548e5bd022a82a2f823da5596fd3a`; Authority-only `156c3e8718f2483179ffa13d69b892e12d2a780f`; pointer/records-only `df12dd0f2b0a5985d87b29aea245e76f04d361d0`.
+- Boundary: no application behavior changes, no history rewrite, no Phase 17. Manifest permissions, actions, cooldown constants, P4 constants, and host/privacy boundary remained unchanged.
+- Validation: `119/119` tests; P4–P16 experiments and required scans PASS; independent staged builds and tracked bundle match at `84,153` bytes/SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
+- Result: normal non-force fast-forward publication from `7b8f249985c54d752d4cc87a5862b43553222298` to `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; local `main == origin/main`; worktree clean.
+
 ## BPDC-P16-001
 
 - Issued: 2026-08-26 America/New_York

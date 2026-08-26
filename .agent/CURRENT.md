@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P16-001`
-- External directive ID: `BPDC-P16-001`
-- Objective: Implement one bounded learned coarse daily activity routine extending the existing habit state.
-- Current status: `IMPLEMENTED — PENDING ARCHITECT REVIEW`
-- Acceptance: Phase 16 was explicitly authorized after published Phase 15; implementation is locally committed at `42a77996143548e5bd022a82a2f823da5596fd3a`; do not begin Phase 17.
-- Current phase: `Phase 16 — Learned Coarse Daily Activity Routine`; local `main` is `156c3e8` (product `42a7799` plus records-only Authority closure), remote remains `7b8f249985c54d752d4cc87a5862b43553222298`; worktree clean.
+- Local directive ID: `BPDC-SYNC-013`
+- External directive ID: `BPDC-SYNC-013`
+- Objective: Publish the Architect-accepted Phase 16 learned coarse daily activity routine without changing product behavior.
+- Current status: `PUBLISHED — COMPLETE`
+- Acceptance: Phase 16 was accepted at `E4_REGRESSION_PROTECTED`; publication completed normally at `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; do not begin Phase 17.
+- Current phase: `Phase 16 — Learned Coarse Daily Activity Routine`; local `main == origin/main == df12dd0f2b0a5985d87b29aea245e76f04d361d0`; worktree clean.
 - Expected touched areas: existing habit extension/schema migration, natural-completion integration, routine scoring diagnostics, deterministic experiments/tests, generated plugin, and Authority records.
-- Immediate next action: Architect review of `BPDC-P16-001`; do not push and do not begin Phase 17.
+- Immediate next action: await Architect re-ranking; do not begin Phase 17.
 - Local P12 implementation commit: `4cd6099` (`feat: add reunion response`); local only.
 - Local implementation commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); published.
 - Authority closure commit: `7b039ae80de50113c0b84e399fddf0fbfb863c1c` (`chore: record Phase 11 authority handoff`); published.
@@ -32,6 +32,16 @@
 - P14 Authority closure commit: `44f70f24f5b0635dd96062258d3977f267d54e60` (`chore: record Phase 14 authority handoff`); published.
 - Publication result: `BPDC-SYNC-011` pushed normally and non-force; product/Authority state reached `44f70f24f5b0635dd96062258d3977f267d54e60`, then records-only closure reached final local `main == origin/main == be9a3be33be120a47cccfd9c0c0251e8155a12c0`; worktree clean; no history rewrite.
 - P14 validation: `node --test` 94/94; P4–P14 experiments PASS; two independent staged bundles and the tracked bundle are identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`; syntax, manifest, schema/action boundary, privacy, safety, and diff checks PASS. Live desktop midpoint evidence remains `UNKNOWN / NOT CLAIMED`.
+
+## Current supersession — BPDC-SYNC-013
+
+- Architect acceptance: `BPDC-P16-001` **ACCEPTED** at `E4_REGRESSION_PROTECTED`.
+- Pre-publication local `HEAD`: `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; pre-publication `origin/main`: `7b8f249985c54d752d4cc87a5862b43553222298`; worktree clean.
+- Unpublished history: product `42a77996143548e5bd022a82a2f823da5596fd3a`; Authority-only `156c3e8718f2483179ffa13d69b892e12d2a780f`; pointer/records-only `df12dd0f2b0a5985d87b29aea245e76f04d361d0`.
+- Ancestry and scope passed. Validation remained green: `119/119` tests, combined P4–P16 experiments, migrations, P4 isolation, P14/P15 integration, syntax, manifest/permissions, boundary/privacy, safety, and `git diff --check`.
+- Generated artifact: two independent staged builds and tracked output were byte-identical at `84,153` bytes, SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`.
+- Publication: normal non-force fast-forward advanced canonical GitHub to `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; final local `main == origin/main`; worktree clean; history rewritten `NO`.
+- Live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`; Phase 17 remains not authorized.
 
 ## Temporary task-relevant facts
 
@@ -76,13 +86,13 @@
 
 - P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, `BPDC-SYNC-007`, `BPDC-P11-001`, `BPDC-SYNC-008`, `BPDC-SYNC-009R1`, `BPDC-P12-001`, `BPDC-P13-001`, `BPDC-P14-001`, and `BPDC-P15-002`; `BPDC-SYNC-010`, `BPDC-SYNC-011`, and `BPDC-SYNC-012` published the accepted P13, P14, and P15 states. Phase 16 is authorized and locally implemented; Phase 17 is not authorized.
 
-## Current supersession — BPDC-P15-002
+## Historical supersession — BPDC-P15-002
 
 - The Architect authorized `BPDC-P15-002` after canonical Phase 14 publication at `6f6b3dd51b76ad352664e0bb5b9af24547420e70`.
 - P15 is Architect-accepted and published by `BPDC-SYNC-012`. It adds only the bounded persisted `behaviorCooldowns` ledger and schema 6 → 7 migration; Phase 16 has not started.
 - Validation is green: 106/106 tests, P15 A–K plus P4–P14 experiments, deterministic staged artifact correspondence at 80,238 bytes/SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`, permissions unchanged, boundary/privacy/safety, syntax, and diff checks passed.
 
-## Current supersession — BPDC-SYNC-012
+## Historical supersession — BPDC-SYNC-012
 
 - `BPDC-P15-002` was Architect-accepted at `E4_REGRESSION_PROTECTED`.
 - Fresh fetch verified the sole unpublished commit was the accepted product commit `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`, descended directly from `6f6b3dd51b76ad352664e0bb5b9af24547420e70`.
@@ -91,10 +101,10 @@
 - Normal non-force `git push origin main` advanced canonical GitHub from `6f6b3dd51b76ad352664e0bb5b9af24547420e70` to `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`.
 - Final fetch verified local `main == origin/main == 1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; worktree clean; no records-only closure was required; no history rewrite occurred.
 
-## Current authorization — BPDC-P16-001
+## Historical authorization — BPDC-P16-001
 
 - Phase 16 is explicitly authorized and implemented locally. Product commit: `42a77996143548e5bd022a82a2f823da5596fd3a`; records-only Authority closure: `156c3e8`.
 - Current local `main`: `156c3e8`; current `origin/main`: `7b8f249985c54d752d4cc87a5862b43553222298`; worktree clean. Push is not authorized.
 - The handoff is complete for Architect review at `E3_TARGET_TESTED`. Live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`.
 - Phase 17 is not authorized and must not begin.
-- Live P15 desktop cooldown behavior remains `UNKNOWN / NOT CLAIMED`; Phase 16 remains not authorized and not started.
+- At that historical point, live P15 desktop cooldown behavior remained `UNKNOWN / NOT CLAIMED`; Phase 16 had not started.

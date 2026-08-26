@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 16 — Learned Coarse Daily Activity Routine; implementation locally committed under `BPDC-P16-001`; local SHA `42a77996143548e5bd022a82a2f823da5596fd3a`; canonical remote remains Phase 15 at `7b8f249985c54d752d4cc87a5862b43553222298`; Phase 17 is not authorized.
+- Current phase: Phase 16 — Learned Coarse Daily Activity Routine; Architect accepted and published; canonical local/remote `main` is `df12dd0f2b0a5985d87b29aea245e76f04d361d0`; Phase 17 is not authorized.
 
 ## Languages and runtimes
 
@@ -33,9 +33,15 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; Phase 16 is local-only pending Architect review; live P15 desktop cooldown evidence remains `UNKNOWN / NOT CLAIMED`; Phase 17 is not authorized.
+- Deployment: no deployment authorized; live Phase 16 routine behavior remains `UNKNOWN / NOT CLAIMED`; Phase 17 is not authorized.
 
-## Phase 16 handoff supersession — 2026-08-26
+## Historical Phase 16 handoff — 2026-08-26
 
 - Local `main` is `156c3e8`, consisting of product `42a7799` plus records-only Authority closure; remote remains the published P15 tip `7b8f249985c54d752d4cc87a5862b43553222298`.
 - Phase 16 is locally implemented and awaiting Architect review. No push or Phase 17 work is authorized.
+
+## BPDC-SYNC-013 publication — 2026-08-26
+
+- Phase 16 was accepted by the Architect at `E4_REGRESSION_PROTECTED` and published normally.
+- Final canonical state: local `main == origin/main == df12dd0f2b0a5985d87b29aea245e76f04d361d0`; worktree clean; no history rewrite.
+- Live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`; Phase 17 remains unauthorized.
