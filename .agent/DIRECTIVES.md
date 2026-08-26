@@ -413,3 +413,19 @@
 - Discovery: not required; Architect research complete.
 - Live evidence policy: live Windows/Electron midpoint observation is `UNKNOWN / NOT CLAIMED` and is non-blocking.
 - Status at issuance: `AUTHORIZED`; implementation complete for Architect review; local commit pending; push not authorized.
+
+## BPDC-SYNC-011
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via Architect review accepting `BPDC-P14-001`
+- External directive: `BPDC-SYNC-011`
+- Objective: Publish the accepted Phase 14 midpoint-reconsideration implementation and Authority closure to canonical GitHub `main` without changing application behavior.
+- Entry: local `main` `44f70f24f5b0635dd96062258d3977f267d54e60`; `origin/main` `9c656f017755f53e34c009c5751b192cce55d221`; clean worktree.
+- Unpublished commits: `e630dc6a5e3ea31697a8f94620f69404633e03ff` product and `44f70f24f5b0635dd96062258d3977f267d54e60` Authority closure.
+- Scope: fresh remote/ancestry/scope verification; 94-test and P4–P14 regression; schema/action/permission boundary; safety/privacy; deterministic staged build correspondence; normal non-force push; final equality; Authority/Notion update.
+- Exclusions: no P14 behavior changes, no history rewrite, no force push, no additional permissions/schema/actions, no live-evidence fabrication, and no Phase 15.
+- Validation: `node --test` 94/94; `node src/cli/experiments.js` PASS; syntax, manifest, schema/action boundary, privacy, safety, `git diff --check`, and publication checks PASS.
+- Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were byte/hash-identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.
+- Result: normal non-force `git push origin main` advanced GitHub from `9c656f017755f53e34c009c5751b192cce55d221` to `44f70f24f5b0635dd96062258d3977f267d54e60`; final local `main == origin/main`; worktree clean; no history rewrite.
+- Evidence boundary: P14 remains `E4_REGRESSION_PROTECTED`; live Windows/Electron midpoint behavior remains `UNKNOWN / NOT CLAIMED`.
+- Status at completion: `COMPLETED`; Phase 15 did not start.

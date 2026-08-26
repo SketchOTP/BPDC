@@ -460,3 +460,16 @@
 - Evidence: `E3_TARGET_TESTED` pending Architect acceptance; no E4 claim is made in this handoff.
 - Local product commit: `e630dc6` (`feat: add midpoint behavior reconsideration`); Authority closure commit follows; no push.
 - Boundary: Phase 15 is not authorized.
+
+## BPDC-SYNC-011 - Phase 14 publication complete
+
+- Outcome ID: `BPDC-SYNC-011-PUBLISHED`
+- Closed for Codex handoff: 2026-08-26 America/New_York
+- Verdict: `COMPLETE`
+- Summary: Published the Architect-accepted Phase 14 midpoint-reconsideration product and Authority closure to canonical GitHub `main` without changing application behavior.
+- Entry: local `main` and `origin/main` were verified at `44f70f24f5b0635dd96062258d3977f267d54e60` and `9c656f017755f53e34c009c5751b192cce55d221` respectively; worktree was clean; the accepted unpublished commits were `e630dc6a5e3ea31697a8f94620f69404633e03ff` and `44f70f24f5b0635dd96062258d3977f267d54e60`.
+- Ancestry and scope: freshly fetched `origin/main` was an ancestor; exactly the accepted P14 source/generated/test/documentation and Authority files were present; schema, action vocabulary, and manifest permissions were unchanged; no suspicious filenames or added secret findings appeared.
+- Validation: direct `node --test` 94/94 PASS; `node src/cli/experiments.js` PASS; syntax, manifest/schema/action, boundary/privacy, safety, and `git diff --check` all passed.
+- Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were byte/hash-identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.
+- Publication: normal non-force `git push origin main` advanced GitHub `9c656f017755f53e34c009c5751b192cce55d221` to `44f70f24f5b0635dd96062258d3977f267d54e60`; post-push fetch verified local `main == origin/main`; worktree clean; history rewritten `NO`.
+- Evidence: P14 remains `E4_REGRESSION_PROTECTED`; live Windows/Electron midpoint behavior remains `UNKNOWN / NOT CLAIMED`; Phase 15 was not started.

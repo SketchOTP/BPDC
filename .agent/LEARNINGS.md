@@ -229,3 +229,12 @@
 - Confidence: `VERIFIED` for deterministic core behavior and generated correspondence; live Windows/Electron midpoint observation remains `UNKNOWN`/not claimed.
 - Scope: BPDC-P14-001 midpoint reconsideration.
 - Supersedes: `NONE`
+
+## BPDC-L026 — generated correspondence is a publication gate
+
+- Date: 2026-08-26
+- Fact: For generated OpenPets runtimes, publication is safe only after two independent clean staged builds agree byte-for-byte with the tracked bundle; a clean Git diff alone does not prove source/generated correspondence.
+- Evidence: `BPDC-E042`; both staged builds and tracked output were 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`, followed by normal non-force publication.
+- Confidence: `VERIFIED` for the BPDC P14 publication workflow; direct UNC esbuild remains blocked by known `spawn EPERM`, so local staging remains the validated build route.
+- Scope: BPDC-SYNC-011.
+- Supersedes: `NONE`
