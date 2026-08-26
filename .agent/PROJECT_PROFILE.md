@@ -34,3 +34,8 @@
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
 - Deployment: no deployment authorized; Phase 16 is local-only pending Architect review; live P15 desktop cooldown evidence remains `UNKNOWN / NOT CLAIMED`; Phase 17 is not authorized.
+
+## Phase 16 handoff supersession — 2026-08-26
+
+- Local `main` is `156c3e8`, consisting of product `42a7799` plus records-only Authority closure; remote remains the published P15 tip `7b8f249985c54d752d4cc87a5862b43553222298`.
+- Phase 16 is locally implemented and awaiting Architect review. No push or Phase 17 work is authorized.

@@ -33,3 +33,9 @@ Read `PROJECT_GOAL.md`, `PROJECT_PROFILE.md`, and `CURRENT.md` before substantia
 ## Update rule
 
 `CURRENT.md` is mutable. Historical ledgers are append-only after adoption. Correct mistakes with a superseding entry; do not rewrite old evidence.
+
+## Current pointer supersession — 2026-08-26
+
+- The active pointer is `BPDC-P16-001`, not P15. Product commit `42a7799` and records-only Authority closure `156c3e8` are local on `main`.
+- Canonical `origin/main` remains `7b8f249985c54d752d4cc87a5862b43553222298`; push is not authorized. Worktree is clean.
+- Phase 16 is complete for Architect review at `E3_TARGET_TESTED`; live routine behavior is `UNKNOWN / NOT CLAIMED`; Phase 17 is not authorized.

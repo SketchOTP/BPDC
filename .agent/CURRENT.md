@@ -12,7 +12,7 @@
 - Objective: Implement one bounded learned coarse daily activity routine extending the existing habit state.
 - Current status: `IMPLEMENTED — PENDING ARCHITECT REVIEW`
 - Acceptance: Phase 16 was explicitly authorized after published Phase 15; implementation is locally committed at `42a77996143548e5bd022a82a2f823da5596fd3a`; do not begin Phase 17.
-- Current phase: `Phase 16 — Learned Coarse Daily Activity Routine`; local `main` is `42a77996143548e5bd022a82a2f823da5596fd3a`, remote remains `7b8f249985c54d752d4cc87a5862b43553222298`; worktree clean.
+- Current phase: `Phase 16 — Learned Coarse Daily Activity Routine`; local `main` is `156c3e8` (product `42a7799` plus records-only Authority closure), remote remains `7b8f249985c54d752d4cc87a5862b43553222298`; worktree clean.
 - Expected touched areas: existing habit extension/schema migration, natural-completion integration, routine scoring diagnostics, deterministic experiments/tests, generated plugin, and Authority records.
 - Immediate next action: Architect review of `BPDC-P16-001`; do not push and do not begin Phase 17.
 - Local P12 implementation commit: `4cd6099` (`feat: add reunion response`); local only.
@@ -43,6 +43,7 @@
 
 - Command or check: `BPDC-SYNC-012` entry/ancestry/scope verification, `node --test`, `node src/cli/experiments.js`, staged OpenPets builds A/B, generated correspondence, syntax, manifest/action/cooldown review, boundary/privacy/publication-safety scans, `git diff --check`, normal push, and final equality verification
 - Result: `PASSED`; P16 implementation produced 119/119 tests, P16 A–M-equivalent plus P4–P15 regression experiments PASS, schema 7→8/habit 1→2 migration, save/reload/offline equivalence, manifest, syntax, boundary/privacy, safety, and `git diff --check` PASS. Two independent staged bundles and tracked output match at 84,153 bytes/SHA-256 `E61BE612F6EFE8B77CEE6B15A1CB43F1435981B180366BCAD31E6675E7E3D2BF`; local product commit `42a77996143548e5bd022a82a2f823da5596fd3a`; not pushed. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. Live P16 routine behavior remains `UNKNOWN / NOT CLAIMED`.
+- Authority closure: records-only commit `156c3e8` records the P16 directive, implementation, evidence, and handoff; local only, not pushed.
 
 ## Risks and blockers
 
@@ -89,4 +90,11 @@
 - Two independent clean staged builds and the tracked bundle matched at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
 - Normal non-force `git push origin main` advanced canonical GitHub from `6f6b3dd51b76ad352664e0bb5b9af24547420e70` to `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`.
 - Final fetch verified local `main == origin/main == 1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; worktree clean; no records-only closure was required; no history rewrite occurred.
+
+## Current authorization — BPDC-P16-001
+
+- Phase 16 is explicitly authorized and implemented locally. Product commit: `42a77996143548e5bd022a82a2f823da5596fd3a`; records-only Authority closure: `156c3e8`.
+- Current local `main`: `156c3e8`; current `origin/main`: `7b8f249985c54d752d4cc87a5862b43553222298`; worktree clean. Push is not authorized.
+- The handoff is complete for Architect review at `E3_TARGET_TESTED`. Live Windows/Electron routine behavior remains `UNKNOWN / NOT CLAIMED`.
+- Phase 17 is not authorized and must not begin.
 - Live P15 desktop cooldown behavior remains `UNKNOWN / NOT CLAIMED`; Phase 16 remains not authorized and not started.
