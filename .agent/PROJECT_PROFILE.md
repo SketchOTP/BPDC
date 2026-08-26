@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 14 — Midpoint Reconsideration; Architect accepted and published through `BPDC-SYNC-011`, final canonical SHA `be9a3be33be120a47cccfd9c0c0251e8155a12c0`. Phase 15 is not authorized.
+- Current phase: Phase 15 — Behavior Cooldown Activation; implementation complete locally under `BPDC-P15-002`, pending Architect review; canonical entry SHA `6f6b3dd51b76ad352664e0bb5b9af24547420e70`; push not authorized and Phase 16 is not authorized.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–14 state is synchronized to GitHub `main` at `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; live P14 desktop evidence remains `UNKNOWN / NOT CLAIMED`; Phase 15 is not authorized.
+- Deployment: no deployment authorized; accepted Phase 1–14 state is synchronized to GitHub `main` at `6f6b3dd51b76ad352664e0bb5b9af24547420e70`; P15 is local-only pending Architect review; live P14 desktop evidence remains `UNKNOWN / NOT CLAIMED`; Phase 16 is not authorized.

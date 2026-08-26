@@ -145,7 +145,7 @@ test("saved FOLLOW_CURSOR behavior uses existing persistence semantics", () => {
   controlledFollowBehavior(core);
   const restored = CreatureCore.fromSnapshot(core.serialize());
   assert.equal(restored.currentBehavior.action, "FOLLOW_CURSOR");
-  assert.equal(restored.toSnapshot().schemaVersion, 6);
+  assert.equal(restored.toSnapshot().schemaVersion, 7);
   assert.equal(Object.hasOwn(restored.toSnapshot(), "cursor"), false);
 });
 

@@ -473,3 +473,16 @@
 - Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were byte/hash-identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.
 - Publication: normal non-force `git push origin main` advanced GitHub `9c656f017755f53e34c009c5751b192cce55d221` to `44f70f24f5b0635dd96062258d3977f267d54e60`; the records-only closure then advanced canonical `main` to `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; post-closure fetch verified local `main == origin/main`; worktree clean; history rewritten `NO`.
 - Evidence: P14 remains `E4_REGRESSION_PROTECTED`; live Windows/Electron midpoint behavior remains `UNKNOWN / NOT CLAIMED`; Phase 15 was not started.
+
+## BPDC-P15-002 - local implementation handoff
+
+- Outcome ID: `BPDC-P15-002-LOCAL-COMMIT`
+- Closed for Codex handoff: 2026-08-26 America/New_York
+- Verdict: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Entry: local and `origin/main` `6f6b3dd51b76ad352664e0bb5b9af24547420e70`; worktree clean before implementation.
+- Model: persisted bounded `behaviorCooldowns` ledger keyed only by existing actions; schema 6 → 7 migration initializes legacy creatures with `{}`; simulation time is authoritative; cooldown affects eligibility only.
+- Boundaries: natural exits and P14 midpoint abandonment start exact cooldowns; stable midpoint, P7/P12 overlays, and utility scoring do not; cooldown diagnostics remain inspectable; candidate RNG draws remain fixed; IDLE remains fallback; no new behavior, permission, host dependency, or Phase 16 work.
+- Validation: 106/106 tests; P15 A–K and P4–P14 experiments PASS; syntax, manifest/permissions, boundary/privacy, safety, and `git diff --check` PASS.
+- Generated artifact: two independent staged builds and tracked bundle match at 80,238 bytes, SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Limitations: direct UNC esbuild is blocked by known `spawn EPERM`; staged builds passed. jCodemunch-MCP was unavailable, so repository indexing is unverified.
+- Commit/push: local implementation plus Authority handoff commit; push not authorized.

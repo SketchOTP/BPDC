@@ -100,10 +100,27 @@ const midpointPartition = runMidpointPartitionExperiment();
 const midpointPersistence = runMidpointPersistenceExperiment();
 const midpointOffline = runMidpointOfflineExperiment();
 const midpointTransient = await runMidpointTransientExperiment();
+const cooldownImmediate = runCooldownImmediateExperiment();
+const cooldownExpiry = runCooldownExpiryExperiment();
+const cooldownOverlap = runCooldownOverlapExperiment();
+const cooldownAbandonment = runCooldownAbandonmentExperiment();
+const cooldownStableMidpoint = runCooldownStableMidpointExperiment();
+const cooldownTransient = runCooldownTransientExperiment();
+const cooldownPersistence = runCooldownPersistenceExperiment();
+const cooldownOffline = runCooldownOfflineExperiment();
+const cooldownRng = runCooldownRngExperiment();
+const cooldownProtective = runCooldownProtectiveExperiment();
+const cooldownIdleFallback = runCooldownIdleFallbackExperiment();
+
+const p15Experiments = [
+  cooldownImmediate, cooldownExpiry, cooldownOverlap, cooldownAbandonment,
+  cooldownStableMidpoint, cooldownTransient, cooldownPersistence, cooldownOffline,
+  cooldownRng, cooldownProtective, cooldownIdleFallback,
+];
 
 console.log(JSON.stringify({
-  directive: "BPDC-P14-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence, followCursorActive, followCursorState, followCursorNonDomination, followCursorTransition, followCursorTransient, followCursorOffline, followCursorPersistence, followCursorRestSite, followCursorShutdown, midpointStable, midpointSwitch, midpointEligibility, midpointHysteresis, midpointNonInterruptible, midpointPartition, midpointPersistence, midpointOffline, midpointTransient]
+  directive: "BPDC-P15-002",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence, followCursorActive, followCursorState, followCursorNonDomination, followCursorTransition, followCursorTransient, followCursorOffline, followCursorPersistence, followCursorRestSite, followCursorShutdown, midpointStable, midpointSwitch, midpointEligibility, midpointHysteresis, midpointNonInterruptible, midpointPartition, midpointPersistence, midpointOffline, midpointTransient, ...p15Experiments]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -131,6 +148,9 @@ console.log(JSON.stringify({
     midpointStable, midpointSwitch, midpointEligibility, midpointHysteresis,
     midpointNonInterruptible, midpointPartition, midpointPersistence, midpointOffline,
     midpointTransient,
+    cooldownImmediate, cooldownExpiry, cooldownOverlap, cooldownAbandonment,
+    cooldownStableMidpoint, cooldownTransient, cooldownPersistence, cooldownOffline,
+    cooldownRng, cooldownProtective, cooldownIdleFallback,
   },
   trace24h,
 }, null, 2));
@@ -775,7 +795,7 @@ function runPlayPreferencePersistenceExperiment() {
   const migrated = CreatureCore.fromSnapshot(schema4);
   return {
     status: JSON.stringify(restored.toSnapshot()) === JSON.stringify(core.toSnapshot())
-      && migrated.toSnapshot().schemaVersion === 6
+      && migrated.toSnapshot().schemaVersion === 7
       && migrated.playPreference.playPreference === 0 ? "PASS" : "FAIL",
     schema: restored.toSnapshot().schemaVersion,
     migratedPreference: migrated.playPreference.playPreference,
@@ -899,7 +919,7 @@ function runDevelopmentPersistenceExperiment() {
   const snapshot = JSON.parse(core.serialize());
   const restored = CreatureCore.fromSnapshot(core.serialize());
   return {
-    status: snapshot.schemaVersion === 6
+    status: snapshot.schemaVersion === 7
       && !Object.hasOwn(snapshot, "development")
       && JSON.stringify(before) === JSON.stringify(restored.developmentSnapshot()) ? "PASS" : "FAIL",
     schema: snapshot.schemaVersion,
@@ -1031,7 +1051,7 @@ function runSocializationPersistenceExperiment() {
   delete schema5.socializationImprint;
   const migrated = CreatureCore.fromSnapshot(schema5);
   return {
-    status: snapshot.schemaVersion === 6
+    status: snapshot.schemaVersion === 7
       && restored.socializationImprint === core.socializationImprint
       && migrated.socializationImprint === 0
       ? "PASS" : "FAIL",
@@ -1326,7 +1346,7 @@ function runFollowCursorPersistenceExperiment() {
   const restored = CreatureCore.fromSnapshot(core.serialize());
   return {
     status: restored.currentBehavior?.action === "FOLLOW_CURSOR"
-      && restored.toSnapshot().schemaVersion === 6
+      && restored.toSnapshot().schemaVersion === 7
       && !Object.hasOwn(restored.toSnapshot(), "cursor")
       ? "PASS" : "FAIL",
     action: restored.currentBehavior?.action ?? null,
@@ -1541,6 +1561,207 @@ async function runMidpointTransientExperiment() {
       ]) ? "PASS" : "FAIL",
     timers: host.timers.size,
     followCalls,
+  };
+}
+
+function runCooldownImmediateExperiment() {
+  const core = CreatureCore.create({ seed: 1601 });
+  core.currentBehavior = cooldownControlledBehavior("AVOID", 10);
+  const events = core.advance(10.001, activeFollowEnvironment);
+  const candidate = getCandidate(core, "AVOID", activeFollowEnvironment());
+  const scoreWithoutCooldown = core.scorer.score("AVOID", {
+    drives: core.drives,
+    personality: core.personality,
+    environment: activeFollowEnvironment(),
+    relationship: core.relationshipForScoring(),
+    habit: core.habitForScoring(activeFollowEnvironment()),
+    learnedPreference: core.learnedPlayPreferenceForScoring(),
+    developmentalSocialization: core.developmentalSocializationForScoring(),
+  }).score;
+  return {
+    status: events.at(-1)?.action !== "AVOID"
+      && candidate.cooldownEligible === false
+      && candidate.cooldownUntil === 100
+      && candidate.score === scoreWithoutCooldown ? "PASS" : "FAIL",
+    exited: "AVOID",
+    cooldownEligible: candidate.cooldownEligible,
+    cooldownUntil: candidate.cooldownUntil,
+    selectedAfterExit: events.at(-1)?.action ?? null,
+  };
+}
+
+function runCooldownExpiryExperiment() {
+  const core = CreatureCore.create({ seed: 1602 });
+  core.behaviorCooldowns.WANDER = 100;
+  core.clock.set(100 - 1e-6);
+  const before = getCandidate(core, "WANDER", activeFollowEnvironment()).cooldownEligible;
+  core.clock.set(100);
+  const exact = getCandidate(core, "WANDER", activeFollowEnvironment()).cooldownEligible;
+  core.clock.set(100 + 1e-6);
+  const after = getCandidate(core, "WANDER", activeFollowEnvironment()).cooldownEligible;
+  return { status: !before && exact && after ? "PASS" : "FAIL", before, exact, after };
+}
+
+function runCooldownOverlapExperiment() {
+  const core = CreatureCore.create({ seed: 1603 });
+  core.startBehaviorCooldown("FOLLOW_CURSOR", 20);
+  core.startBehaviorCooldown("OBSERVE", 40);
+  return {
+    status: core.behaviorCooldowns.FOLLOW_CURSOR === 200
+      && core.behaviorCooldowns.OBSERVE === 70
+      && getCandidate(core, "FOLLOW_CURSOR", activeFollowEnvironment()).cooldownRemaining === 200
+      && getCandidate(core, "OBSERVE", activeFollowEnvironment()).cooldownRemaining === 70 ? "PASS" : "FAIL",
+    ledger: core.behaviorCooldowns,
+  };
+}
+
+function runCooldownAbandonmentExperiment() {
+  const core = CreatureCore.create({ seed: 1604 });
+  core.currentBehavior = cooldownControlledBehavior("FOLLOW_CURSOR", 100);
+  const events = core.advance(60, midpointActiveThenAbsentEnvironment);
+  return {
+    status: events.length === 1
+      && events[0].time === 50
+      && events[0].scoreBreakdown.reconsideration?.previousAction === "FOLLOW_CURSOR"
+      && core.behaviorCooldowns.FOLLOW_CURSOR === 230 ? "PASS" : "FAIL",
+    switchedAt: events[0]?.time ?? null,
+    cooldownUntil: core.behaviorCooldowns.FOLLOW_CURSOR ?? null,
+  };
+}
+
+function runCooldownStableMidpointExperiment() {
+  const core = midpointCore(1605);
+  commitMidpointBehavior(core, "OBSERVE");
+  const before = JSON.stringify(core.behaviorCooldowns);
+  core.advance(60, midpointStableEnvironment);
+  return {
+    status: JSON.stringify(core.behaviorCooldowns) === before ? "PASS" : "FAIL",
+    ledger: core.behaviorCooldowns,
+  };
+}
+
+function runCooldownTransientExperiment() {
+  const core = CreatureCore.create({ seed: 1606 });
+  core.currentBehavior = cooldownControlledBehavior("PLAY", 100);
+  core.startBehaviorCooldown("OBSERVE", 300);
+  const before = JSON.stringify(core.behaviorCooldowns);
+  core.selectInteractionResponse();
+  core.selectReunionResponse({ absenceSeconds: 7_200, previousState: "IDLE" });
+  return {
+    status: JSON.stringify(core.behaviorCooldowns) === before
+      && core.currentBehavior.action === "PLAY" ? "PASS" : "FAIL",
+    unchanged: JSON.stringify(core.behaviorCooldowns) === before,
+  };
+}
+
+function runCooldownPersistenceExperiment() {
+  const core = CreatureCore.create({ seed: 1607 });
+  core.startBehaviorCooldown("WANDER", 10);
+  core.startBehaviorCooldown("OBSERVE", 20);
+  const restored = CreatureCore.fromSnapshot(JSON.parse(core.serialize()));
+  return {
+    status: restored.toSnapshot().schemaVersion === 7
+      && JSON.stringify(restored.behaviorCooldowns) === JSON.stringify(core.behaviorCooldowns)
+      && JSON.stringify(restored.evaluate(activeFollowEnvironment())) === JSON.stringify(core.evaluate(activeFollowEnvironment())) ? "PASS" : "FAIL",
+    schema: restored.toSnapshot().schemaVersion,
+    ledger: restored.behaviorCooldowns,
+  };
+}
+
+function runCooldownOfflineExperiment() {
+  const short = CreatureCore.create({ seed: 1608 });
+  const long = CreatureCore.create({ seed: 1608 });
+  short.behaviorCooldowns.WANDER = 100;
+  long.behaviorCooldowns.WANDER = 100;
+  short.reconcileElapsed(30, (timestamp) => offlineEnvironmentAt(timestamp * 1_000, 0));
+  long.reconcileElapsed(100, (timestamp) => offlineEnvironmentAt(timestamp * 1_000, 0));
+  return {
+    status: !getCandidate(short, "WANDER", absentFollowEnvironment()).cooldownEligible
+      && getCandidate(long, "WANDER", absentFollowEnvironment()).cooldownEligible ? "PASS" : "FAIL",
+    shortRemaining: getCandidate(short, "WANDER", absentFollowEnvironment()).cooldownRemaining,
+    longRemaining: getCandidate(long, "WANDER", absentFollowEnvironment()).cooldownRemaining,
+    historicalIntents: 0,
+  };
+}
+
+function runCooldownRngExperiment() {
+  const core = CreatureCore.create({ seed: 1609 });
+  const calls = [];
+  const rng = { nextRange(min, max) { calls.push([min, max]); return 0; } };
+  const baseline = core.selector.select({
+    ...cooldownSelectionInputs(core, activeFollowEnvironment()),
+    rng,
+  });
+  const baselineCount = calls.length;
+  calls.length = 0;
+  core.behaviorCooldowns.WANDER = 60;
+  const blocked = core.selector.select({
+    ...cooldownSelectionInputs(core, activeFollowEnvironment()),
+    rng,
+  });
+  return {
+    status: baselineCount === 8 && calls.length === 8
+      && blocked.candidates.find((candidate) => candidate.action === "WANDER").cooldownEligible === false ? "PASS" : "FAIL",
+    baselineDraws: baselineCount,
+    blockedDraws: calls.length,
+  };
+}
+
+function runCooldownProtectiveExperiment() {
+  const sleepy = CreatureCore.create({ seed: 1610 });
+  sleepy.currentBehavior = cooldownControlledBehavior("SLEEP", 10);
+  sleepy.advance(10.001, absentFollowEnvironment);
+  const avoidant = CreatureCore.create({ seed: 1611 });
+  avoidant.currentBehavior = cooldownControlledBehavior("AVOID", 10);
+  avoidant.advance(10.001, activeFollowEnvironment);
+  return {
+    status: sleepy.behaviorCooldowns.SLEEP === 310
+      && avoidant.behaviorCooldowns.AVOID === 100
+      && !getCandidate(sleepy, "SLEEP", absentFollowEnvironment()).cooldownEligible
+      && !getCandidate(avoidant, "AVOID", activeFollowEnvironment()).cooldownEligible ? "PASS" : "FAIL",
+    sleepUntil: sleepy.behaviorCooldowns.SLEEP,
+    avoidUntil: avoidant.behaviorCooldowns.AVOID,
+  };
+}
+
+function runCooldownIdleFallbackExperiment() {
+  const core = CreatureCore.create({ seed: 1612 });
+  for (const action of ["OBSERVE", "WANDER", "PLAY", "SEEK_ATTENTION", "AVOID", "FOLLOW_CURSOR", "SLEEP"]) {
+    core.behaviorCooldowns[action] = 100;
+  }
+  core.currentBehavior = null;
+  const intent = core.advance(0, activeFollowEnvironment())[0];
+  return {
+    status: intent.action === "IDLE" && getCandidate(core, "IDLE", activeFollowEnvironment()).eligible ? "PASS" : "FAIL",
+    selected: intent.action,
+  };
+}
+
+function cooldownControlledBehavior(action, duration) {
+  return {
+    action,
+    startedAt: 0,
+    endsAt: duration,
+    duration,
+    interruptible: !["SLEEP", "AVOID"].includes(action),
+    cooldown: 0,
+    reason: "controlled cooldown experiment",
+    score: 0,
+    scoreBreakdown: { source: "CONTROLLED_COOLDOWN_EXPERIMENT" },
+  };
+}
+
+function cooldownSelectionInputs(core, environment) {
+  return {
+    drives: core.drives,
+    personality: core.personality,
+    environment,
+    relationship: core.relationshipForScoring(),
+    habit: core.habitForScoring(environment),
+    learnedPreference: core.learnedPlayPreferenceForScoring(),
+    developmentalSocialization: core.developmentalSocializationForScoring(),
+    behaviorCooldowns: core.behaviorCooldowns,
+    simulationTime: core.clock.now(),
   };
 }
 

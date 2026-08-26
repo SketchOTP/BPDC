@@ -104,9 +104,9 @@ test("imprint persists through reload and schema-5 migration invents none", () =
   delete schema5.socializationImprint;
   const migrated = CreatureCore.fromSnapshot(schema5);
 
-  assert.equal(snapshot.schemaVersion, 6);
+  assert.equal(snapshot.schemaVersion, 7);
   assert.deepEqual(reloaded.toSnapshot(), snapshot);
-  assert.equal(migrated.toSnapshot().schemaVersion, 6);
+  assert.equal(migrated.toSnapshot().schemaVersion, 7);
   assert.equal(migrated.socializationImprint, 0);
   assert.equal(migrated.relationship.bond, core.relationship.bond);
 });

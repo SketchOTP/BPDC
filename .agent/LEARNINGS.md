@@ -238,3 +238,12 @@
 - Confidence: `VERIFIED` for the BPDC P14 publication workflow; direct UNC esbuild remains blocked by known `spawn EPERM`, so local staging remains the validated build route.
 - Scope: BPDC-SYNC-011.
 - Supersedes: `NONE`
+
+## BPDC-L027 — cooldown activation and generated determinism
+
+- Date: 2026-08-26
+- Fact: A bounded action-to-availableAt ledger is sufficient to activate declared behavior cooldowns while preserving utility scores and fixed RNG draws; generated correspondence also requires esbuild `absWorkingDir` to avoid absolute staging roots entering source comments.
+- Evidence: `BPDC-E043`; 106/106 tests, P15 A–K experiments, and P4–P14 regressions passed. Two independent staged builds and the tracked bundle match at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Confidence: `VERIFIED` for deterministic core behavior and staged artifact correspondence; direct UNC esbuild remains blocked by known `spawn EPERM`.
+- Scope: `BPDC-P15-002`.
+- Supersedes: `NONE`

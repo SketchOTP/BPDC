@@ -41,6 +41,10 @@ export {
   BehaviorSelector,
 } from "./behavior.js";
 export {
+  createInitialBehaviorCooldowns,
+  validateBehaviorCooldowns,
+} from "./cooldown.js";
+export {
   DRIVE_NAMES,
   PERSONALITY_TRAITS,
   clamp01,

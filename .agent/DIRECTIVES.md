@@ -429,3 +429,15 @@
 - Result: normal non-force `git push origin main` advanced GitHub from `9c656f017755f53e34c009c5751b192cce55d221` to `44f70f24f5b0635dd96062258d3977f267d54e60`; the records-only closure then advanced canonical `main` to `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; final local `main == origin/main`; worktree clean; no history rewrite.
 - Evidence boundary: P14 remains `E4_REGRESSION_PROTECTED`; live Windows/Electron midpoint behavior remains `UNKNOWN / NOT CLAIMED`.
 - Status at completion: `COMPLETED`; Phase 15 did not start.
+
+## BPDC-P15-002
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via active directive; `BPDC-P15-001` remains cancelled.
+- Objective: Activate the declared behavior cooldown durations without adding behaviors or changing utility scores.
+- Entry: canonical local and `origin/main` `6f6b3dd51b76ad352664e0bb5b9af24547420e70`; clean worktree; 94/94 tests and P4–P14 experiments passed.
+- Scope: bounded `behaviorCooldowns` action-to-availableAt ledger, schema 6 → 7 migration, exact natural-exit and P14-abandonment cooldown starts, eligibility-only composition, diagnostics, fixed RNG-draw discipline, persistence/offline determinism, and IDLE fallback.
+- Exclusions: no new actions, score retuning, protective-action overrides, overlay cooldowns, new permissions, host/core boundary expansion, history subsystem, Phase 16, or push.
+- Validation: 106/106 tests; P15 A–K and P4–P14 experiments PASS; syntax, manifest/permission, boundary/privacy, safety, and `git diff --check` PASS; two staged builds match tracked output at 80,238 bytes/SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Environment: direct UNC esbuild execution remains blocked by known `spawn EPERM`; independent local staged builds are the validated artifact route. jCodemunch-MCP was unavailable and is recorded as an inspection limitation.
+- Status: `IMPLEMENTED — PENDING ARCHITECT REVIEW`; local commit required; do not push; Phase 16 remains on hold.

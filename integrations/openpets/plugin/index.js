@@ -153,7 +153,17 @@ var BEHAVIOR_DEFINITIONS = {
   SLEEP: { minDuration: 600, maxDuration: 1800, interruptible: false, cooldown: 300 }
 };
 var BehaviorScorer = class {
-  scoreAll({ drives, personality, environment, relationship, habit, learnedPreference = 0, developmentalSocialization = 0 }) {
+  scoreAll({
+    drives,
+    personality,
+    environment,
+    relationship,
+    habit,
+    learnedPreference = 0,
+    developmentalSocialization = 0,
+    behaviorCooldowns = {},
+    simulationTime = 0
+  }) {
     return ACTIONS.map((action) => this.score(action, {
       drives,
       personality,
@@ -161,7 +171,9 @@ var BehaviorScorer = class {
       relationship,
       habit,
       learnedPreference,
-      developmentalSocialization
+      developmentalSocialization,
+      behaviorCooldowns,
+      simulationTime
     }));
   }
   score(action, {
@@ -171,7 +183,9 @@ var BehaviorScorer = class {
     relationship = { bond: 0.5, recentInfluence: 0 },
     habit = { timeHabit: 0 },
     learnedPreference = 0,
-    developmentalSocialization = 0
+    developmentalSocialization = 0,
+    behaviorCooldowns = {},
+    simulationTime = 0
   }) {
     const night = environment.localTime >= 22 || environment.localTime < 7 ? 1 : 0;
     const activeUser = environment.userPresent && environment.userIdleDuration < 300 ? 1 : 0;
@@ -245,8 +259,20 @@ var BehaviorScorer = class {
     }
     const contributors = scores[action];
     const score = Object.values(contributors).reduce((sum, value) => sum + value, 0);
-    const eligible = action !== "FOLLOW_CURSOR" || activeUser === 1;
-    return { action, score, contributors: { ...contributors }, eligible };
+    const baseEligible = action !== "FOLLOW_CURSOR" || activeUser === 1;
+    const cooldownUntil = behaviorCooldowns[action] ?? 0;
+    const cooldownRemaining = Math.max(0, cooldownUntil - simulationTime);
+    const cooldownEligible = simulationTime >= cooldownUntil;
+    return {
+      action,
+      score,
+      contributors: { ...contributors },
+      eligible: baseEligible && cooldownEligible,
+      baseEligible,
+      cooldownEligible,
+      cooldownUntil,
+      cooldownRemaining
+    };
   }
 };
 var BehaviorSelector = class {
@@ -254,7 +280,18 @@ var BehaviorSelector = class {
     this.scorer = scorer;
     this.noiseAmplitude = noiseAmplitude;
   }
-  select({ drives, personality, environment, relationship, habit, learnedPreference, developmentalSocialization, rng }) {
+  select({
+    drives,
+    personality,
+    environment,
+    relationship,
+    habit,
+    learnedPreference,
+    developmentalSocialization,
+    behaviorCooldowns,
+    simulationTime,
+    rng
+  }) {
     const candidates = this.scorer.scoreAll({
       drives,
       personality,
@@ -262,7 +299,9 @@ var BehaviorSelector = class {
       relationship,
       habit,
       learnedPreference,
-      developmentalSocialization
+      developmentalSocialization,
+      behaviorCooldowns,
+      simulationTime
     }).map((candidate) => {
       const noise = rng.nextRange(-this.noiseAmplitude, this.noiseAmplitude);
       return {
@@ -276,6 +315,28 @@ var BehaviorSelector = class {
     return { selected: candidates[0], candidates };
   }
 };
+
+// integrations/openpets/plugin/core/cooldown.js
+function createInitialBehaviorCooldowns() {
+  return {};
+}
+function validateBehaviorCooldowns(cooldowns) {
+  if (cooldowns === void 0 || cooldowns === null) return createInitialBehaviorCooldowns();
+  if (typeof cooldowns !== "object" || Array.isArray(cooldowns)) {
+    throw new TypeError("behaviorCooldowns must be an object.");
+  }
+  const validated = {};
+  for (const [action, availableAt] of Object.entries(cooldowns)) {
+    if (!ACTIONS.includes(action)) {
+      throw new RangeError(`Unknown behavior cooldown action: ${action}`);
+    }
+    if (!Number.isFinite(availableAt) || availableAt < 0) {
+      throw new RangeError(`Cooldown expiry for ${action} must be finite and non-negative.`);
+    }
+    validated[action] = availableAt;
+  }
+  return validated;
+}
 
 // integrations/openpets/plugin/core/relationship.js
 var RELATIONSHIP_SCHEMA_VERSION = 1;
@@ -504,7 +565,7 @@ function learnedPlayPreferenceForScoring(preference, timestamp) {
 }
 
 // integrations/openpets/plugin/core/persistence.js
-var SNAPSHOT_SCHEMA_VERSION = 6;
+var SNAPSHOT_SCHEMA_VERSION = 7;
 function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
 }
@@ -518,7 +579,8 @@ function deserializeSnapshot(serialized) {
       habit: createInitialHabit(snapshot.simulationTimestamp ?? 0),
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
       playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
-      socializationImprint: 0
+      socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns()
     };
   }
   if (snapshot?.schemaVersion === 2) {
@@ -528,7 +590,8 @@ function deserializeSnapshot(serialized) {
       habit: createInitialHabit(snapshot.simulationTimestamp ?? 0),
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
       playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
-      socializationImprint: 0
+      socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns()
     };
   }
   if (snapshot?.schemaVersion === 3) {
@@ -537,7 +600,8 @@ function deserializeSnapshot(serialized) {
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
       playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
-      socializationImprint: 0
+      socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns()
     };
   }
   if (snapshot?.schemaVersion === 4) {
@@ -545,14 +609,23 @@ function deserializeSnapshot(serialized) {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
-      socializationImprint: 0
+      socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns()
     };
   }
   if (snapshot?.schemaVersion === 5) {
     return {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
-      socializationImprint: 0
+      socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns()
+    };
+  }
+  if (snapshot?.schemaVersion === 6) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      behaviorCooldowns: createInitialBehaviorCooldowns()
     };
   }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {
@@ -700,6 +773,7 @@ var CreatureCore = class _CreatureCore {
     spatial = createInitialSpatial(simulationTimestamp),
     playPreference = createInitialPlayPreference(simulationTimestamp),
     socializationImprint = 0,
+    behaviorCooldowns = createInitialBehaviorCooldowns(),
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer()
   }) {
@@ -715,6 +789,7 @@ var CreatureCore = class _CreatureCore {
     this.spatial = validateSpatial(spatial, this.clock.now());
     this.playPreference = validatePlayPreference(playPreference, this.clock.now());
     this.socializationImprint = validateSocializationImprint(socializationImprint);
+    this.behaviorCooldowns = validateBehaviorCooldowns(behaviorCooldowns);
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -768,6 +843,7 @@ var CreatureCore = class _CreatureCore {
         if (collectIntents && intent) events.push(intent);
       }
       if (this.currentBehavior && this.clock.now() >= this.currentBehavior.endsAt - 1e-9) {
+        this.startBehaviorCooldown(this.currentBehavior.action, this.clock.now());
         this.currentBehavior = null;
         if (remaining > 0) {
           const nextEnvironment = resolveEnvironment(environmentInput, this.clock.now());
@@ -806,7 +882,9 @@ var CreatureCore = class _CreatureCore {
       relationship: this.relationshipForScoring(),
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
-      developmentalSocialization: this.developmentalSocializationForScoring()
+      developmentalSocialization: this.developmentalSocializationForScoring(),
+      behaviorCooldowns: this.behaviorCooldowns,
+      simulationTime: this.clock.now()
     });
     return {
       simulationTime: this.clock.now(),
@@ -825,6 +903,7 @@ var CreatureCore = class _CreatureCore {
       currentBehavior: clone(this.currentBehavior),
       behaviorDurationRemaining: this.currentBehavior ? Math.max(0, this.currentBehavior.endsAt - this.clock.now()) : 0,
       candidates: evaluation.candidates,
+      behaviorCooldowns: clone(this.behaviorCooldowns),
       relationship: this.relationshipSnapshot(),
       habit: this.habitSnapshot(environment),
       spatial: this.spatialSnapshot(),
@@ -855,6 +934,7 @@ var CreatureCore = class _CreatureCore {
       spatial: this.spatialStateSnapshot(),
       playPreference: this.playPreferenceStateSnapshot(),
       socializationImprint: this.socializationImprint,
+      behaviorCooldowns: clone(this.behaviorCooldowns),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming
     };
@@ -882,7 +962,8 @@ var CreatureCore = class _CreatureCore {
       habit: snapshot.habit,
       spatial: snapshot.spatial,
       playPreference: snapshot.playPreference,
-      socializationImprint: snapshot.socializationImprint
+      socializationImprint: snapshot.socializationImprint,
+      behaviorCooldowns: snapshot.behaviorCooldowns
     });
   }
   commitBehavior(environment, { selection = null, reconsideration = null } = {}) {
@@ -894,6 +975,8 @@ var CreatureCore = class _CreatureCore {
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
       developmentalSocialization: this.developmentalSocializationForScoring(),
+      behaviorCooldowns: this.behaviorCooldowns,
+      simulationTime: this.clock.now(),
       rng: this.rng
     });
     const definition = BEHAVIOR_DEFINITIONS[resolvedSelection.selected.action];
@@ -934,6 +1017,7 @@ var CreatureCore = class _CreatureCore {
     const challenger = candidates.filter((candidate) => candidate.action !== current.action && candidate.eligible).sort((left, right) => right.score - left.score || left.action.localeCompare(right.action))[0] ?? null;
     const reason = !current.eligible ? "ineligible" : challenger && challenger.score >= current.score + RECONSIDERATION_MARGIN ? "utility margin" : null;
     if (!reason || !challenger) return null;
+    this.startBehaviorCooldown(current.action, this.clock.now());
     return this.commitBehavior(environment, {
       selection: { selected: challenger, candidates },
       reconsideration: {
@@ -955,8 +1039,15 @@ var CreatureCore = class _CreatureCore {
       relationship: this.relationshipForScoring(),
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
-      developmentalSocialization: this.developmentalSocializationForScoring()
+      developmentalSocialization: this.developmentalSocializationForScoring(),
+      behaviorCooldowns: this.behaviorCooldowns,
+      simulationTime: this.clock.now()
     });
+  }
+  startBehaviorCooldown(action, exitSimulationTime = this.clock.now()) {
+    const definition = BEHAVIOR_DEFINITIONS[action];
+    if (!definition) throw new RangeError(`Unknown behavior action: ${action}`);
+    this.behaviorCooldowns[action] = exitSimulationTime + definition.cooldown;
   }
   recordInteraction(event, environmentInput = this.lastEnvironment) {
     this.decayRelationship();

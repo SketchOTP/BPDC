@@ -21,9 +21,27 @@ export const BEHAVIOR_DEFINITIONS = {
 };
 
 export class BehaviorScorer {
-  scoreAll({ drives, personality, environment, relationship, habit, learnedPreference = 0, developmentalSocialization = 0 }) {
+  scoreAll({
+    drives,
+    personality,
+    environment,
+    relationship,
+    habit,
+    learnedPreference = 0,
+    developmentalSocialization = 0,
+    behaviorCooldowns = {},
+    simulationTime = 0,
+  }) {
     return ACTIONS.map((action) => this.score(action, {
-      drives, personality, environment, relationship, habit, learnedPreference, developmentalSocialization,
+      drives,
+      personality,
+      environment,
+      relationship,
+      habit,
+      learnedPreference,
+      developmentalSocialization,
+      behaviorCooldowns,
+      simulationTime,
     }));
   }
 
@@ -35,6 +53,8 @@ export class BehaviorScorer {
     habit = { timeHabit: 0 },
     learnedPreference = 0,
     developmentalSocialization = 0,
+    behaviorCooldowns = {},
+    simulationTime = 0,
   }) {
     const night = environment.localTime >= 22 || environment.localTime < 7 ? 1 : 0;
     const activeUser = environment.userPresent && environment.userIdleDuration < 300 ? 1 : 0;
@@ -110,8 +130,20 @@ export class BehaviorScorer {
 
     const contributors = scores[action];
     const score = Object.values(contributors).reduce((sum, value) => sum + value, 0);
-    const eligible = action !== "FOLLOW_CURSOR" || activeUser === 1;
-    return { action, score, contributors: { ...contributors }, eligible };
+    const baseEligible = action !== "FOLLOW_CURSOR" || activeUser === 1;
+    const cooldownUntil = behaviorCooldowns[action] ?? 0;
+    const cooldownRemaining = Math.max(0, cooldownUntil - simulationTime);
+    const cooldownEligible = simulationTime >= cooldownUntil;
+    return {
+      action,
+      score,
+      contributors: { ...contributors },
+      eligible: baseEligible && cooldownEligible,
+      baseEligible,
+      cooldownEligible,
+      cooldownUntil,
+      cooldownRemaining,
+    };
   }
 }
 
@@ -121,9 +153,28 @@ export class BehaviorSelector {
     this.noiseAmplitude = noiseAmplitude;
   }
 
-  select({ drives, personality, environment, relationship, habit, learnedPreference, developmentalSocialization, rng }) {
+  select({
+    drives,
+    personality,
+    environment,
+    relationship,
+    habit,
+    learnedPreference,
+    developmentalSocialization,
+    behaviorCooldowns,
+    simulationTime,
+    rng,
+  }) {
     const candidates = this.scorer.scoreAll({
-      drives, personality, environment, relationship, habit, learnedPreference, developmentalSocialization,
+      drives,
+      personality,
+      environment,
+      relationship,
+      habit,
+      learnedPreference,
+      developmentalSocialization,
+      behaviorCooldowns,
+      simulationTime,
     }).map((candidate) => {
       const noise = rng.nextRange(-this.noiseAmplitude, this.noiseAmplitude);
       return {

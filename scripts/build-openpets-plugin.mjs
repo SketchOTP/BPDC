@@ -9,6 +9,7 @@ const coreSource = resolve(root, "src/creature-core");
 const coreTarget = resolve(root, "integrations/openpets/plugin/core");
 const coreFiles = [
   "behavior.js",
+  "cooldown.js",
   "clock.js",
   "creature-core.js",
   "index.js",
@@ -28,7 +29,7 @@ const coreFiles = [
 await mkdir(coreTarget, { recursive: true });
 for (const file of coreFiles) await copyFile(join(coreSource, file), join(coreTarget, file));
 await copyFile(resolve(root, "integrations/openpets/openpets-adapter.js"), resolve(root, "integrations/openpets/plugin/openpets-adapter.js"));
-await build({ entryPoints: [entry], outfile: output, bundle: true, format: "esm", platform: "browser", target: "es2022", sourcemap: false, legalComments: "none" });
+await build({ absWorkingDir: root, entryPoints: [entry], outfile: output, bundle: true, format: "esm", platform: "browser", target: "es2022", sourcemap: false, legalComments: "none" });
 const manifest = JSON.parse(await readFile(resolve(root, "integrations/openpets/plugin/openpets.plugin.json"), "utf8"));
 const built = await readFile(output);
 if (built.byteLength > 1024 * 1024) throw new Error(`OpenPets plugin entry exceeds 1 MiB: ${built.byteLength}`);

@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-SYNC-011`
-- External directive ID: `BPDC-SYNC-011`
-- Objective: Publish the Architect-accepted Phase 14 midpoint reconsideration implementation and Authority closure to canonical GitHub `main`.
-- Current status: `COMPLETED — PHASE 14 PUBLISHED`
-- Acceptance: P14 was accepted as `E4_REGRESSION_PROTECTED`; publication completed by normal non-force fast-forward, local `main == origin/main`, and Phase 15 has not started.
-- Current phase: `Phase 14 — Midpoint Reconsideration` published through `BPDC-SYNC-011`; final canonical `main` is `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; Phase 15 is not authorized.
+- Local directive ID: `BPDC-P15-002`
+- External directive ID: `BPDC-P15-002`
+- Objective: Activate the declared behavior cooldown durations through one bounded persistent ledger.
+- Current status: `IMPLEMENTED — PENDING ARCHITECT REVIEW`
+- Acceptance: P15 implementation and validation are complete locally; push is not authorized, Phase 16 has not started, and Architect acceptance is pending.
+- Current phase: `Phase 15 — Behavior Cooldown Activation`; entry canonical `main == origin/main == 6f6b3dd51b76ad352664e0bb5b9af24547420e70`; local P15 changes are uncommitted pending the handoff commit.
 - Expected touched areas: behavior vocabulary/scoring, OpenPets adapter lifecycle, deterministic experiments/tests, generated plugin, and Authority records.
-- Immediate next action: await the next Architect directive; do not begin Phase 15.
+- Immediate next action: Architect review of the P15 handoff; do not push and do not begin Phase 16.
 - Local P12 implementation commit: `4cd6099` (`feat: add reunion response`); local only.
 - Local implementation commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); published.
 - Authority closure commit: `7b039ae80de50113c0b84e399fddf0fbfb863c1c` (`chore: record Phase 11 authority handoff`); published.
@@ -74,3 +74,9 @@
 ## Pending decisions
 
 - P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, `BPDC-SYNC-007`, `BPDC-P11-001`, `BPDC-SYNC-008`, `BPDC-SYNC-009R1`, `BPDC-P12-001`, `BPDC-P13-001`, and `BPDC-P14-001`; `BPDC-SYNC-010` published the accepted P13 state and `BPDC-SYNC-011` published the accepted P14 state. Phase 15 is not authorized.
+
+## Current supersession — BPDC-P15-002
+
+- The Architect authorized `BPDC-P15-002` after canonical Phase 14 publication at `6f6b3dd51b76ad352664e0bb5b9af24547420e70`.
+- P15 is implemented locally and pending Architect review. It adds only the bounded persisted `behaviorCooldowns` ledger and schema 6 → 7 migration; Phase 16 has not started and push is not authorized.
+- Validation is green: 106/106 tests, P15 A–K plus P4–P14 experiments, deterministic staged artifact correspondence at 80,238 bytes/SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`, permissions unchanged, boundary/privacy/safety, syntax, and diff checks passed.

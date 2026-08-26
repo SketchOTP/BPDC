@@ -2,8 +2,9 @@ import { createInitialRelationship } from "./relationship.js";
 import { createInitialHabit } from "./habit.js";
 import { createInitialSpatial } from "./spatial.js";
 import { createInitialPlayPreference } from "./play-preference.js";
+import { createInitialBehaviorCooldowns } from "./cooldown.js";
 
-export const SNAPSHOT_SCHEMA_VERSION = 6;
+export const SNAPSHOT_SCHEMA_VERSION = 7;
 
 export function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
@@ -20,6 +21,7 @@ export function deserializeSnapshot(serialized) {
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
       playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
       socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns(),
     };
   }
   if (snapshot?.schemaVersion === 2) {
@@ -30,6 +32,7 @@ export function deserializeSnapshot(serialized) {
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
       playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
       socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns(),
     };
   }
   if (snapshot?.schemaVersion === 3) {
@@ -39,6 +42,7 @@ export function deserializeSnapshot(serialized) {
       spatial: createInitialSpatial(snapshot.simulationTimestamp ?? 0),
       playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
       socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns(),
     };
   }
   if (snapshot?.schemaVersion === 4) {
@@ -47,6 +51,7 @@ export function deserializeSnapshot(serialized) {
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       playPreference: createInitialPlayPreference(snapshot.simulationTimestamp ?? 0),
       socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns(),
     };
   }
   if (snapshot?.schemaVersion === 5) {
@@ -54,6 +59,14 @@ export function deserializeSnapshot(serialized) {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
       socializationImprint: 0,
+      behaviorCooldowns: createInitialBehaviorCooldowns(),
+    };
+  }
+  if (snapshot?.schemaVersion === 6) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      behaviorCooldowns: createInitialBehaviorCooldowns(),
     };
   }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {

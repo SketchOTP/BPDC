@@ -447,3 +447,13 @@
 - Generated artifact: two independent staged builds and the tracked bundle were byte/hash-identical at 77,281 bytes, SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.
 - Result: GitHub `main` advanced normally to `44f70f24f5b0635dd96062258d3977f267d54e60`; the records-only closure then finalized canonical `main` at `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; local `main == origin/main`; worktree clean; no history rewrite.
 - Evidence boundary: P14 remains `E4_REGRESSION_PROTECTED`; live midpoint behavior remains `UNKNOWN / NOT CLAIMED`; Phase 15 did not start or become authorized.
+
+## 2026-08-26 — BPDC-P15-002 local implementation
+
+- Decision: Implement the authorized cooldown activation directive locally without push or Phase 16 work.
+- Entry: canonical local and `origin/main` `6f6b3dd51b76ad352664e0bb5b9af24547420e70`; worktree clean; baseline 94/94 tests and P4–P14 experiments passed.
+- Implementation: persisted `behaviorCooldowns` ledger; schema 6 → 7 migration with empty legacy state; simulation-time eligibility checks; exact natural-exit and P14-abandonment semantics; diagnostics and unchanged RNG/utility behavior.
+- Validation: 106/106 tests; P15 A–K and P4–P14 experiments; syntax, manifest/permissions, boundary/privacy, safety, and `git diff --check` passed.
+- Generated artifact: two independent staged builds and tracked bundle match at 80,238 bytes, SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Environment/inspection: direct UNC esbuild remains blocked by known `spawn EPERM`; jCodemunch-MCP unavailable, so indexing is unverified. Staged build and local fallback inspection were used.
+- Status: implementation complete for Architect review; local commit pending at record time; push not authorized; Phase 16 not started.

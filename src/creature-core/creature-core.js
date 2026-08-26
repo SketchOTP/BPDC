@@ -8,6 +8,7 @@ import {
   validatePersonality,
 } from "./models.js";
 import { BEHAVIOR_DEFINITIONS, BehaviorScorer, BehaviorSelector } from "./behavior.js";
+import { createInitialBehaviorCooldowns, validateBehaviorCooldowns } from "./cooldown.js";
 import { SeededRng, normalizeSeed } from "./seeded-rng.js";
 import { deserializeSnapshot, SNAPSHOT_SCHEMA_VERSION, serializeSnapshot } from "./persistence.js";
 import { BehaviorIntent, InteractionResponseIntent, ReunionResponseIntent } from "./intent.js";
@@ -61,6 +62,7 @@ export class CreatureCore {
     spatial = createInitialSpatial(simulationTimestamp),
     playPreference = createInitialPlayPreference(simulationTimestamp),
     socializationImprint = 0,
+    behaviorCooldowns = createInitialBehaviorCooldowns(),
     selector = new BehaviorSelector(),
     scorer = new BehaviorScorer(),
   }) {
@@ -76,6 +78,7 @@ export class CreatureCore {
     this.spatial = validateSpatial(spatial, this.clock.now());
     this.playPreference = validatePlayPreference(playPreference, this.clock.now());
     this.socializationImprint = validateSocializationImprint(socializationImprint);
+    this.behaviorCooldowns = validateBehaviorCooldowns(behaviorCooldowns);
     this.selector = selector;
     this.scorer = scorer;
     this.lastEnvironment = createEnvironment();
@@ -140,6 +143,7 @@ export class CreatureCore {
       }
 
       if (this.currentBehavior && this.clock.now() >= this.currentBehavior.endsAt - 1e-9) {
+        this.startBehaviorCooldown(this.currentBehavior.action, this.clock.now());
         this.currentBehavior = null;
         if (remaining > 0) {
           const nextEnvironment = resolveEnvironment(environmentInput, this.clock.now());
@@ -183,6 +187,8 @@ export class CreatureCore {
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
       developmentalSocialization: this.developmentalSocializationForScoring(),
+      behaviorCooldowns: this.behaviorCooldowns,
+      simulationTime: this.clock.now(),
     });
     return {
       simulationTime: this.clock.now(),
@@ -204,6 +210,7 @@ export class CreatureCore {
         ? Math.max(0, this.currentBehavior.endsAt - this.clock.now())
         : 0,
       candidates: evaluation.candidates,
+      behaviorCooldowns: clone(this.behaviorCooldowns),
       relationship: this.relationshipSnapshot(),
       habit: this.habitSnapshot(environment),
       spatial: this.spatialSnapshot(),
@@ -238,6 +245,7 @@ export class CreatureCore {
       spatial: this.spatialStateSnapshot(),
       playPreference: this.playPreferenceStateSnapshot(),
       socializationImprint: this.socializationImprint,
+      behaviorCooldowns: clone(this.behaviorCooldowns),
       currentBehavior: clone(this.currentBehavior),
       behaviorTiming,
     };
@@ -269,6 +277,7 @@ export class CreatureCore {
       spatial: snapshot.spatial,
       playPreference: snapshot.playPreference,
       socializationImprint: snapshot.socializationImprint,
+      behaviorCooldowns: snapshot.behaviorCooldowns,
     });
   }
 
@@ -281,6 +290,8 @@ export class CreatureCore {
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
       developmentalSocialization: this.developmentalSocializationForScoring(),
+      behaviorCooldowns: this.behaviorCooldowns,
+      simulationTime: this.clock.now(),
       rng: this.rng,
     });
     const definition = BEHAVIOR_DEFINITIONS[resolvedSelection.selected.action];
@@ -331,6 +342,8 @@ export class CreatureCore {
         : null;
     if (!reason || !challenger) return null;
 
+    this.startBehaviorCooldown(current.action, this.clock.now());
+
     return this.commitBehavior(environment, {
       selection: { selected: challenger, candidates },
       reconsideration: {
@@ -354,7 +367,15 @@ export class CreatureCore {
       habit: this.habitForScoring(environment),
       learnedPreference: this.learnedPlayPreferenceForScoring(),
       developmentalSocialization: this.developmentalSocializationForScoring(),
+      behaviorCooldowns: this.behaviorCooldowns,
+      simulationTime: this.clock.now(),
     });
+  }
+
+  startBehaviorCooldown(action, exitSimulationTime = this.clock.now()) {
+    const definition = BEHAVIOR_DEFINITIONS[action];
+    if (!definition) throw new RangeError(`Unknown behavior action: ${action}`);
+    this.behaviorCooldowns[action] = exitSimulationTime + definition.cooldown;
   }
 
   recordInteraction(event, environmentInput = this.lastEnvironment) {

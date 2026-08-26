@@ -481,3 +481,15 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: direct 85/85 tests; combined P4–P13 experiments; syntax, boundary/privacy, safety, and `git diff --check` all passed.
 - Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were identical at 74,401 bytes with SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`.
 - Boundary: live Windows/Electron cursor-follow behavior remains `UNKNOWN / NOT CLAIMED`; Phase 14 was not started and is not authorized.
+
+## BPDC-E043 — Phase 15 cooldown activation
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-P15-002` / local implementation handoff
+- Evidence level: `E3_TARGET_TESTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED` for deterministic cooldown activation, expiry, overlap, P14 abandonment/stability, overlay non-interference, persistence, offline behavior, RNG discipline, protective actions, and IDLE fallback.
+- Model: one persisted action-to-availableAt `behaviorCooldowns` ledger; schema 6 → 7 migration initializes `{}`; simulation time only; cooldown changes eligibility without changing scores.
+- Validation: 106/106 tests; P15 A–K and P4–P14 experiments; syntax, manifest/permission, boundary/privacy, safety, and `git diff --check` all passed.
+- Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` are byte/hash-identical at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Boundary: live desktop behavior was not required and is `UNKNOWN / NOT CLAIMED`; direct UNC esbuild remains blocked by known `spawn EPERM`; Phase 16 was not started.
