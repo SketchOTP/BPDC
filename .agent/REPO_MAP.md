@@ -56,3 +56,14 @@ This map covers the governance bootstrap only. It is not an exhaustive applicati
 - `tests/socialization.test.js` — juvenile plasticity, saturation, no-contact maturation, bond independence, non-domination, persistence, offline crossing, and adult-contact regression.
 - `src/cli/experiments.js` — deterministic Phase 11 experiment suite included with the P4–P11 aggregate runner.
 - `integrations/openpets/plugin/core/socialization.js` and generated `index.js` — bundled runtime equivalents.
+
+## BPDC-P12-001 verified reunion map
+
+- `integrations/openpets/presence-tracker.js` — transient one-shot return metadata for observed IDLE/LOCKED to ACTIVE transitions; no persistence.
+- `src/creature-core/intent.js` — host-neutral `ReunionResponseIntent` with the bounded `ACKNOWLEDGE_RETURN` / `GREET_RETURN` vocabulary.
+- `src/creature-core/creature-core.js` — deterministic reunion selection from observed absence plus existing bond, sociability, socialization, and current behavior constraints.
+- `integrations/openpets/openpets-adapter.js` — reunion reaction mapping and reuse of the existing generation-guarded transient restoration slot.
+- `integrations/openpets/plugin/index.src.js` — curated presence-return pipeline into CreatureCore and transient adapter expression.
+- `tests/reunion-response.test.js` — duration, state dependence, autonomous preservation, sleep, startup, deduplication, P7 arbitration, and P5 regression checks.
+- `src/cli/experiments.js` — deterministic P12 reunion experiment suite included with the prior regression aggregate.
+- `integrations/openpets/plugin/core/` and `index.js` — generated bundled runtime equivalents.

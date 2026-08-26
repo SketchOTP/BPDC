@@ -414,3 +414,16 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: `node --test` 68/68; combined `node src/cli/experiments.js` PASS; `git diff --check` PASS; publication-safety scan PASS with no bounded secret findings; generated plugin syntax/markers PASS; manifest permission set unchanged with no new permissions.
 - Publication: normal non-force `git push origin main` succeeded from `4b3890cece60289ac48bf3d5791cfe96bea5ac14` to `7b039ae80de50113c0b84e399fddf0fbfb863c1c`; final local `main == origin/main`; worktree clean; no history rewrite.
 - Evidence boundary: live Windows/Electron P11 evidence remains `UNKNOWN / NOT CLAIMED`; Phase 12 did not start.
+
+## BPDC-E038 — Phase 12 reunion response implementation
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-P12-001` / implementation handoff
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; observed IDLE/LOCKED → ACTIVE transitions expose one-shot absence metadata, and CreatureCore selects a bounded transient reunion response without changing autonomous state.
+- Model: five-minute minimum absence; saturating duration contribution; `ACKNOWLEDGE_RETURN` for meaningful absence and `GREET_RETURN` for long/high-affinity absence; existing bond, sociability, socialization imprint, and current behavior provide inspectable state dependence.
+- Boundaries: SLEEP suppresses reunion; startup UNKNOWN and application restart do not fabricate reunion; no persistence or schema change; no state mutation; no new permission or sensing.
+- Arbitration: reunion and P7 contact share one generation-guarded restoration slot; contact supersedes reunion and leaves one bounded timer.
+- Validation: 76/76 tests; combined P4–P12 experiments PASS; staged OpenPets bundle PASS at 72,886 bytes; generated syntax, unchanged manifest, boundary/privacy, and diff checks PASS.
+- Reliability/limitations: direct UNC build remains blocked by the known UNC working-directory/`spawn EPERM` limitation; local staging succeeds. Live desktop evidence is useful but not required and remains `UNKNOWN / NOT CLAIMED`.

@@ -400,3 +400,17 @@
 - Validation: 68/68 tests; combined P4–P11 experiments PASS; manifest unchanged; generated plugin syntax/markers PASS; publication-safety scan PASS; `git diff --check` PASS.
 - Publication: normal non-force push succeeded from `4b3890cece60289ac48bf3d5791cfe96bea5ac14` to `7b039ae80de50113c0b84e399fddf0fbfb863c1c`; final local `main == origin/main`; worktree clean; no history rewrite.
 - Boundary: live P11 evidence remains `UNKNOWN / NOT CLAIMED`; Phase 12 did not start.
+
+## BPDC-P12-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P12-001-LOCAL-COMMIT`
+- Closed for Codex handoff: 2026-08-26 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Summary: Added a transient observed-return path from the existing presence tracker to a host-neutral reunion response, with no new persistent state or autonomous behavior.
+- Parameters: five-minute minimum absence; saturating duration function with 3,600-second saturation scale; response threshold `0.32`; `ACKNOWLEDGE_RETURN` and `GREET_RETURN`; greeting requires at least seven hours and affinity `0.58`; SLEEP suppresses response.
+- State boundary: bond, innate sociability, socialization imprint, and current behavior influence inspectable affinity; reunion selection mutates none of them and does not consume RNG or advance simulation time.
+- Persistence boundary: no snapshot/schema change; startup UNKNOWN and P6 restart catch-up cannot create reunion evidence.
+- Validation: 76/76 tests; combined P4–P12 experiments; duration, state dependence, autonomous preservation, sleep, startup, deduplication, P7 arbitration, and P5 regression; staged bundle 72,886 bytes; syntax/manifest/boundary/privacy/diff checks passed.
+- Evidence: `BPDC-E038`, `E4_REGRESSION_PROTECTED`; live desktop evidence is useful but not required and remains unclaimed.
+- Local implementation commit: `4cd6099` (`feat: add reunion response`); not pushed.
+- Next boundary: Architect review; do not push and do not begin Phase 13.

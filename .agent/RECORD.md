@@ -399,3 +399,13 @@
 - Validation: 68/68 tests, P4–P11 experiments, manifest review, generated syntax/markers, bounded secret scan, and `git diff --check` passed.
 - Publication: normal push succeeded; final local `main == origin/main == 7b039ae80de50113c0b84e399fddf0fbfb863c1c`; worktree clean; no history rewrite.
 - Boundary: live P11 evidence remains unclaimed; Phase 12 did not start.
+
+## 2026-08-26 — BPDC-P12-001 implementation handoff
+
+- Decision: implement one transient reunion response from observed user return after IDLE/LOCKED absence.
+- Core: `ReunionResponseIntent` is selected from a saturating observed absence contribution plus existing bond, sociability, socialization imprint, and current behavior; only `ACKNOWLEDGE_RETURN` and `GREET_RETURN` exist.
+- Presence: return metadata is one-shot and non-persistent; UNKNOWN startup and application restart do not create a reunion.
+- Expression: SLEEP remains undisturbed; autonomous timing/RNG/drives/relationship/development remain unchanged; P7's single generation-guarded transient slot is reused.
+- Validation: `BPDC-E038`; 76/76 tests, P4–P12 experiments, staged build, manifest, syntax, boundary/privacy, and diff checks passed.
+- Product commit: `4cd6099` (`feat: add reunion response`); local only, no push authorized.
+- Boundary: Phase 13 not authorized.

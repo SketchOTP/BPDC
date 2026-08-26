@@ -253,6 +253,20 @@
 - Discovery: not required; repository durability only.
 - Status at issuance: `AUTHORIZED`; completed successfully.
 
+## BPDC-P12-001
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-SYNC-008`
+- Objective: Implement one transient, state-dependent reunion response when the user returns after a meaningful observed IDLE or LOCKED absence.
+- Scope: transient presence return metadata; host-neutral `ReunionResponseIntent`; saturating duration sensitivity; existing bond, sociability, socialization, and current-behavior contributors; `ACKNOWLEDGE_RETURN` / `GREET_RETURN`; P7 transient-slot reuse; deduplication; startup non-fabrication; P5/P6 regression; deterministic experiments; build, manifest, boundary, privacy, and diff validation.
+- Exclusions: no absence persistence, reunion history, loneliness, anxiety, neglect, new autonomous behavior, drive, mood, development scalar, personality mutation, sensing, permission, art, LLM, OpenPets core change, or Phase 13.
+- Model: IDLE/LOCKED → ACTIVE only; five-minute minimum absence; saturating absence contribution `1 - exp(-(absenceSeconds - 300) / 3600)` weighted at `0.6`; response threshold `0.32`; greeting threshold `0.58` after seven hours; SLEEP suppresses response.
+- Persistence rule: no snapshot or schema change; startup UNKNOWN and P6 application restart do not fabricate reunion evidence.
+- Expression rule: reunion uses the existing generation-guarded transient restoration slot; the newest legitimate contact/reunion expression supersedes prior transient work.
+- Acceptance: all 24 Architect criteria, with live desktop observation useful but non-blocking and not claimable from deterministic tests.
+- Discovery: not required; Architect discovery complete.
+- Status at issuance: `AUTHORIZED`
+
 ## BPDC-SYNC-008
 
 - Issued: 2026-08-26 America/New_York

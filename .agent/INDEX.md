@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 11 — Juvenile Socialization Imprint (closed and published)
-- Active directive: BPDC-SYNC-008 (completed)
-- Active task packet: `.agent/tasks/active/BPDC-P11-001.md`
-- Last Codex outcome: BPDC-SYNC-008 (Phase 11 publication complete)
-- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == origin/main` at `7b039ae80de50113c0b84e399fddf0fbfb863c1c`; worktree clean; Phase 12 not authorized.
+- Current stage: Phase 12 — Reunion Response (implemented; pending Architect review)
+- Active directive: BPDC-P12-001
+- Active task packet: `.agent/tasks/active/BPDC-P12-001.md`
+- Last Codex outcome: BPDC-P12-001 (implementation complete for Architect review)
+- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; P12 implementation commit `4cd6099` is local and `origin/main` remains `c9a262f781e9d39fd16eb9982dc00c2279adf211`; worktree contains only P12 Authority updates; Phase 13 not authorized.
 
 ## Mandatory kernel
 

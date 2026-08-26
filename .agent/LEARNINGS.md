@@ -202,3 +202,12 @@
 - Confidence: `VERIFIED` for this publication.
 - Scope: BPDC repository durability after Phase 11.
 - Supersedes: `NONE`
+
+## BPDC-L023
+
+- Date: 2026-08-26
+- Fact: A one-shot return projection is enough to make curated presence causally visible without adding loneliness or persistent absence memory. Presence must capture the completed IDLE/LOCKED interval before resetting to ACTIVE, while direct interaction consumes that transition without scheduling a second reunion expression.
+- Evidence: `BPDC-E038`; P12 presence, duration, state, sleep, startup, deduplication, P7 arbitration, and P5 regression experiments.
+- Confidence: `VERIFIED` for deterministic core/integration behavior and bounded expression arbitration; live desktop reunion remains `UNKNOWN`/not claimed.
+- Scope: BPDC-P12-001 reunion response.
+- Supersedes: `NONE`

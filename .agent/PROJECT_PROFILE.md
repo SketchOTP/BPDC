@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 11 — Juvenile Socialization Imprint; accepted and published. Phase 12 is not authorized.
+- Current phase: Phase 12 — Reunion Response; implemented locally and pending Architect review. Phase 13 is not authorized.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–11 state is synchronized to GitHub `main`; Phase 12 is not authorized.
+- Deployment: no deployment authorized; accepted Phase 1–11 state is synchronized to GitHub `main`; Phase 12 is local and pending Architect review; Phase 13 is not authorized.

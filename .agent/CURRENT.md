@@ -7,14 +7,15 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-SYNC-008`
-- External directive ID: `BPDC-SYNC-008`
-- Objective: Publish the Architect-accepted Phase 11 product and Authority commits to canonical GitHub `main` without changing application behavior.
-- Current status: `COMPLETE`
-- Acceptance: Phase 11 is Architect-accepted and its product plus Authority closure are published by normal non-force fast-forward; no Phase 12 work has started.
-- Current phase: `Phase 11 — Juvenile Socialization Imprint` closed; awaiting a new Architect directive.
-- Expected touched areas: CreatureCore scalar and schema migration, behavior scoring contributor, generated OpenPets core, tests, experiments, README, and Authority records.
-- Immediate next action: await the next Architect directive; do not begin Phase 12.
+- Local directive ID: `BPDC-P12-001`
+- External directive ID: `BPDC-P12-001`
+- Objective: Implement one transient, state-dependent reunion response after an observed idle or locked absence, reusing the bounded P7 expression slot.
+- Current status: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Acceptance: P12 implementation and deterministic evidence are complete for Architect review; no Phase 13 work has started.
+- Current phase: `Phase 12 — Reunion Response` implemented; awaiting Architect review.
+- Expected touched areas: transient presence return metadata, host-neutral reunion intent, bounded OpenPets expression arbitration, tests, experiments, generated plugin, and Authority records.
+- Immediate next action: await Architect review; do not begin Phase 13 or push.
+- Local P12 implementation commit: `4cd6099` (`feat: add reunion response`); local only.
 - Local implementation commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); published.
 - Authority closure commit: `7b039ae80de50113c0b84e399fddf0fbfb863c1c` (`chore: record Phase 11 authority handoff`); published.
 - Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
@@ -56,7 +57,8 @@
 - Phase 7 implementation: `InteractionResponseIntent` is transient and non-persistent; `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, and `WITHDRAW_CONTACT` are selected from existing bond/personality/current behavior. The adapter maps them to existing reactions and uses one generation-guarded restoration timer; no autonomous behavior/timing/RNG/drive state is replaced.
 - Phase 7 publication: product commit `98b506d` (`feat: express immediate contact response`) and Authority closure `619b35e` were published normally under `BPDC-SYNC-004`; GitHub `main`, local `main`, and `origin/main` now equal `619b35e1e2020ba9157d16d5241628f73a83395c`.
 - Phase 11 implementation: one persistent numeric `socializationImprint` was added with schema 5 → 6 zero migration, continuous `1 - maturity` plasticity, `0.03` saturating learning, and a maximum `0.12` `SEEK_ATTENTION.developmentalSocialization` contributor. Innate sociability, bond, P7 response, P8 REST_SITE, P9 play preference, and P10 maturation remain separate.
+- Phase 12 implementation: observed IDLE/LOCKED → ACTIVE return metadata feeds a host-neutral `ReunionResponseIntent`; five-minute minimum absence, saturating duration contribution, `ACKNOWLEDGE_RETURN`/`GREET_RETURN`, unchanged SLEEP/autonomous state, no persistence, and one shared generation-guarded P7 transient slot are implemented and target-tested.
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, `BPDC-SYNC-007`, and `BPDC-P11-001`; `BPDC-SYNC-008` is complete. Phase 12 is not authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, `BPDC-SYNC-007`, `BPDC-P11-001`, and `BPDC-SYNC-008`; `BPDC-P12-001` is authorized and pending review. Phase 13 is not authorized.
