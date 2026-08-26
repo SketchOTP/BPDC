@@ -338,6 +338,20 @@
 - Local commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); push is explicitly not authorized by this directive.
 - Follow-up directive: Architect review of `BPDC-P9-001`.
 
+## BPDC-P10-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P10-001-CONTINUOUS-PHYSICAL-MATURATION`
+- Closed for Codex handoff: 2026-08-25 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Summary: Implemented exactly one derived continuous maturation projection from existing simulation age and mapped it to OpenPets `setScale()` presentation.
+- Parameters: 14 simulated day maturation duration; maturity `0..1`; size factor `0.8..1.0`; 0.01 quantization; no persisted development state; schema remains 5.
+- Evidence: `BPDC-E034`, `E4_REGRESSION_PROTECTED`; curve, age boundary, behavior non-interference, offline catch-up, save/reload, adapter mapping, and scale-call boundedness all passed.
+- Validation: original 53-test regression and final 60/60 tests; P10 experiments; staged bundle at 65,763 bytes; generated syntax; manifest; exactly one new `pet:animate` permission; wall-clock/dependency, added-line privacy, publication-safety, and diff checks all passed.
+- Boundary: no utility, personality, drive, relationship, habit, preference, timing, RNG, response, REST_SITE, behavior-selection, evolution, alternate-form, care-history, or Phase 11 changes.
+- Local product commit: `9045fb7a61a29917405e3d1d53174aec63246dfb` (`feat: add continuous physical maturation`); push not authorized.
+- Live evidence: not required for this handoff; no live visual claim made.
+- Push: NO; local commit and subsequent Architect publication decision remain required.
+
 ## BPDC-P9-001 - LOCAL COMMIT RECORDED
 
 - Outcome ID: `BPDC-P9-001-LOCAL-COMMIT`

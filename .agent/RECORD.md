@@ -356,3 +356,17 @@
 - Unpublished commits: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` and `58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; freshly fetched remote was an ancestor; no unexpected files.
 - Validation: 53/53 tests, P9 experiments, diff check, and publication-safety scan passed; zero bad filenames or added secret findings.
 - Boundary: live observation was not required and remains unclaimed; Phase 10 was not started and is not authorized.
+
+## BPDC-P10-001-IMPLEMENTATION-COMPLETE
+
+- Date: 2026-08-25
+- Record ID: `BPDC-P10-001-IMPLEMENTATION-COMPLETE`
+- Status: `PENDING_ARCHITECT_ACCEPTANCE`
+- Decision: Implement the smallest visible maturation cue: a derived 14-day physical size curve, without adding development state or evolution.
+- Core: `developmentSnapshot()` derives age from existing `simulationTimestamp - createdAt`, clamps backward age to zero, and returns maturity plus size factor without affecting behavior scoring.
+- Embodiment: OpenPets adapter applies quantized `0.8..1.0` through `pet.setScale()` after startup reconciliation and only when the 0.01 step changes; exactly one `pet:animate` permission was added.
+- Validation: `BPDC-E034`; baseline 53/53 and final 60/60 tests; P10 experiments; staged plugin at 65,763 bytes; manifest/syntax; wall-clock/dependency; added-line privacy; publication-safety; and diff checks passed.
+- Product commit: `9045fb7a61a29917405e3d1d53174aec63246dfb` (`feat: add continuous physical maturation`); local only.
+- Limitation: live visual growth observation was not performed or claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
+- Boundary: no schema bump, utility consequence, personality/preference mutation, evolution, alternate form, care-history development, OpenPets core change, or Phase 11 work.
+- Publication: local commit authorized; push not authorized; stop before Phase 11.

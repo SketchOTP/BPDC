@@ -306,3 +306,19 @@
 - Acceptance: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` and `58acab9a85fefeb7b79d130b3ceb0e75d7aada89` were the only unpublished descendants of `1feeb4c8079e823cb365a1016536f7dc655f5362`; validation and publication-safety checks passed; normal push succeeded; final local `main == origin/main`; worktree clean; Phase 10 untouched.
 - Discovery: not required; repository durability only.
 - Status at issuance: `AUTHORIZED`; completed successfully.
+
+## BPDC-P10-001
+
+- Issued: 2026-08-25 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-SYNC-006`
+- External directive: `BPDC-P10-001`
+- Objective: Implement continuous physical maturation derived solely from existing creature age and present it through a host-neutral size factor mapped to OpenPets `setScale()`.
+- Scope: framework-independent derived development projection; age from `simulationTimestamp - createdAt`; continuous maturity clamped `0..1`; 14 simulated day duration; size factor `0.8..1.0`; no schema change; adapter quantization and call suppression; startup-after-reconciliation presentation; exactly one new `pet:animate` permission; deterministic curve, non-interference, offline growth, save/reload, adapter, boundedness, manifest, boundary, privacy, regression, and diff validation.
+- Exclusions: no development persistence, XP, levels, discrete stages, evolution branches, care-score formulas, personality/preference mutation, new actions, age utility weights, hunger, mood, health, feeding, new art/forms, LLM, OpenPets core changes, or Phase 11.
+- Model: `ageSeconds = max(0, simulationTimestamp - createdAt)`; `maturity = clamp(ageSeconds / 1,209,600, 0, 1)`; `sizeFactor = 0.8 + 0.2 * maturity`.
+- Persistence rule: existing CreatureCore schema 5 remains unchanged; `createdAt` and `simulationTimestamp` remain the only age inputs; no development field is serialized.
+- Embodiment rule: after restore and P6 elapsed reconciliation, apply current quantized size before resume embodiment; runtime `setScale()` calls occur only on meaningful `0.01` changes.
+- Acceptance: all 25 Architect criteria, including 53-test regression, P4-P9 regression, curve, non-interference, offline growth, schema compatibility, adapter mapping, bounded calls, exactly one new permission, P7/P8/P9 preservation, and no Phase 11.
+- Discovery: not required; Architect research complete; Petz maturation is directly adaptable design principle and OpenPets `setScale` is directly reusable.
+- Live evidence policy: live visual observation is not required for this handoff and was not performed or claimed.
+- Status at issuance: `AUTHORIZED`

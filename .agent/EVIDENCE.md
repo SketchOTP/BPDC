@@ -350,6 +350,23 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: `node --test` 53/53; `node src/cli/experiments.js` BPDC-P9-001 PASS; generated plugin syntax PASS; local-staged plugin build PASS at 63,376 bytes; OpenPets manifest PASS; CreatureCore boundary/privacy/secret scans 0 findings; publication-safety scan PASS; `git diff --check` PASS.
 - Reliability/limitations: live observation is not required by the directive and was not claimed. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. jCodemunch-MCP was unavailable and bounded direct reads were used for relevant files.
 
+## BPDC-E034 — Phase 10 continuous physical maturation
+
+- Created: 2026-08-25 America/New_York
+- Directive/outcome: `BPDC-P10-001` / implementation handoff
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; physical maturity is a pure derived projection from existing simulation age. `ageSeconds = max(0, simulationTimestamp - createdAt)`, maturity clamps from 0 to 1 over 1,209,600 seconds, and size factor grows monotonically from 0.8 to 1.0.
+- Curve evidence: at 0, 3.5, 7, 10.5, 14, and 30 simulated days, maturity is 0, 0.25, 0.5, 0.75, 1, 1 and size factor is 0.8, 0.85, 0.9, 0.95, 1, 1 within floating-point tolerance. Backward simulation time clamps age to zero.
+- Non-interference: young and mature cores with identical behavioral state produced identical candidate utilities and selected behavior under identical RNG; personality, drives, relationship values/events, habit values, spatial state, and play preference remained equal.
+- Offline evidence: P6 reconciliation across seven simulated days produced maturity 0.5 and exactly matched ordinary continuous advancement; no offline development subsystem or fabricated event was added.
+- Persistence evidence: save/reload produced an identical derived projection; schema remained 5 and serialized snapshots contain no `development` field.
+- Adapter evidence: `setScale(0.9)` and `setScale(1)` mapped correctly; the unchanged 0.904 input was quantized to 0.90 and suppressed. 1,001 short updates produced exactly 21 calls for meaningful 0.01 steps.
+- Startup evidence: generated plugin ordering applies current scale after restore/reconciliation and before resume embodiment. Runtime applies scale after core advancement, with adapter suppression preventing per-tick host calls.
+- Permission evidence: OpenPets manifest validation passed with exactly one added permission, `pet:animate`; no other permission changed.
+- Validation: baseline 53/53 and final 60/60 tests; P10 CLI experiments PASS; staged plugin build PASS at 65,763 bytes; generated syntax PASS; manifest PASS; CreatureCore wall-clock/dependency scan 0 findings; added-line privacy scan 0 findings; publication-safety scan PASS for 15 expected files; `git diff --check` PASS.
+- Boundary/limitations: no schema bump, development persistence, behavior consequence, evolution, alternate form, care-history mutation, live visual observation, or Phase 11 work. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. jCodemunch-MCP remained unavailable and bounded direct reads were used.
+
 ## BPDC-E033 — Phase 9 accepted publication
 
 - Created: 2026-08-24 America/New_York

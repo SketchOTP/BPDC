@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 9 — User-Shaped Activity Preference (closed and published)
-- Active directive: BPDC-SYNC-006 (completed)
-- Active task packet: `.agent/tasks/active/BPDC-P9-001.md` (accepted; sync closure recorded)
-- Last Codex outcome: BPDC-SYNC-006 (Phase 9 published)
-- Last state sync: 2026-08-24 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == origin/main == 58acab9a85fefeb7b79d130b3ceb0e75d7aada89`; worktree clean.
+- Current stage: Phase 10 — Continuous Physical Maturation (implementation complete for review)
+- Active directive: BPDC-P10-001
+- Active task packet: `.agent/tasks/active/BPDC-P10-001.md`
+- Last Codex outcome: BPDC-P10-001 (implementation complete for Architect review)
+- Last state sync: 2026-08-25 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; entry `main == origin/main == 9f38bb0db40332c6f3d2524dd889877523778a4d`; P10 changes are local-only pending commit and review.
 
 ## Mandatory kernel
 
