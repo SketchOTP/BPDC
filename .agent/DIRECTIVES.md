@@ -253,6 +253,18 @@
 - Discovery: not required; repository durability only.
 - Status at issuance: `AUTHORIZED`; completed successfully.
 
+## BPDC-P11-001
+
+- Issued: 2026-08-25 America/New_York
+- Issuer: User / project architect via attached Architect review accepting `BPDC-SYNC-007`
+- Objective: Implement exactly one persistent juvenile `socializationImprint` learned from positive contact while continuous maturation plasticity remains, with one bounded `SEEK_ATTENTION.developmentalSocialization` consequence.
+- Scope: one numeric scalar, continuous `1 - maturity` plasticity, saturating positive-contact learning, schema 5 → 6 migration, persistence, utility diagnostics, deterministic juvenile/saturation/no-contact/bond-independence/non-domination/save-reload/offline/adult-contact experiments, P4–P10 regression, build, manifest, boundary, privacy, and diff validation.
+- Exclusions: negative imprint, neglect penalties, multiple developmental traits, mutable personality, XP, levels, forms/evolution, new behaviors/drives/preferences/sensing, feeding/health, new OpenPets permissions, LLMs, Phase 12, and live desktop evidence.
+- Model: learning rate `0.03`; imprint `0..1`; no decay; adult learning zero; utility weight `0.12` and maximum `0.12`.
+- Migration: schema 5 and earlier snapshots initialize `socializationImprint = 0` without inferring history.
+- Discovery: not required during implementation; Architect prior-art discovery is complete and treated as reference/adaptable only.
+- Status at issuance: `AUTHORIZED`; implementation complete for Architect review.
+
 ## BPDC-P9-001
 
 - Issued: 2026-08-24 America/New_York

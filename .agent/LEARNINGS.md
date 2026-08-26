@@ -186,3 +186,10 @@
 - A first placement should establish a candidate without learning. Nearby repeated placements can reinforce with smoothing and proximity strength; a bounded repeated-new-area streak can relocate the single site without maintaining a site list.
 - SLEEP targeting must be a body-side consequence of an already-selected SLEEP intent. Spatial familiarity must not affect SLEEP utility or consume autonomous-selection randomness.
 - Display changes are safest when they invalidate the host coordinate and reset the scalar preference; preserving stale geometry creates an unsafe targeting path.
+
+## BPDC-P11-001 juvenile socialization
+
+- Keep developmental history separate from current bond: bond describes the present relationship, while `socializationImprint` is a one-way juvenile consequence.
+- Deriving plasticity from the accepted maturity projection avoids an arbitrary day boundary; adult contact can continue normal relationship learning without changing the imprint.
+- A single `0.03` saturating scalar is measurable after repeated contact without allowing a few clicks to dominate; a `0.12` utility cap remains subordinate to fatigue and core social pressure.
+- Existing mature creatures must migrate with zero imprint. Inferring juvenile care from current bond, interaction history, habits, preference, or age would fabricate history.

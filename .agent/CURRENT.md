@@ -7,14 +7,15 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-SYNC-007`
-- External directive ID: `BPDC-SYNC-007`
-- Objective: Publish the Architect-accepted Phase 10 maturation implementation and Authority closure to canonical GitHub `main` without changing application behavior.
-- Current status: `COMPLETED`
-- Acceptance: Phase 10 is closed and durably published; no new persistent development state, behavior consequence, evolution system, or Phase 11 work was added.
-- Current phase: `Phase 10 — Continuous Physical Maturation` closed; synchronization complete.
-- Expected touched areas: derived CreatureCore development projection, OpenPets adapter presentation, generated plugin, manifest permission, tests, experiments, README, and Authority records.
-- Immediate next action: await a new Architect directive; do not begin Phase 11.
+- Local directive ID: `BPDC-P11-001`
+- External directive ID: `BPDC-P11-001`
+- Objective: Implement exactly one persistent juvenile socialization imprint learned from positive contact during continuous maturation and exposed only as a bounded `SEEK_ATTENTION` developmental contributor.
+- Current status: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Acceptance: implementation and deterministic evidence satisfy the authorized Phase 11 boundary; no Phase 12 work has started.
+- Current phase: `Phase 11 — Juvenile Socialization Imprint` complete for Architect review.
+- Expected touched areas: CreatureCore scalar and schema migration, behavior scoring contributor, generated OpenPets core, tests, experiments, README, and Authority records.
+- Immediate next action: Architect review of `BPDC-P11-001`; do not begin Phase 12 or push.
+- Local implementation commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); not pushed.
 - Local implementation commit: `0b7e70e` (`feat: teach one persistent rest site`); published.
 - Authority closure commit: `807d867` (`chore: record Phase 8 authority handoff`); published.
 - Local P9 implementation commit: `f25010b0fd5a89776d8fb151c5fd5dc9e2d0b5b6` (`feat: learn user-shaped play preference`); published.
@@ -32,7 +33,7 @@
 ## Last validation
 
 - Command or check: `node --test`, `node src/cli/experiments.js`, adapter response harness, manifest validation, local-staged OpenPets build, dependency/privacy/publication-safety scans, and `git diff --check`
-- Result: `PASSED`; baseline 53/53 tests, final 60/60 tests, BPDC-P10-001 experiment suite PASS, staged bundle PASS at 65,763 bytes, manifest/syntax/permission validation PASS, CreatureCore wall-clock/dependency scan clear, added-line privacy scan clear, publication-safety scan PASS, and `git diff --check` PASS. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. Live visual observation was not performed or claimed.
+- Result: `PASSED`; 68/68 tests, combined P4–P11 experiment suite PASS, staged bundle PASS at 68,010 bytes, generated syntax/manifest validation PASS, no new permission beyond accepted `pet:animate`, CreatureCore boundary/privacy scans clear, and `git diff --check` PASS. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. Live desktop evidence was not required and was not claimed.
 
 ## Risks and blockers
 
@@ -52,7 +53,8 @@
 - Phase 6 publication: product and Authority implementation commit `2e4ff7eb261b1df1c8db57392cfa4bbee9b99b61` was pushed normally; final Authority closure verification is recorded after the follow-up records-only commit.
 - Phase 7 implementation: `InteractionResponseIntent` is transient and non-persistent; `ENJOY_CONTACT`, `ACKNOWLEDGE_CONTACT`, and `WITHDRAW_CONTACT` are selected from existing bond/personality/current behavior. The adapter maps them to existing reactions and uses one generation-guarded restoration timer; no autonomous behavior/timing/RNG/drive state is replaced.
 - Phase 7 publication: product commit `98b506d` (`feat: express immediate contact response`) and Authority closure `619b35e` were published normally under `BPDC-SYNC-004`; GitHub `main`, local `main`, and `origin/main` now equal `619b35e1e2020ba9157d16d5241628f73a83395c`.
+- Phase 11 implementation: one persistent numeric `socializationImprint` was added with schema 5 → 6 zero migration, continuous `1 - maturity` plasticity, `0.03` saturating learning, and a maximum `0.12` `SEEK_ATTENTION.developmentalSocialization` contributor. Innate sociability, bond, P7 response, P8 REST_SITE, P9 play preference, and P10 maturation remain separate.
 
 ## Pending decisions
 
-- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, and `BPDC-P10-001`; `BPDC-SYNC-007` is complete and no Phase 11 work is authorized.
+- P3-003 live evidence is accepted by the Architect. `BPDC-SYNC-001` was superseded by `BPDC-SYNC-002`; reconciliation commit `34aef6f` was pushed normally and verified equal on local `main` and GitHub `main`. Architect accepted `BPDC-SYNC-003`, `BPDC-P5-001`, `BPDC-P6-001`, `BPDC-P7-001`, `BPDC-SYNC-004`, `BPDC-P8-001`, `BPDC-SYNC-005`, `BPDC-SYNC-006`, `BPDC-P10-001`, and `BPDC-SYNC-007`; `BPDC-P11-001` is implemented and awaiting review. Phase 12 is not authorized.

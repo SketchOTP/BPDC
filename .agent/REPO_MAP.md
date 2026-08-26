@@ -47,3 +47,12 @@ This map covers the governance bootstrap only. It is not an exhaustive applicati
 - `integrations/openpets/plugin/index.src.js` — physical interaction pipeline from relationship learning to transient response execution and persistence.
 - `tests/interaction-response.test.js` — state dependence, autonomous-state preservation, learning regression, sleep constraint, adapter mapping/restoration, rapid-click safety, and offline non-fabrication.
 - `.agent/tasks/active/BPDC-P7-001.md` — current Architect handoff packet.
+
+## BPDC-P11-001 verified developmental map
+
+- `src/creature-core/socialization.js` — bounded juvenile imprint learning and the capped developmental utility projection.
+- `src/creature-core/creature-core.js` — positive-contact learning, scalar persistence, migration input, diagnostics, and `SEEK_ATTENTION` scoring input.
+- `src/creature-core/persistence.js` — schema 5 → 6 migration with zero invented imprint.
+- `tests/socialization.test.js` — juvenile plasticity, saturation, no-contact maturation, bond independence, non-domination, persistence, offline crossing, and adult-contact regression.
+- `src/cli/experiments.js` — deterministic Phase 11 experiment suite included with the P4–P11 aggregate runner.
+- `integrations/openpets/plugin/core/socialization.js` and generated `index.js` — bundled runtime equivalents.

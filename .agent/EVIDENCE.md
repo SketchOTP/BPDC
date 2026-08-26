@@ -389,3 +389,17 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: `node --test` 60/60; `node src/cli/experiments.js` P10 PASS; `git diff --check` PASS; publication-safety scan PASS with 23 expected files, zero unexpected files, zero added secret findings; manifest permission delta was exactly `pet:animate`.
 - Publication: normal non-force push succeeded; final local `main == origin/main == edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; worktree clean; no history rewrite.
 - Reliability/limitations: live Windows/Electron visual growth remains `UNKNOWN` / not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds. No Phase 11 work started.
+
+## BPDC-E036 — Phase 11 juvenile socialization imprint
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-P11-001` / implementation handoff
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; one persistent numeric `socializationImprint` is reinforced only by positive contact during continuous maturation, with plasticity `1 - maturity`, saturating learning rate `0.03`, no decay, and zero adult learning.
+- Utility: only `SEEK_ATTENTION.developmentalSocialization` was added; it is `imprint * maturity * 0.12`, maximum `0.12`, and strong fatigue still selects `SLEEP`.
+- Persistence: CreatureCore schema 6; schema 5 and earlier migrate with zero imprint; reload is deterministic and no prior care history is inferred.
+- Experiments: juvenile plasticity, saturation, no-contact maturation, bond independence, utility consequence, non-domination, save/reload, offline maturity crossing, and adult-contact regression all passed. P4–P10 aggregate experiments passed.
+- Validation: `node --test` 68/68; combined CLI experiment runner PASS; local-staged bundle PASS at 68,010 bytes; generated syntax/manifest PASS; no new permission beyond accepted `pet:animate`; boundary/privacy scans PASS; `git diff --check` PASS.
+- Local commit: `536abe67e724437dc969e1e27736bd08af9edea1`; not pushed.
+- Reliability/limitations: live desktop evidence was not required and was not claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.

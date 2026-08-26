@@ -322,6 +322,18 @@
 - Validation: 53/53 tests; P9 CLI experiments; P4-P8 regression; migration, persistence, offline, no-self-reinforcement, non-domination, P7 response, and P8 REST_SITE checks; manifest; staged bundle at 63,376 bytes; boundary/privacy/secret/publication-safety scans; and diff check all passed.
 - Evidence: `BPDC-E032`, `E4_REGRESSION_PROTECTED`; live observation is not required and is not claimed.
 
+## BPDC-P11-001 — juvenile socialization imprint implementation
+
+- Outcome ID: `BPDC-P11-001-LOCAL-COMMIT`
+- Recorded: 2026-08-26 America/New_York
+- Acceptance: `MET_FOR_ARCHITECT_REVIEW`
+- Local commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); not pushed.
+- Implementation: one numeric `socializationImprint`, learned by positive contact with continuous `1 - maturity` plasticity at rate `0.03`; no negative learning, no decay, no personality mutation, and no generic development framework.
+- Utility: only `SEEK_ATTENTION.developmentalSocialization`, capped at `0.12`; current bond, innate sociability, P7 response, P8 REST_SITE, P9 play preference, and P10 maturation remain independent.
+- Persistence: schema 6; schema 5 and earlier migrate to zero imprint without fabricating prior history.
+- Verification: 68/68 tests, P4–P11 experiments, staged bundle 68,010 bytes, syntax/manifest, boundary/privacy, and diff checks passed. Live desktop evidence was not required and is not claimed.
+- Next boundary: Architect review; do not push and do not begin Phase 12.
+
 ## BPDC-SYNC-007 - PUBLISHED
 
 - Outcome ID: `BPDC-SYNC-007-PUBLISHED`

@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 10 — Continuous Physical Maturation; accepted and published.
+- Current phase: Phase 11 — Juvenile Socialization Imprint; implementation complete for Architect review, not pushed.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–10 state is synchronized to GitHub `main`; no Phase 11 is authorized.
+- Deployment: no deployment authorized; accepted Phase 1–10 state is synchronized to GitHub `main`; Phase 11 is committed locally only and Phase 12 is not authorized.

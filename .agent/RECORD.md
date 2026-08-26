@@ -381,3 +381,13 @@
 - Limitation: live visual growth observation was not performed or claimed; direct UNC esbuild remains blocked by known `spawn EPERM`, while local staging succeeds.
 - Boundary: no schema bump, utility consequence, personality/preference mutation, evolution, alternate form, care-history development, OpenPets core change, or Phase 11 work.
 - Publication: local commit authorized; push not authorized; stop before Phase 11.
+
+## 2026-08-26 — BPDC-P11-001 implementation handoff
+
+- Decision: implement one care-shaped developmental consequence only: positive juvenile contact leaves a persistent socialization imprint.
+- Core: `socializationImprint` is a bounded numeric scalar; learning uses `0.03 * intensity * (1 - maturity) * (1 - imprint)` and naturally closes at maturity 1.
+- Behavior: the only downstream consequence is `SEEK_ATTENTION.developmentalSocialization = imprint * maturity * 0.12`; low imprint has no penalty and fatigue remains dominant.
+- Persistence: snapshot schema 6; schema 5 and earlier migrate with zero imprint; no developmental history is inferred from bond, events, habits, preference, or age.
+- Validation: `BPDC-E036`; 68/68 tests; P4–P11 experiments; staged plugin 68,010 bytes; syntax/manifest/boundary/privacy/diff checks passed.
+- Product commit: `536abe67e724437dc969e1e27736bd08af9edea1`; local only, no push.
+- Boundary: no negative development, multiple traits, XP/levels, mutable personality, evolution, new permissions, Phase 12, or live desktop claim.
