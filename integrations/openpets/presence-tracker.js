@@ -30,10 +30,17 @@ export class PresenceTracker {
   }
 
   markActive() {
+    const previousState = this.state;
+    const returnedFromAbsence = previousState === "IDLE" || previousState === "LOCKED";
+    const now = this.clock();
+    const absenceSeconds = returnedFromAbsence ? this.snapshot(now).userIdleDuration : 0;
     this.state = "ACTIVE";
     this.idleSinceMs = null;
     this.lastIdleDuration = 0;
-    return this.snapshot();
+    const snapshot = this.snapshot();
+    return returnedFromAbsence
+      ? { ...snapshot, previousState, absenceSeconds, returnedFromAbsence: true }
+      : snapshot;
   }
 
   markIdle(idleSeconds = 0) {

@@ -73,10 +73,18 @@ const socializationNonDomination = runSocializationNonDominationExperiment();
 const socializationPersistence = runSocializationPersistenceExperiment();
 const socializationOffline = runSocializationOfflineExperiment();
 const socializationAdultContact = runSocializationAdultContactExperiment();
+const reunionDuration = runReunionDurationExperiment();
+const reunionState = runReunionStateExperiment();
+const reunionPreservation = runReunionPreservationExperiment();
+const reunionSleep = runReunionSleepExperiment();
+const reunionStartup = runReunionStartupExperiment();
+const reunionDedup = runReunionDedupExperiment();
+const reunionArbitration = await runReunionArbitrationExperiment();
+const reunionPresence = runReunionPresenceExperiment();
 
 console.log(JSON.stringify({
-  directive: "BPDC-P11-001",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact]
+  directive: "BPDC-P12-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -96,6 +104,8 @@ console.log(JSON.stringify({
     juvenilePlasticity, socializationSaturation, socializationNoContact,
     socializationBondIndependence, socializationUtility, socializationNonDomination,
     socializationPersistence, socializationOffline, socializationAdultContact,
+    reunionDuration, reunionState, reunionPreservation, reunionSleep,
+    reunionStartup, reunionDedup, reunionArbitration, reunionPresence,
   },
   trace24h,
 }, null, 2));
@@ -1050,6 +1060,125 @@ function runSocializationAdultContactExperiment() {
       playPreference: core.playPreference.playPreference,
       habit: core.habit.attentionByHour[12],
     },
+  };
+}
+
+function runReunionDurationExperiment() {
+  const core = CreatureCore.create({ seed: 1201 });
+  commitControlledBehavior(core, "IDLE");
+  const short = core.selectReunionResponse({ absenceSeconds: 60 });
+  const medium = core.selectReunionResponse({ absenceSeconds: 1_800, previousState: "IDLE" });
+  const long = core.selectReunionResponse({ absenceSeconds: 7_200, previousState: "IDLE" });
+  return {
+    status: short === null && medium?.kind === "ACKNOWLEDGE_RETURN" && long?.kind === "GREET_RETURN"
+      && long.diagnostics.contributors.absence > medium.diagnostics.contributors.absence
+      ? "PASS" : "FAIL",
+    short: short?.kind ?? null,
+    medium: medium?.kind ?? null,
+    long: long?.kind ?? null,
+  };
+}
+
+function runReunionStateExperiment() {
+  const low = CreatureCore.create({ seed: 1202 });
+  const high = CreatureCore.create({ seed: 1202 });
+  commitControlledBehavior(low, "IDLE");
+  commitControlledBehavior(high, "IDLE");
+  low.relationship.bond = 0.1;
+  low.personality.sociability = 0.2;
+  high.relationship.bond = 0.9;
+  high.personality.sociability = 0.9;
+  high.socializationImprint = 1;
+  const lowResponse = low.selectReunionResponse({ absenceSeconds: 3_600 });
+  const highResponse = high.selectReunionResponse({ absenceSeconds: 3_600 });
+  return {
+    status: highResponse?.diagnostics.affinity > lowResponse?.diagnostics.affinity ? "PASS" : "FAIL",
+    lowAffinity: lowResponse?.diagnostics.affinity ?? null,
+    highAffinity: highResponse?.diagnostics.affinity ?? null,
+  };
+}
+
+function runReunionPreservationExperiment() {
+  const core = CreatureCore.create({ seed: 1203 });
+  commitControlledBehavior(core, "WANDER");
+  const before = JSON.stringify({
+    behavior: core.currentBehavior,
+    drives: core.drives,
+    relationship: core.relationship,
+    imprint: core.socializationImprint,
+    rng: core.rng.getState(),
+  });
+  const response = core.selectReunionResponse({ absenceSeconds: 7_200, previousState: "LOCKED" });
+  const after = JSON.stringify({
+    behavior: core.currentBehavior,
+    drives: core.drives,
+    relationship: core.relationship,
+    imprint: core.socializationImprint,
+    rng: core.rng.getState(),
+  });
+  return { status: response !== null && before === after ? "PASS" : "FAIL", response: response?.kind ?? null };
+}
+
+function runReunionSleepExperiment() {
+  const core = CreatureCore.create({ seed: 1204 });
+  commitControlledBehavior(core, "SLEEP");
+  const response = core.selectReunionResponse({ absenceSeconds: 14_400, previousState: "IDLE" });
+  return { status: response === null && core.currentBehavior.action === "SLEEP" ? "PASS" : "FAIL", response: response?.kind ?? null };
+}
+
+function runReunionStartupExperiment() {
+  const tracker = new PresenceTracker();
+  const startup = tracker.snapshot();
+  return {
+    status: startup.state === "UNKNOWN" && !Object.hasOwn(startup, "returnedFromAbsence") ? "PASS" : "FAIL",
+    state: startup.state,
+  };
+}
+
+function runReunionDedupExperiment() {
+  const tracker = new PresenceTracker({ clock: () => 1_000_000 });
+  tracker.apply({ kind: "IDLE", idleSeconds: 600 });
+  const first = tracker.apply({ kind: "ACTIVE" });
+  const duplicate = tracker.apply({ kind: "ACTIVE" });
+  tracker.apply({ kind: "LOCKED" });
+  const second = tracker.apply({ kind: "ACTIVE" });
+  return {
+    status: first.returnedFromAbsence === true
+      && !Object.hasOwn(duplicate, "returnedFromAbsence")
+      && second.returnedFromAbsence === true
+      ? "PASS" : "FAIL",
+    returns: [first.returnedFromAbsence === true, second.returnedFromAbsence === true],
+  };
+}
+
+async function runReunionArbitrationExperiment() {
+  const calls = [];
+  const timers = new Map();
+  let timerId = 0;
+  const adapter = new OpenPetsAdapter({
+    pet: {
+      async react(reaction) { calls.push(reaction); },
+      async wander() {},
+      async physics() {},
+      async getState() { return {}; },
+    },
+  }, {
+    setTimeoutFn(callback) { const id = ++timerId; timers.set(id, callback); return id; },
+    clearTimeoutFn(id) { timers.delete(id); },
+  });
+  await adapter.executeReunionResponse({ kind: "GREET_RETURN", duration: 1.2 }, { action: "IDLE", duration: 1 });
+  await adapter.executeInteractionResponse({ kind: "ACKNOWLEDGE_CONTACT", duration: 0.6 }, { action: "IDLE", duration: 1 });
+  return { status: timers.size === 1 && calls.join(",") === "celebrating,waving" ? "PASS" : "FAIL", timers: timers.size, calls };
+}
+
+function runReunionPresenceExperiment() {
+  const tracker = new PresenceTracker({ clock: () => 1_000_000 });
+  tracker.apply({ kind: "IDLE", idleSeconds: 600 });
+  const returned = tracker.apply({ kind: "ACTIVE" });
+  return {
+    status: returned.userPresent === true && returned.userIdleDuration === 0 && returned.absenceSeconds === 600
+      ? "PASS" : "FAIL",
+    presence: returned,
   };
 }
 

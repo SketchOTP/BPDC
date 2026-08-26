@@ -128,6 +128,33 @@ export function register(OpenPetsPlugin) {
       runtime.unsubscribePresence = adapter.subscribePresence((signal) => {
         const snapshot = presence.apply(signal);
         log(ctx, "ENV", new Date().toISOString(), "presence updated", { presence: snapshot });
+        if (!snapshot.returnedFromAbsence) return;
+        runtime.tickChain = runtime.tickChain.then(async () => {
+          const response = core.selectReunionResponse({
+            absenceSeconds: snapshot.absenceSeconds,
+            previousState: snapshot.previousState,
+          });
+          if (!response) {
+            log(ctx, "CORE", new Date().toISOString(), "reunion response suppressed", {
+              creatureId: core.creatureId,
+              absenceSeconds: snapshot.absenceSeconds,
+              previousState: snapshot.previousState,
+              currentBehavior: core.currentBehavior?.action ?? null,
+            });
+            return;
+          }
+          const restoreIntent = core.currentIntent();
+          log(ctx, "CORE", new Date().toISOString(), "reunion response selected", {
+            creatureId: core.creatureId,
+            response: {
+              kind: response.kind,
+              durationSeconds: response.duration,
+              diagnostics: response.diagnostics,
+            },
+            restoreAction: restoreIntent?.action ?? null,
+          });
+          await adapter.executeReunionResponse(response, restoreIntent);
+        }).catch((error) => log(ctx, "ERROR", new Date().toISOString(), "reunion handling failed", { message: String(error?.message ?? error) }));
       });
       runtime.unsubscribeInteraction = adapter.subscribeInteraction((event) => {
         runtime.tickChain = runtime.tickChain.then(async () => {

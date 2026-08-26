@@ -17,10 +17,20 @@ const INTERACTION_RESPONSE_KINDS = new Set([
   "WITHDRAW_CONTACT",
 ]);
 
+const REUNION_RESPONSE_KINDS = new Set([
+  "ACKNOWLEDGE_RETURN",
+  "GREET_RETURN",
+]);
+
 const REACTION_BY_INTERACTION_RESPONSE = {
   ENJOY_CONTACT: "celebrating",
   ACKNOWLEDGE_CONTACT: "waving",
   WITHDRAW_CONTACT: "failed",
+};
+
+const REACTION_BY_REUNION_RESPONSE = {
+  ACKNOWLEDGE_RETURN: "waving",
+  GREET_RETURN: "celebrating",
 };
 
 function clampDurationMs(seconds) {
@@ -115,12 +125,20 @@ export class OpenPetsAdapter {
   }
 
   async executeInteractionResponse(intent, restoreIntent = null) {
-    if (!intent || !INTERACTION_RESPONSE_KINDS.has(intent.kind)) {
-      throw new TypeError(`Unsupported InteractionResponseIntent kind: ${intent?.kind}`);
+    return this.executeTransientResponse(intent, restoreIntent, INTERACTION_RESPONSE_KINDS, REACTION_BY_INTERACTION_RESPONSE, "InteractionResponseIntent");
+  }
+
+  async executeReunionResponse(intent, restoreIntent = null) {
+    return this.executeTransientResponse(intent, restoreIntent, REUNION_RESPONSE_KINDS, REACTION_BY_REUNION_RESPONSE, "ReunionResponseIntent");
+  }
+
+  async executeTransientResponse(intent, restoreIntent, validKinds, reactionMap, intentName) {
+    if (!intent || !validKinds.has(intent.kind)) {
+      throw new TypeError(`Unsupported ${intentName} kind: ${intent?.kind}`);
     }
     this.cancelInteractionResponse();
     const generation = this.interactionExpressionGeneration;
-    const reaction = REACTION_BY_INTERACTION_RESPONSE[intent.kind];
+    const reaction = reactionMap[intent.kind];
     await this.ctx.pet.react(reaction, { showMessage: false });
     this.log("ADAPT", new Date().toISOString(), intent, `pet.react(${reaction}) response=accepted`, {
       reaction,

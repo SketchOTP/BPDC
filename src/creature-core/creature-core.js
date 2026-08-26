@@ -10,7 +10,7 @@ import {
 import { BEHAVIOR_DEFINITIONS, BehaviorScorer, BehaviorSelector } from "./behavior.js";
 import { SeededRng, normalizeSeed } from "./seeded-rng.js";
 import { deserializeSnapshot, SNAPSHOT_SCHEMA_VERSION, serializeSnapshot } from "./persistence.js";
-import { BehaviorIntent, InteractionResponseIntent } from "./intent.js";
+import { BehaviorIntent, InteractionResponseIntent, ReunionResponseIntent } from "./intent.js";
 import { normalizeInteractionEvent } from "./interaction.js";
 import {
   decayHabit as decayTimeHabit,
@@ -367,6 +367,46 @@ export class CreatureCore {
     });
   }
 
+  selectReunionResponse({ absenceSeconds = 0, previousState = null } = {}) {
+    const absence = assertNonNegative(absenceSeconds, "absenceSeconds");
+    const currentBehavior = this.currentBehavior?.action ?? "NONE";
+    if (currentBehavior === "SLEEP" || absence < REUNION_MIN_ABSENCE_SECONDS) return null;
+
+    const effectiveAbsence = absence - REUNION_MIN_ABSENCE_SECONDS;
+    const absenceContribution = 1 - Math.exp(-effectiveAbsence / REUNION_ABSENCE_SATURATION_SECONDS);
+    const relationship = this.relationshipForScoring();
+    const contributors = {
+      absence: absenceContribution * 0.6,
+      bond: relationship.bond * 0.16,
+      sociability: this.personality.sociability * 0.14,
+      socialization: this.socializationImprint * 0.1,
+      currentBehavior: reunionBehaviorContribution(currentBehavior),
+    };
+    const affinity = Object.values(contributors).reduce((sum, value) => sum + value, 0);
+    if (affinity < REUNION_RESPONSE_THRESHOLD) return null;
+
+    const kind = absence >= REUNION_LONG_ABSENCE_SECONDS && affinity >= REUNION_GREETING_THRESHOLD
+      ? "GREET_RETURN"
+      : "ACKNOWLEDGE_RETURN";
+    return new ReunionResponseIntent({
+      kind,
+      duration: kind === "GREET_RETURN" ? 1.2 : 0.65,
+      diagnostics: {
+        contributors,
+        affinity,
+        absenceSeconds: absence,
+        previousState,
+        thresholds: {
+          minimumAbsenceSeconds: REUNION_MIN_ABSENCE_SECONDS,
+          greetingAbsenceSeconds: REUNION_LONG_ABSENCE_SECONDS,
+          responseAtOrAbove: REUNION_RESPONSE_THRESHOLD,
+          greetingAtOrAbove: REUNION_GREETING_THRESHOLD,
+        },
+        currentBehavior,
+      },
+    });
+  }
+
   relationshipSnapshot() {
     this.decayRelationship();
     return {
@@ -519,6 +559,18 @@ function interactionResponseBehaviorContribution(action) {
   if (action === "SEEK_ATTENTION") return 0.04;
   return 0;
 }
+
+function reunionBehaviorContribution(action) {
+  if (action === "AVOID") return -0.18;
+  if (action === "SEEK_ATTENTION" || action === "PLAY") return 0.05;
+  return 0;
+}
+
+const REUNION_MIN_ABSENCE_SECONDS = 300;
+const REUNION_LONG_ABSENCE_SECONDS = 7_200;
+const REUNION_ABSENCE_SATURATION_SECONDS = 3_600;
+const REUNION_RESPONSE_THRESHOLD = 0.32;
+const REUNION_GREETING_THRESHOLD = 0.58;
 
 function clone(value) {
   return value === null || value === undefined ? value : JSON.parse(JSON.stringify(value));

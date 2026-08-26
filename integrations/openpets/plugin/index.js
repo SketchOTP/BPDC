@@ -578,6 +578,23 @@ var InteractionResponseIntent = class {
     this.diagnostics = diagnostics;
   }
 };
+var REUNION_RESPONSE_KINDS = [
+  "ACKNOWLEDGE_RETURN",
+  "GREET_RETURN"
+];
+var ReunionResponseIntent = class {
+  constructor({ kind, duration, diagnostics }) {
+    if (!REUNION_RESPONSE_KINDS.includes(kind)) {
+      throw new RangeError(`Unknown reunion response kind: ${kind}`);
+    }
+    if (!Number.isFinite(duration) || duration <= 0) {
+      throw new RangeError("Reunion response duration must be positive.");
+    }
+    this.kind = kind;
+    this.duration = duration;
+    this.diagnostics = diagnostics;
+  }
+};
 
 // integrations/openpets/plugin/core/interaction.js
 var INTERACTION_KINDS = ["POSITIVE_CONTACT", "NEGATIVE_CONTACT"];
@@ -940,6 +957,41 @@ var CreatureCore = class _CreatureCore {
       }
     });
   }
+  selectReunionResponse({ absenceSeconds = 0, previousState = null } = {}) {
+    const absence = assertNonNegative(absenceSeconds, "absenceSeconds");
+    const currentBehavior = this.currentBehavior?.action ?? "NONE";
+    if (currentBehavior === "SLEEP" || absence < REUNION_MIN_ABSENCE_SECONDS) return null;
+    const effectiveAbsence = absence - REUNION_MIN_ABSENCE_SECONDS;
+    const absenceContribution = 1 - Math.exp(-effectiveAbsence / REUNION_ABSENCE_SATURATION_SECONDS);
+    const relationship = this.relationshipForScoring();
+    const contributors = {
+      absence: absenceContribution * 0.6,
+      bond: relationship.bond * 0.16,
+      sociability: this.personality.sociability * 0.14,
+      socialization: this.socializationImprint * 0.1,
+      currentBehavior: reunionBehaviorContribution(currentBehavior)
+    };
+    const affinity = Object.values(contributors).reduce((sum, value) => sum + value, 0);
+    if (affinity < REUNION_RESPONSE_THRESHOLD) return null;
+    const kind = absence >= REUNION_LONG_ABSENCE_SECONDS && affinity >= REUNION_GREETING_THRESHOLD ? "GREET_RETURN" : "ACKNOWLEDGE_RETURN";
+    return new ReunionResponseIntent({
+      kind,
+      duration: kind === "GREET_RETURN" ? 1.2 : 0.65,
+      diagnostics: {
+        contributors,
+        affinity,
+        absenceSeconds: absence,
+        previousState,
+        thresholds: {
+          minimumAbsenceSeconds: REUNION_MIN_ABSENCE_SECONDS,
+          greetingAbsenceSeconds: REUNION_LONG_ABSENCE_SECONDS,
+          responseAtOrAbove: REUNION_RESPONSE_THRESHOLD,
+          greetingAtOrAbove: REUNION_GREETING_THRESHOLD
+        },
+        currentBehavior
+      }
+    });
+  }
   relationshipSnapshot() {
     this.decayRelationship();
     return {
@@ -1064,6 +1116,16 @@ function interactionResponseBehaviorContribution(action) {
   if (action === "SEEK_ATTENTION") return 0.04;
   return 0;
 }
+function reunionBehaviorContribution(action) {
+  if (action === "AVOID") return -0.18;
+  if (action === "SEEK_ATTENTION" || action === "PLAY") return 0.05;
+  return 0;
+}
+var REUNION_MIN_ABSENCE_SECONDS = 300;
+var REUNION_LONG_ABSENCE_SECONDS = 7200;
+var REUNION_ABSENCE_SATURATION_SECONDS = 3600;
+var REUNION_RESPONSE_THRESHOLD = 0.32;
+var REUNION_GREETING_THRESHOLD = 0.58;
 function clone(value) {
   return value === null || value === void 0 ? value : JSON.parse(JSON.stringify(value));
 }
@@ -1097,10 +1159,18 @@ var INTERACTION_RESPONSE_KINDS2 = /* @__PURE__ */ new Set([
   "ACKNOWLEDGE_CONTACT",
   "WITHDRAW_CONTACT"
 ]);
+var REUNION_RESPONSE_KINDS2 = /* @__PURE__ */ new Set([
+  "ACKNOWLEDGE_RETURN",
+  "GREET_RETURN"
+]);
 var REACTION_BY_INTERACTION_RESPONSE = {
   ENJOY_CONTACT: "celebrating",
   ACKNOWLEDGE_CONTACT: "waving",
   WITHDRAW_CONTACT: "failed"
+};
+var REACTION_BY_REUNION_RESPONSE = {
+  ACKNOWLEDGE_RETURN: "waving",
+  GREET_RETURN: "celebrating"
 };
 function clampDurationMs(seconds) {
   return Math.max(250, Math.min(1500, Math.round(seconds * 1e3)));
@@ -1183,12 +1253,18 @@ var OpenPetsAdapter = class {
     return { command, hostState };
   }
   async executeInteractionResponse(intent, restoreIntent = null) {
-    if (!intent || !INTERACTION_RESPONSE_KINDS2.has(intent.kind)) {
-      throw new TypeError(`Unsupported InteractionResponseIntent kind: ${intent?.kind}`);
+    return this.executeTransientResponse(intent, restoreIntent, INTERACTION_RESPONSE_KINDS2, REACTION_BY_INTERACTION_RESPONSE, "InteractionResponseIntent");
+  }
+  async executeReunionResponse(intent, restoreIntent = null) {
+    return this.executeTransientResponse(intent, restoreIntent, REUNION_RESPONSE_KINDS2, REACTION_BY_REUNION_RESPONSE, "ReunionResponseIntent");
+  }
+  async executeTransientResponse(intent, restoreIntent, validKinds, reactionMap, intentName) {
+    if (!intent || !validKinds.has(intent.kind)) {
+      throw new TypeError(`Unsupported ${intentName} kind: ${intent?.kind}`);
     }
     this.cancelInteractionResponse();
     const generation = this.interactionExpressionGeneration;
-    const reaction = REACTION_BY_INTERACTION_RESPONSE[intent.kind];
+    const reaction = reactionMap[intent.kind];
     await this.ctx.pet.react(reaction, { showMessage: false });
     this.log("ADAPT", (/* @__PURE__ */ new Date()).toISOString(), intent, `pet.react(${reaction}) response=accepted`, {
       reaction,
@@ -1288,10 +1364,14 @@ var PresenceTracker = class {
     }
   }
   markActive() {
+    const previousState = this.state;
+    const returnedFromAbsence = previousState === "IDLE" || previousState === "LOCKED";
+    const absenceSeconds = returnedFromAbsence ? this.snapshot().userIdleDuration : 0;
     this.state = "ACTIVE";
     this.idleSinceMs = null;
     this.lastIdleDuration = 0;
-    return this.snapshot();
+    const snapshot = this.snapshot();
+    return returnedFromAbsence ? { ...snapshot, previousState, absenceSeconds, returnedFromAbsence: true } : snapshot;
   }
   markIdle(idleSeconds = 0) {
     const now = this.clock();
@@ -1698,6 +1778,33 @@ function register(OpenPetsPlugin) {
       runtime.unsubscribePresence = adapter.subscribePresence((signal) => {
         const snapshot = presence.apply(signal);
         log(ctx, "ENV", (/* @__PURE__ */ new Date()).toISOString(), "presence updated", { presence: snapshot });
+        if (!snapshot.returnedFromAbsence) return;
+        runtime.tickChain = runtime.tickChain.then(async () => {
+          const response = core.selectReunionResponse({
+            absenceSeconds: snapshot.absenceSeconds,
+            previousState: snapshot.previousState
+          });
+          if (!response) {
+            log(ctx, "CORE", (/* @__PURE__ */ new Date()).toISOString(), "reunion response suppressed", {
+              creatureId: core.creatureId,
+              absenceSeconds: snapshot.absenceSeconds,
+              previousState: snapshot.previousState,
+              currentBehavior: core.currentBehavior?.action ?? null
+            });
+            return;
+          }
+          const restoreIntent = core.currentIntent();
+          log(ctx, "CORE", (/* @__PURE__ */ new Date()).toISOString(), "reunion response selected", {
+            creatureId: core.creatureId,
+            response: {
+              kind: response.kind,
+              durationSeconds: response.duration,
+              diagnostics: response.diagnostics
+            },
+            restoreAction: restoreIntent?.action ?? null
+          });
+          await adapter.executeReunionResponse(response, restoreIntent);
+        }).catch((error) => log(ctx, "ERROR", (/* @__PURE__ */ new Date()).toISOString(), "reunion handling failed", { message: String(error?.message ?? error) }));
       });
       runtime.unsubscribeInteraction = adapter.subscribeInteraction((event) => {
         runtime.tickChain = runtime.tickChain.then(async () => {
