@@ -445,5 +445,5 @@
 - Decision: Publish the Architect-accepted Phase 14 midpoint reconsideration implementation and Authority closure through a normal non-force fast-forward push.
 - Verification: local accepted commits `e630dc6a5e3ea31697a8f94620f69404633e03ff` and `44f70f24f5b0635dd96062258d3977f267d54e60` were the only unpublished descendants of `9c656f017755f53e34c009c5751b192cce55d221`; ancestry, scope, schema/action/permissions, safety, and validation passed.
 - Generated artifact: two independent staged builds and the tracked bundle were byte/hash-identical at 77,281 bytes, SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.
-- Result: GitHub `main` advanced normally to `44f70f24f5b0635dd96062258d3977f267d54e60`; local `main == origin/main`; worktree clean; no history rewrite.
+- Result: GitHub `main` advanced normally to `44f70f24f5b0635dd96062258d3977f267d54e60`; the records-only closure then finalized canonical `main` at `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; local `main == origin/main`; worktree clean; no history rewrite.
 - Evidence boundary: P14 remains `E4_REGRESSION_PROTECTED`; live midpoint behavior remains `UNKNOWN / NOT CLAIMED`; Phase 15 did not start or become authorized.

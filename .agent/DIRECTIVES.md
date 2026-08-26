@@ -426,6 +426,6 @@
 - Exclusions: no P14 behavior changes, no history rewrite, no force push, no additional permissions/schema/actions, no live-evidence fabrication, and no Phase 15.
 - Validation: `node --test` 94/94; `node src/cli/experiments.js` PASS; syntax, manifest, schema/action boundary, privacy, safety, `git diff --check`, and publication checks PASS.
 - Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were byte/hash-identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.
-- Result: normal non-force `git push origin main` advanced GitHub from `9c656f017755f53e34c009c5751b192cce55d221` to `44f70f24f5b0635dd96062258d3977f267d54e60`; final local `main == origin/main`; worktree clean; no history rewrite.
+- Result: normal non-force `git push origin main` advanced GitHub from `9c656f017755f53e34c009c5751b192cce55d221` to `44f70f24f5b0635dd96062258d3977f267d54e60`; the records-only closure then advanced canonical `main` to `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; final local `main == origin/main`; worktree clean; no history rewrite.
 - Evidence boundary: P14 remains `E4_REGRESSION_PROTECTED`; live Windows/Electron midpoint behavior remains `UNKNOWN / NOT CLAIMED`.
 - Status at completion: `COMPLETED`; Phase 15 did not start.

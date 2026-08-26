@@ -463,7 +463,7 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Evidence level: `E4_REGRESSION_PROTECTED`
 - Type: `PUBLICATION_VERIFICATION`
 - Result: `PASSED`; accepted Phase 14 product and Authority commits were published by normal non-force fast-forward push, with no application behavior change or history rewrite.
-- Entry/final state: remote before `9c656f017755f53e34c009c5751b192cce55d221`; final local and `origin/main` `44f70f24f5b0635dd96062258d3977f267d54e60`; worktree clean.
+- Entry/final state: remote before `9c656f017755f53e34c009c5751b192cce55d221`; product/Authority push reached `44f70f24f5b0635dd96062258d3977f267d54e60`, and the records-only closure finalized local and `origin/main` at `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; worktree clean.
 - Scope: accepted P14 source/generated/test/documentation and Authority files only; schema, action vocabulary, and manifest permission set unchanged; publication-safety scan clear.
 - Validation: direct 94/94 tests; combined P4–P14 experiments; syntax, manifest/schema/action, boundary/privacy, safety, and `git diff --check` all passed.
 - Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.

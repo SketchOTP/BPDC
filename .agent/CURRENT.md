@@ -12,7 +12,7 @@
 - Objective: Publish the Architect-accepted Phase 14 midpoint reconsideration implementation and Authority closure to canonical GitHub `main`.
 - Current status: `COMPLETED — PHASE 14 PUBLISHED`
 - Acceptance: P14 was accepted as `E4_REGRESSION_PROTECTED`; publication completed by normal non-force fast-forward, local `main == origin/main`, and Phase 15 has not started.
-- Current phase: `Phase 14 — Midpoint Reconsideration` published at `44f70f24f5b0635dd96062258d3977f267d54e60`; Phase 15 is not authorized.
+- Current phase: `Phase 14 — Midpoint Reconsideration` published through `BPDC-SYNC-011`; final canonical `main` is `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; Phase 15 is not authorized.
 - Expected touched areas: behavior vocabulary/scoring, OpenPets adapter lifecycle, deterministic experiments/tests, generated plugin, and Authority records.
 - Immediate next action: await the next Architect directive; do not begin Phase 15.
 - Local P12 implementation commit: `4cd6099` (`feat: add reunion response`); local only.
@@ -30,7 +30,7 @@
 - P14 implementation: one exact midpoint checkpoint at `startedAt + duration * 0.5` for interruptible commitments; deterministic utility gate with `0.15` hysteresis margin; SLEEP/AVOID remain non-interruptible; no new state/schema/permission; P7/P12 transient restoration remains single-slot and generation-guarded.
 - P14 product commit: `e630dc6a5e3ea31697a8f94620f69404633e03ff` (`feat: add midpoint behavior reconsideration`); published.
 - P14 Authority closure commit: `44f70f24f5b0635dd96062258d3977f267d54e60` (`chore: record Phase 14 authority handoff`); published.
-- Publication result: `BPDC-SYNC-011` pushed normally and non-force; final local `main == origin/main == 44f70f24f5b0635dd96062258d3977f267d54e60`; worktree clean; no history rewrite.
+- Publication result: `BPDC-SYNC-011` pushed normally and non-force; product/Authority state reached `44f70f24f5b0635dd96062258d3977f267d54e60`, then records-only closure reached final local `main == origin/main == be9a3be33be120a47cccfd9c0c0251e8155a12c0`; worktree clean; no history rewrite.
 - P14 validation: `node --test` 94/94; P4–P14 experiments PASS; two independent staged bundles and the tracked bundle are identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`; syntax, manifest, schema/action boundary, privacy, safety, and diff checks PASS. Live desktop midpoint evidence remains `UNKNOWN / NOT CLAIMED`.
 
 ## Temporary task-relevant facts
@@ -42,7 +42,7 @@
 ## Last validation
 
 - Command or check: `BPDC-SYNC-011` entry/ancestry/scope verification, `node --test`, `node src/cli/experiments.js`, staged OpenPets builds A/B, generated correspondence, syntax, manifest/schema/action, boundary/privacy/publication-safety scans, `git diff --check`, normal push, and final equality verification
-- Result: `PASSED`; 94/94 tests, combined P4–P14 experiment suite PASS, independent staged bundles and tracked output match at 77,281 bytes/SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`, permissions/schema/action vocabulary unchanged, boundary/privacy/safety scans clear, `git diff --check` PASS, normal non-force push succeeded, and final local `main == origin/main == 44f70f24f5b0635dd96062258d3977f267d54e60`. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. Live P14 desktop evidence remains unknown and unclaimed.
+- Result: `PASSED`; 94/94 tests, combined P4–P14 experiment suite PASS, independent staged bundles and tracked output match at 77,281 bytes/SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`, permissions/schema/action vocabulary unchanged, boundary/privacy/safety scans clear, `git diff --check` PASS, normal non-force publication and records-only closure succeeded, and final local `main == origin/main == be9a3be33be120a47cccfd9c0c0251e8155a12c0`. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. Live P14 desktop evidence remains unknown and unclaimed.
 
 ## Risks and blockers
 
@@ -69,7 +69,7 @@
 - Phase 13 publication: product `aba30b150a670a068c9011ecf9b05d65e42751b8` and Authority closure `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a` published by `BPDC-SYNC-010`; no history rewrite.
 - Phase 14 implementation: midpoint reconsideration is derived from existing behavior timing and current deterministic utility scores. Exactly one checkpoint occurs per interruptible commitment; current behavior is preserved unless ineligible or a challenger exceeds the current score by `0.15`; switching consumes only the normal duration RNG. Offline reconciliation suppresses historical intents/host commands, reload does not invent retroactive checkpoints, and no checkpoint is persisted.
 - Phase 14 tooling limitation: jCodemunch-MCP is unavailable in this session, so local fallback exploration was used and the indexing requirement remains explicitly unverified.
-- Phase 14 publication: `BPDC-SYNC-011` verified the accepted product and Authority commits, deterministic staged correspondence, unchanged schema/action/permission boundary, and normal non-force publication to `44f70f24f5b0635dd96062258d3977f267d54e60`; Phase 15 remains untouched.
+- Phase 14 publication: `BPDC-SYNC-011` verified the accepted product and Authority commits, deterministic staged correspondence, unchanged schema/action/permission boundary, and normal non-force publication; the records-only closure finalized canonical `main` at `be9a3be33be120a47cccfd9c0c0251e8155a12c0`; Phase 15 remains untouched.
 
 ## Pending decisions
 

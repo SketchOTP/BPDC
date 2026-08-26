@@ -14,7 +14,7 @@
 - Active directive: BPDC-SYNC-011 (completed)
 - Active task packet: `.agent/tasks/active/BPDC-P14-001.md`
 - Last Codex outcome: BPDC-SYNC-011 (Phase 14 publication complete)
-- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == origin/main == 44f70f24f5b0635dd96062258d3977f267d54e60`; worktree clean; Phase 15 is not authorized.
+- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local `main == origin/main == be9a3be33be120a47cccfd9c0c0251e8155a12c0`; worktree clean; Phase 15 is not authorized.
 
 ## Mandatory kernel
 
