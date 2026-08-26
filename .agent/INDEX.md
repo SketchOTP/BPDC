@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 13 — Follow Cursor (accepted and published; awaiting next directive)
-- Active directive: BPDC-P13-001
-- Active task packet: `.agent/tasks/active/BPDC-P13-001.md`
-- Last Codex outcome: BPDC-P13-001 (implementation complete for Architect review)
-- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; P13 product `aba30b150a670a068c9011ecf9b05d65e42751b8` and Authority closure `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a` are published; local `main == origin/main`; Phase 14 not authorized.
+- Current stage: Phase 14 — Midpoint Reconsideration (implemented locally; pending Architect acceptance)
+- Active directive: BPDC-P14-001
+- Active task packet: `.agent/tasks/active/BPDC-P14-001.md`
+- Last Codex outcome: BPDC-P14-001 (implementation complete for Architect review)
+- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; P13 publication remains at `9c656f017755f53e34c009c5751b192cce55d221`; P14 is local-only and unpushed; Phase 15 is not authorized.
 
 ## Mandatory kernel
 

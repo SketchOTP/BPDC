@@ -7,14 +7,14 @@
 
 ## Active state
 
-- Local directive ID: `BPDC-P13-001`
-- External directive ID: `BPDC-P13-001`
-- Objective: Add one bounded, utility-selected `FOLLOW_CURSOR` behavior using the existing active-user presence signal and OpenPets host operation.
-- Current status: `PUBLISHED — AWAITING NEXT ARCHITECT DIRECTIVE`
-- Acceptance: P13 was accepted and published by normal non-force fast-forward; no Phase 14 work has started.
-- Current phase: `Phase 13 — Follow Cursor` closed and durable at `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a`.
+- Local directive ID: `BPDC-P14-001`
+- External directive ID: `BPDC-P14-001`
+- Objective: Add one deterministic midpoint reconsideration to existing interruptible behavior commitments.
+- Current status: `IMPLEMENTATION COMPLETE — PENDING ARCHITECT ACCEPTANCE`
+- Acceptance: P14 implementation and target validation are complete locally; Architect review is pending, publication is not authorized, and Phase 15 has not started.
+- Current phase: `Phase 14 — Midpoint Reconsideration` implemented locally after P13 publication at `9c656f017755f53e34c009c5751b192cce55d221`.
 - Expected touched areas: behavior vocabulary/scoring, OpenPets adapter lifecycle, deterministic experiments/tests, generated plugin, and Authority records.
-- Immediate next action: await the next Architect directive; do not begin Phase 14.
+- Immediate next action: obtain Architect review of P14; do not push and do not begin Phase 15.
 - Local P12 implementation commit: `4cd6099` (`feat: add reunion response`); local only.
 - Local implementation commit: `536abe67e724437dc969e1e27736bd08af9edea1` (`feat: add juvenile socialization imprint`); published.
 - Authority closure commit: `7b039ae80de50113c0b84e399fddf0fbfb863c1c` (`chore: record Phase 11 authority handoff`); published.
@@ -27,6 +27,9 @@
 - Publication result: `BPDC-SYNC-007` pushed normally and non-force; final local `main == origin/main == edff9031a90a1420552ab4d51cdbc03d9d8a05d5`; worktree clean.
 - Publication result: `BPDC-SYNC-008` pushed normally and non-force; final local `main == origin/main == 7b039ae80de50113c0b84e399fddf0fbfb863c1c`; worktree clean.
 - Publication result: `BPDC-SYNC-010` pushed normally and non-force; final local `main == origin/main == 8fa4a8b67cd44d64708f3b141773d4b6caf54d7a`; worktree clean.
+- P14 implementation: one exact midpoint checkpoint at `startedAt + duration * 0.5` for interruptible commitments; deterministic utility gate with `0.15` hysteresis margin; SLEEP/AVOID remain non-interruptible; no new state/schema/permission; P7/P12 transient restoration remains single-slot and generation-guarded.
+- P14 product commit: `e630dc6` (`feat: add midpoint behavior reconsideration`); local only. Authority closure remains local and push is not authorized.
+- P14 validation: `node --test` 94/94; P4–P14 experiments PASS; two independent staged bundles and the tracked bundle are identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`; syntax, manifest, boundary/privacy, safety, and diff checks PASS. Live desktop midpoint evidence remains `UNKNOWN / NOT CLAIMED`.
 
 ## Temporary task-relevant facts
 
@@ -36,8 +39,8 @@
 
 ## Last validation
 
-- Command or check: `node --test`, `node src/cli/experiments.js`, adapter response harness, manifest validation, local-staged OpenPets build, dependency/privacy/publication-safety scans, and `git diff --check`
-- Result: `PASSED`; 68/68 tests, combined P4–P11 experiment suite PASS, staged bundle PASS at 68,010 bytes, generated syntax/manifest validation PASS, no new permission beyond accepted `pet:animate`, CreatureCore boundary/privacy scans clear, and `git diff --check` PASS. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. Live desktop evidence was not required and was not claimed.
+- Command or check: `node --test`, `node src/cli/experiments.js`, P14 midpoint experiments, staged OpenPets builds A/B, generated correspondence, syntax, manifest, boundary/privacy/publication-safety scans, and `git diff --check`
+- Result: `PASSED`; 94/94 tests, combined P4–P14 experiment suite PASS, independent staged bundles and tracked output match at 77,281 bytes/SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`, permissions unchanged, boundary/privacy/safety scans clear, and `git diff --check` PASS. Direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. Live P14 desktop evidence remains unknown and unclaimed.
 
 ## Risks and blockers
 
@@ -62,6 +65,8 @@
 - Phase 13 implementation: `FOLLOW_CURSOR` is a single utility-selected semantic action with active-user eligibility, 30–45 second bounded duration, 180-second cooldown, no cursor data in CreatureCore, no persistence/schema/permission changes, and OpenPets `followCursor` enable/disable lifecycle using fixed lag `0.35`.
 - Phase 13 validation: 85/85 tests; combined P4–P13 experiments PASS; two independent staged bundles are byte/hash-identical at 74,401 bytes; tracked generated bundle equals the fresh staged build; manifest permissions unchanged; syntax/boundary/privacy/safety/diff checks PASS. Direct UNC esbuild remains blocked by known `spawn EPERM`; staging succeeds. Live desktop follow evidence remains `UNKNOWN / NOT CLAIMED`.
 - Phase 13 publication: product `aba30b150a670a068c9011ecf9b05d65e42751b8` and Authority closure `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a` published by `BPDC-SYNC-010`; no history rewrite.
+- Phase 14 implementation: midpoint reconsideration is derived from existing behavior timing and current deterministic utility scores. Exactly one checkpoint occurs per interruptible commitment; current behavior is preserved unless ineligible or a challenger exceeds the current score by `0.15`; switching consumes only the normal duration RNG. Offline reconciliation suppresses historical intents/host commands, reload does not invent retroactive checkpoints, and no checkpoint is persisted.
+- Phase 14 tooling limitation: jCodemunch-MCP is unavailable in this session, so local fallback exploration was used and the indexing requirement remains explicitly unverified.
 
 ## Pending decisions
 

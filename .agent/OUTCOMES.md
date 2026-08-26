@@ -444,3 +444,19 @@
 - Publication: normal non-force `git push origin main` advanced GitHub `0d8dde1` to `8fa4a8b`; post-push fetch verified local `main == origin/main == 8fa4a8b67cd44d64708f3b141773d4b6caf54d7a`; worktree clean; history rewritten `NO`.
 - Evidence: P13 remains `E4_REGRESSION_PROTECTED`; live Windows/Electron cursor-follow behavior remains `UNKNOWN / NOT CLAIMED`.
 - Boundary: Phase 14 was not started and remains not authorized; await next Architect directive.
+
+## BPDC-P14-001 - CODEX HANDOFF COMPLETE
+
+- Outcome ID: `BPDC-P14-001-LOCAL-COMMIT`
+- Closed for Codex handoff: 2026-08-26 America/New_York
+- Acceptance: `COMPLETE_FOR_ARCHITECT_REVIEW`
+- Summary: Added one deterministic midpoint reconsideration to the existing behavior authority. Every interruptible commitment receives at most one checkpoint at `startedAt + duration * 0.5`; current behavior remains unless it is ineligible or an eligible challenger exceeds it by the `0.15` margin.
+- Behavior boundary: `SLEEP` and `AVOID` are non-interruptible; no new action or continuous replanning exists. The gate uses fresh current utility scores and no RNG; a switch uses the existing normal duration sampling and emits ordinary behavior intent diagnostics.
+- Determinism: exact midpoint segmentation makes large and partitioned advances semantically equivalent; one-shot checkpoint state is derived rather than persisted; save/reload before and after midpoint and legacy snapshots do not invent retroactive switches.
+- Offline/transient boundary: offline reconciliation suppresses historical intents and host commands; P7/P12 retain the single generation-guarded transient slot, and a new autonomous intent supersedes stale restoration without a second timer.
+- Validation: 94/94 tests; combined P4–P14 experiments PASS; midpoint stability/switch/eligibility/hysteresis/non-interruptible/partition/persistence/offline/transient experiments PASS; syntax, manifest/permission, boundary/privacy, safety, and `git diff --check` PASS.
+- Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` are identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.
+- Reliability/limitations: direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. jCodemunch-MCP was unavailable, so local fallback exploration was used and indexing remains unverified. Live desktop midpoint behavior remains `UNKNOWN / NOT CLAIMED`.
+- Evidence: `E3_TARGET_TESTED` pending Architect acceptance; no E4 claim is made in this handoff.
+- Local product commit: `e630dc6` (`feat: add midpoint behavior reconsideration`); Authority closure commit follows; no push.
+- Boundary: Phase 15 is not authorized.

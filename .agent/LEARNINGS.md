@@ -220,3 +220,12 @@
 - Confidence: `VERIFIED` for deterministic core/adapter behavior, regression, and generated-artifact correspondence; live desktop following remains `UNKNOWN`/not claimed.
 - Scope: BPDC-P13-001 `FOLLOW_CURSOR`.
 - Supersedes: `NONE`
+
+## BPDC-L025 — deterministic midpoint reconsideration
+
+- Date: 2026-08-26
+- Fact: A single checkpoint at the derived midpoint of an interruptible commitment makes `interruptible` meaningful without introducing a replanning loop. A no-RNG gate plus a bounded hysteresis margin preserves deterministic behavior and prevents ordinary utility noise from causing churn.
+- Evidence: `BPDC-E041`; P14 stability, switching, eligibility, hysteresis, partition, persistence, offline, and transient-arbitration experiments.
+- Confidence: `VERIFIED` for deterministic core behavior and generated correspondence; live Windows/Electron midpoint observation remains `UNKNOWN`/not claimed.
+- Scope: BPDC-P14-001 midpoint reconsideration.
+- Supersedes: `NONE`

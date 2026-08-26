@@ -427,3 +427,15 @@
 - Generated artifact: two independent staged builds and the tracked bundle were byte/hash-identical at 74,401 bytes, SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`.
 - Result: GitHub `main` advanced normally to `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a`; local `main == origin/main`; worktree clean; no history rewrite.
 - Evidence boundary: P13 remains `E4_REGRESSION_PROTECTED`; live cursor-follow behavior remains `UNKNOWN / NOT CLAIMED`; Phase 14 not started or authorized.
+
+## 2026-08-26 — BPDC-P14-001 implementation handoff
+
+- Decision: implement exactly one deterministic midpoint reconsideration for existing interruptible behavior commitments.
+- Core: checkpoint is derived at `startedAt + duration * 0.5`; `SLEEP` and `AVOID` remain non-interruptible; current utility is compared with the strongest eligible challenger using a `0.15` hysteresis margin.
+- Randomness: the reconsideration gate consumes no RNG. A selected replacement is committed through the existing behavior authority and samples only its ordinary duration.
+- Persistence: no checkpoint field or schema change; before/after-midpoint reload is deterministic and legacy/current snapshots do not fabricate retroactive interruption.
+- Offline/transient: quiet reconciliation suppresses historical intents and host commands; P7/P12 continue to share one generation-guarded restoration slot.
+- Validation: `BPDC-E041`; 94/94 tests, P4–P14 experiments, deterministic two-build correspondence, syntax/manifest/boundary/privacy/safety, and `git diff --check` passed.
+- Generated artifact: 77,281 bytes; SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`; staged builds A/B and tracked bundle match.
+- Product commit: pending local commit; push not authorized.
+- Boundary: live midpoint behavior is `UNKNOWN / NOT CLAIMED`; Phase 15 did not start.

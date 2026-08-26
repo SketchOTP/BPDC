@@ -398,3 +398,18 @@
 - Discovery: not required; Architect research complete; Petz cursor/shared-space principle is adaptable and pinned OpenPets `followCursor` is directly reusable.
 - Live evidence policy: live desktop observation is useful but non-blocking and was not claimed.
 - Status at issuance: `AUTHORIZED`; implementation complete for Architect review.
+
+## BPDC-P14-001
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via Architect review accepting `BPDC-SYNC-010`
+- External directive: `BPDC-P14-001`
+- Objective: Make the existing `interruptible` behavior property meaningful through exactly one deterministic midpoint reconsideration per interruptible commitment.
+- Scope: midpoint at `startedAt + duration * 0.5`; fresh deterministic utility comparison; `0.15` hysteresis margin; strongest eligible challenger; ordinary replacement duration; exact advance segmentation; reload/offline/transient arbitration validation; P4–P13 regression; generated-artifact correspondence; Authority handoff.
+- Model: `SLEEP` and `AVOID` remain non-interruptible; all other existing behaviors, including `FOLLOW_CURSOR`, may be reconsidered once. The gate consumes no RNG; a switch consumes only the existing duration RNG. Reasons are `ineligible` or `utility margin` with ordinary intent diagnostics.
+- Persistence rule: no checkpoint state, schema bump, new action, drive, preference, sensing, permission, cursor data, or planner; legacy snapshots do not invent retroactive checkpoints.
+- Exclusions: no periodic replanning, stochastic interruption, behavior tree/task system, P7/P12 second transient slot, adapter behavior authority, or Phase 15.
+- Validation: 94/94 tests; P4–P14 experiments PASS; two clean staged bundles and tracked output identical at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`; syntax, manifest, boundary/privacy, safety, and diff checks PASS.
+- Discovery: not required; Architect research complete.
+- Live evidence policy: live Windows/Electron midpoint observation is `UNKNOWN / NOT CLAIMED` and is non-blocking.
+- Status at issuance: `AUTHORIZED`; implementation complete for Architect review; local commit pending; push not authorized.

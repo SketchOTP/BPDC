@@ -13,7 +13,7 @@
 - Default branch: `main`
 - GitHub visibility: public
 - GitHub state at adoption: empty repository, size 0, no indexed source files
-- Current phase: Phase 13 — Follow Cursor; implemented locally and pending Architect review. Phase 14 is not authorized.
+- Current phase: Phase 14 — Midpoint Reconsideration; implemented locally and pending Architect review. Phase 15 is not authorized.
 
 ## Languages and runtimes
 
@@ -33,4 +33,4 @@
 
 - Platform target: desktop; exact shell/runtime is a Phase 0 decision.
 - Privacy: use only bounded, low-privacy environmental signals in early work.
-- Deployment: no deployment authorized; accepted Phase 1–12 state is synchronized to GitHub `main`; Phase 13 is local and pending Architect review; Phase 14 is not authorized.
+- Deployment: no deployment authorized; accepted Phase 1–13 state is synchronized to GitHub `main` at `9c656f017755f53e34c009c5751b192cce55d221`; Phase 14 is local and pending Architect review; Phase 15 is not authorized.

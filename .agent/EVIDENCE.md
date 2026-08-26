@@ -442,6 +442,20 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Generated artifact: independent staged builds A and B both produced 74,401 bytes and SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`; tracked generated bundle is byte/hash-identical to a fresh staged build.
 - Reliability/limitations: direct UNC esbuild was not run because the known UNC `spawn EPERM` limitation remains; local staged builds pass. Live Windows/Electron follow behavior is `UNKNOWN / NOT CLAIMED`.
 
+## BPDC-E041 — Phase 14 midpoint reconsideration implementation
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-P14-001` / implementation handoff
+- Evidence level: `E3_TARGET_TESTED` pending Architect acceptance
+- Type: `FOCUSED_REPRODUCTION`
+- Result: `PASSED`; existing interruptible behavior commitments now receive one deterministic midpoint utility checkpoint. Current behavior is preserved unless ineligible or an eligible challenger exceeds the current score by `0.15`.
+- Model: checkpoint `startedAt + duration * 0.5`; `SLEEP` and `AVOID` remain non-interruptible; the gate consumes no RNG and switches use normal duration sampling only. No new action, planner, state, schema, permission, drive, preference, or host data was added.
+- Determinism: exact midpoint segmentation, partition equivalence, stable no-switch behavior, hysteresis, save/reload, legacy snapshot, and offline historical-intent suppression experiments passed.
+- Arbitration: P7/P12 retain one generation-guarded transient restoration slot; a new autonomous intent cancels stale restoration without a second timer.
+- Validation: `node --test` 94/94; combined P4–P14 experiments PASS; syntax, manifest/unchanged permissions, boundary/privacy, safety, and `git diff --check` PASS.
+- Generated artifact: independent staged builds A/B and tracked `integrations/openpets/plugin/index.js` match at 77,281 bytes with SHA-256 `F0671BCF39B9FF2DCF4BEF61DFB195A5B5F5CBACC8B42F66F9BDCEFEF1A43A38`.
+- Reliability/limitations: direct UNC esbuild remains blocked by known `spawn EPERM`; local staging succeeds. jCodemunch-MCP was unavailable and local fallback exploration was used. Live Windows/Electron midpoint behavior remains `UNKNOWN / NOT CLAIMED`.
+
 ## BPDC-E040 — Phase 13 publication
 
 - Created: 2026-08-26 America/New_York
