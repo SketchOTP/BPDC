@@ -457,3 +457,12 @@
 - Generated artifact: two independent staged builds and tracked bundle match at 80,238 bytes, SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
 - Environment/inspection: direct UNC esbuild remains blocked by known `spawn EPERM`; jCodemunch-MCP unavailable, so indexing is unverified. Staged build and local fallback inspection were used.
 - Status: implementation complete for Architect review; local commit pending at record time; push not authorized; Phase 16 not started.
+
+## 2026-08-26 — BPDC-SYNC-012 Phase 15 publication
+
+- Decision: Publish the Architect-accepted Phase 15 behavior cooldown implementation through a normal non-force fast-forward push.
+- Verification: `origin/main` `6f6b3dd51b76ad352664e0bb5b9af24547420e70` was freshly fetched; exactly the accepted product commit `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3` was unpublished; ancestry passed; scope and permission/action/utility checks passed.
+- Validation: 106/106 tests; P15 A–K and P4–P14 experiments PASS; migration, persistence/offline/RNG, SLEEP/AVOID, syntax, manifest, boundary/privacy, safety, and `git diff --check` passed.
+- Generated artifact: two independent staged builds and tracked output matched at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Result: GitHub `main` advanced normally to `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; final local `main == origin/main`; worktree clean; no records-only closure; no history rewrite.
+- Evidence boundary: P15 remains `E4_REGRESSION_PROTECTED`; live cooldown behavior remains `UNKNOWN / NOT CLAIMED`; Phase 16 not started.

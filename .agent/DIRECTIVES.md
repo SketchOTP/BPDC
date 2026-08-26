@@ -414,6 +414,18 @@
 - Live evidence policy: live Windows/Electron midpoint observation is `UNKNOWN / NOT CLAIMED` and is non-blocking.
 - Status at issuance: `AUTHORIZED`; implementation complete for Architect review; local commit pending; push not authorized.
 
+## BPDC-SYNC-012
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via Architect review accepting `BPDC-P15-002`
+- External directive: `BPDC-SYNC-012`
+- Objective: Publish the accepted Phase 15 behavior cooldown implementation to canonical GitHub `main` without changing application behavior.
+- Entry: local accepted product `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; `origin/main` `6f6b3dd51b76ad352664e0bb5b9af24547420e70`; clean worktree.
+- Scope: verify unpublished history, ancestry, accepted P15 scope, 106-test/regression validation, deterministic staged generated output, normal non-force publication, and final equality.
+- Exclusions: no cooldown/action/utility changes, no new permissions, no history rewrite, no live-evidence fabrication, and no Phase 16.
+- Acceptance: P15 remains `E4_REGRESSION_PROTECTED`; live desktop cooldown behavior remains `UNKNOWN / NOT CLAIMED`.
+- Status at completion: `COMPLETED`; no records-only closure was required.
+
 ## BPDC-SYNC-011
 
 - Issued: 2026-08-26 America/New_York

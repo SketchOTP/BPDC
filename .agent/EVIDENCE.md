@@ -493,3 +493,16 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: 106/106 tests; P15 A–K and P4–P14 experiments; syntax, manifest/permission, boundary/privacy, safety, and `git diff --check` all passed.
 - Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` are byte/hash-identical at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
 - Boundary: live desktop behavior was not required and is `UNKNOWN / NOT CLAIMED`; direct UNC esbuild remains blocked by known `spawn EPERM`; Phase 16 was not started.
+
+## BPDC-E044 — Phase 15 publication
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-SYNC-012` / publication closure
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `PUBLICATION_VERIFICATION`
+- Result: `PASSED`; accepted P15 product was published by normal non-force fast-forward push with no application behavior change or history rewrite.
+- Entry/final state: remote before `6f6b3dd51b76ad352664e0bb5b9af24547420e70`; final local and `origin/main` `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; worktree clean.
+- Scope: exactly the accepted P15 product/Authority delta; no additional unpublished commits; actions, cooldown constants, utility weights, schema boundary, and manifest permissions unchanged.
+- Validation: 106/106 tests; combined P15 A–K and P4–P14 experiments; schema migration, persistence/offline/RNG, protective actions, syntax, manifest, boundary/privacy, safety, and `git diff --check` passed.
+- Generated artifact: two independent staged builds and tracked output were byte/hash-identical at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Boundary: live desktop cooldown behavior remains `UNKNOWN / NOT CLAIMED`; Phase 16 was not started.

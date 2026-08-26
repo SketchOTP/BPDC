@@ -9,6 +9,15 @@
 - Scope: repository bootstrap and Phase 0 planning.
 - Supersedes: `NONE`
 
+## BPDC-L028 — Phase 15 cooldown publication
+
+- Date: 2026-08-26
+- Fact: The accepted cooldown activation can be published as a single fast-forward product commit when remote ancestry, fixed validation, and two-build generated correspondence are verified; no post-publication records-only closure was necessary.
+- Evidence: `BPDC-E044`; final canonical local and remote SHA `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; staged/tracked artifact 80,238 bytes and SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Confidence: `VERIFIED` for publication and deterministic artifact correspondence; live desktop cooldown behavior remains `UNKNOWN / NOT CLAIMED`.
+- Scope: `BPDC-SYNC-012`.
+- Supersedes: `NONE`
+
 ## BPDC-L006
 
 - Date: 2026-08-22

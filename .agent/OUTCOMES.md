@@ -486,3 +486,16 @@
 - Generated artifact: two independent staged builds and tracked bundle match at 80,238 bytes, SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
 - Limitations: direct UNC esbuild is blocked by known `spawn EPERM`; staged builds passed. jCodemunch-MCP was unavailable, so repository indexing is unverified.
 - Commit/push: local implementation plus Authority handoff commit; push not authorized.
+
+## BPDC-SYNC-012 - Phase 15 publication
+
+- Outcome ID: `BPDC-SYNC-012-PUBLISHED`
+- Closed for Codex handoff: 2026-08-26 America/New_York
+- Verdict: `COMPLETE`
+- Entry: `origin/main` `6f6b3dd51b76ad352664e0bb5b9af24547420e70`; local accepted product `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; worktree clean.
+- Unpublished history: exactly one commit, the accepted P15 product commit `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; remote ancestry passed.
+- Scope: bounded cooldown ledger/schema-7 migration, eligibility integration, tests/experiments, generated bundle, and Authority records only; actions, declared cooldowns, utility weights, schema boundary, and manifest permissions remained unchanged.
+- Validation: 106/106 tests; P15 A–K and P4–P14 experiments PASS; migration, persistence/offline/RNG, SLEEP/AVOID, syntax, manifest, boundary/privacy, safety, and `git diff --check` passed.
+- Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` matched at 80,238 bytes with SHA-256 `F86F925C54F31DE5FE8DA88C7D19649F10645F439DE6422B8BAA9A9699BC2817`.
+- Publication: normal non-force `git push origin main` advanced GitHub from `6f6b3dd51b76ad352664e0bb5b9af24547420e70` to `1ebc4e51dbe0e370e89ccdcb74c22cc0cdb7a1b3`; final fetch verified local `main == origin/main`; worktree clean; no records-only closure and no history rewrite.
+- Evidence: P15 remains `E4_REGRESSION_PROTECTED`; live desktop cooldown behavior remains `UNKNOWN / NOT CLAIMED`; Phase 16 was not started.
