@@ -441,3 +441,16 @@ New target tests alone are at most `E3_TARGET_TESTED`. A commit is not runtime e
 - Validation: `node --test` 85/85; combined `node src/cli/experiments.js` PASS; syntax/manifest/permission/boundary/privacy/safety checks PASS; `git diff --check` PASS.
 - Generated artifact: independent staged builds A and B both produced 74,401 bytes and SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`; tracked generated bundle is byte/hash-identical to a fresh staged build.
 - Reliability/limitations: direct UNC esbuild was not run because the known UNC `spawn EPERM` limitation remains; local staged builds pass. Live Windows/Electron follow behavior is `UNKNOWN / NOT CLAIMED`.
+
+## BPDC-E040 — Phase 13 publication
+
+- Created: 2026-08-26 America/New_York
+- Directive/outcome: `BPDC-SYNC-010` / publication closure
+- Evidence level: `E4_REGRESSION_PROTECTED`
+- Type: `PUBLICATION_VERIFICATION`
+- Result: `PASSED`; accepted Phase 13 product and Authority commits were published by normal non-force fast-forward push, with no behavior change or history rewrite.
+- Entry/final state: remote before `0d8dde1961d2fcda4f9f03d6af50c11846ff18fb`; final local and `origin/main` `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a`; worktree clean.
+- Scope: exactly the expected 18 P13 source/generated/test/documentation files changed; no unexpected files; manifest and permission set unchanged.
+- Validation: direct 85/85 tests; combined P4–P13 experiments; syntax, boundary/privacy, safety, and `git diff --check` all passed.
+- Generated artifact: two independent staged builds and tracked `integrations/openpets/plugin/index.js` were identical at 74,401 bytes with SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`.
+- Boundary: live Windows/Electron cursor-follow behavior remains `UNKNOWN / NOT CLAIMED`; Phase 14 was not started and is not authorized.

@@ -291,6 +291,18 @@
 - Discovery: not required during implementation; Architect prior-art discovery is complete and treated as reference/adaptable only.
 - Status at issuance: `AUTHORIZED`; implementation complete for Architect review.
 
+## BPDC-SYNC-010
+
+- Issued: 2026-08-26 America/New_York
+- Issuer: User / project architect via Architect review accepting `BPDC-P13-001`
+- External directive: `BPDC-SYNC-010`
+- Objective: Publish the accepted Phase 13 `FOLLOW_CURSOR` implementation and Authority closure to canonical GitHub `main` without changing application behavior.
+- Scope: Authority read, clean-tree and commit verification, fresh fetch, ancestry/content/safety validation, 85-test regression, P4–P13 experiments, manifest/permission review, deterministic generated correspondence, diff check, normal non-force push, final local/remote equality verification, and Authority/Notion recording.
+- Exclusions: no P13 behavior changes, no cursor retuning, no permission/sensing/persistence changes, no history rewrite, no force push, and no Phase 14.
+- Acceptance: expected commits `aba30b150a670a068c9011ecf9b05d65e42751b8` and `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a` verified; `origin/main` ancestor; delta limited to accepted P13 source/generated/tests/docs and Authority files; 85/85 tests and experiments pass; generated bundle remains 74,401 bytes with SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`; permissions unchanged; normal push succeeds; local `main == origin/main`; worktree clean; live P13 evidence remains unknown; Phase 14 untouched.
+- Discovery: not required; repository durability only.
+- Status at completion: `COMPLETED`; publication was normal non-force fast-forward with no history rewrite.
+
 ## BPDC-P9-001
 
 - Issued: 2026-08-24 America/New_York

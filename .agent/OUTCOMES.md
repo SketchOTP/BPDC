@@ -430,3 +430,17 @@
 - Evidence: `BPDC-E039`, `E4_REGRESSION_PROTECTED`; live Windows/Electron follow behavior remains `UNKNOWN / NOT CLAIMED`.
 - Local product commit: `aba30b150a670a068c9011ecf9b05d65e42751b8` (`feat: add autonomous cursor following`); not pushed.
 - Next boundary: Architect review; do not push and do not begin Phase 14.
+
+## BPDC-SYNC-010 - Phase 13 publication complete
+
+- Outcome ID: `BPDC-SYNC-010-PUBLISHED`
+- Closed for Codex handoff: 2026-08-26 America/New_York
+- Verdict: `COMPLETE`
+- Summary: Published the Architect-accepted Phase 13 `FOLLOW_CURSOR` product and Authority closure to canonical GitHub `main` without changing application behavior.
+- Entry: local `main` and `origin/main` were freshly verified at `0d8dde1961d2fcda4f9f03d6af50c11846ff18fb`; worktree was clean; the accepted unpublished commits were `aba30b150a670a068c9011ecf9b05d65e42751b8` and `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a`.
+- Ancestry and scope: freshly fetched `origin/main` was an ancestor; exactly the expected 18 P13 source/generated/test/documentation files changed; no unexpected files or manifest delta appeared.
+- Validation: direct `node --test` 85/85 PASS; `node src/cli/experiments.js` PASS; syntax, manifest/permission, CreatureCore boundary/privacy, safety, `git diff --check`, and generated correspondence checks PASS.
+- Generated artifact: two independent local-staged builds were identical at 74,401 bytes with SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`; tracked bundle matched byte-for-byte.
+- Publication: normal non-force `git push origin main` advanced GitHub `0d8dde1` to `8fa4a8b`; post-push fetch verified local `main == origin/main == 8fa4a8b67cd44d64708f3b141773d4b6caf54d7a`; worktree clean; history rewritten `NO`.
+- Evidence: P13 remains `E4_REGRESSION_PROTECTED`; live Windows/Electron cursor-follow behavior remains `UNKNOWN / NOT CLAIMED`.
+- Boundary: Phase 14 was not started and remains not authorized; await next Architect directive.

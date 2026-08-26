@@ -419,3 +419,11 @@
 - Validation: `BPDC-E039`; 85/85 tests; combined P4–P13 experiments; staged build A/B identical at 74,401 bytes with SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`; manifest unchanged; syntax/boundary/privacy/safety/diff checks passed.
 - Product commit: `aba30b150a670a068c9011ecf9b05d65e42751b8` (`feat: add autonomous cursor following`); local only, no push.
 - Boundary: live desktop follow remains `UNKNOWN / NOT CLAIMED`; Phase 14 not started or authorized.
+
+## 2026-08-26 — BPDC-SYNC-010 Phase 13 publication
+
+- Decision: publish the accepted Phase 13 `FOLLOW_CURSOR` implementation and Authority closure through a normal non-force fast-forward push.
+- Verification: local accepted commits `aba30b150a670a068c9011ecf9b05d65e42751b8` and `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a` were the only unpublished descendants of `0d8dde1961d2fcda4f9f03d6af50c11846ff18fb`; ancestry, scope, permissions, safety, and validation passed.
+- Generated artifact: two independent staged builds and the tracked bundle were byte/hash-identical at 74,401 bytes, SHA-256 `59D488B2962A9D340BD4CE2B330EF8CE1B386A217061EBADFF7F42F98C982946`.
+- Result: GitHub `main` advanced normally to `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a`; local `main == origin/main`; worktree clean; no history rewrite.
+- Evidence boundary: P13 remains `E4_REGRESSION_PROTECTED`; live cursor-follow behavior remains `UNKNOWN / NOT CLAIMED`; Phase 14 not started or authorized.

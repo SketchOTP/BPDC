@@ -10,11 +10,11 @@
 
 ## Current pointers
 
-- Current stage: Phase 13 — Follow Cursor (implemented; pending Architect review)
+- Current stage: Phase 13 — Follow Cursor (accepted and published; awaiting next directive)
 - Active directive: BPDC-P13-001
 - Active task packet: `.agent/tasks/active/BPDC-P13-001.md`
 - Last Codex outcome: BPDC-P13-001 (implementation complete for Architect review)
-- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; local P13 product commit `aba30b150a670a068c9011ecf9b05d65e42751b8` is not pushed and `origin/main` remains `0d8dde1961d2fcda4f9f03d6af50c11846ff18fb`; Authority closure is local; Phase 14 not authorized.
+- Last state sync: 2026-08-26 America/New_York; canonical repository `\\atlas\ATLAS\100_ACTIVE\Projects\BPDC`; P13 product `aba30b150a670a068c9011ecf9b05d65e42751b8` and Authority closure `8fa4a8b67cd44d64708f3b141773d4b6caf54d7a` are published; local `main == origin/main`; Phase 14 not authorized.
 
 ## Mandatory kernel
 
