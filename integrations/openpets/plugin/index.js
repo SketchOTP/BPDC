@@ -257,7 +257,10 @@ var BehaviorScorer = class {
     if (!scores[action]) {
       throw new RangeError(`Unknown behavior action: ${action}`);
     }
-    const contributors = scores[action];
+    const contributors = {
+      ...scores[action],
+      routine: habit.routineByAction?.[action] ?? 0
+    };
     const score = Object.values(contributors).reduce((sum, value) => sum + value, 0);
     const baseEligible = action !== "FOLLOW_CURSOR" || activeUser === 1;
     const cooldownUntil = behaviorCooldowns[action] ?? 0;
@@ -410,15 +413,27 @@ function nonNegative2(value, name) {
 }
 
 // integrations/openpets/plugin/core/habit.js
-var HABIT_SCHEMA_VERSION = 1;
+var HABIT_SCHEMA_VERSION = 2;
 var HABIT_HOURS = 24;
 var HABIT_LEARNING_RATE = 0.08;
 var HABIT_HALF_LIFE_SECONDS = 7 * 24 * 3600;
 var TIME_HABIT_UTILITY_WEIGHT = 0.25;
+var ROUTINE_PERIODS = 4;
+var ROUTINE_ACTIONS = ["OBSERVE", "WANDER", "PLAY", "FOLLOW_CURSOR", "SLEEP"];
+var ROUTINE_LEARNING_RATE = 0.04;
+var ROUTINE_HALF_LIFE_SECONDS = 14 * 24 * 3600;
+var ROUTINE_UTILITY_WEIGHT = 0.12;
+function createInitialActivityByPeriod() {
+  return Array.from(
+    { length: ROUTINE_PERIODS },
+    () => Object.fromEntries(ROUTINE_ACTIONS.map((action) => [action, 0]))
+  );
+}
 function createInitialHabit(timestamp = 0) {
   return {
     schemaVersion: HABIT_SCHEMA_VERSION,
     attentionByHour: Array(HABIT_HOURS).fill(0),
+    activityByPeriod: createInitialActivityByPeriod(),
     lastUpdatedAt: timestamp
   };
 }
@@ -430,9 +445,23 @@ function validateHabit(value, timestamp = 0) {
   if (!Number.isFinite(habit.lastUpdatedAt) || habit.lastUpdatedAt < 0) {
     throw new RangeError("Habit lastUpdatedAt must be finite and non-negative.");
   }
+  const activityByPeriod = habit.activityByPeriod ?? createInitialActivityByPeriod();
+  if (!Array.isArray(activityByPeriod) || activityByPeriod.length !== ROUTINE_PERIODS) {
+    throw new TypeError(`Habit activityByPeriod must contain exactly ${ROUTINE_PERIODS} values.`);
+  }
   return {
     schemaVersion: HABIT_SCHEMA_VERSION,
     attentionByHour: habit.attentionByHour.map((value2) => clamp01(value2)),
+    activityByPeriod: activityByPeriod.map((period) => {
+      if (!period || typeof period !== "object" || Array.isArray(period)) {
+        throw new TypeError("Habit activity period must be an object.");
+      }
+      return Object.fromEntries(ROUTINE_ACTIONS.map((action) => {
+        const value2 = period[action] ?? 0;
+        if (!Number.isFinite(value2)) throw new TypeError(`Habit affinity for ${action} must be finite.`);
+        return [action, clamp01(value2)];
+      }));
+    }),
     lastUpdatedAt: habit.lastUpdatedAt
   };
 }
@@ -442,6 +471,13 @@ function decayHabit(habit, timestamp) {
   if (elapsed > 0) {
     const retention = 2 ** (-elapsed / HABIT_HALF_LIFE_SECONDS);
     habit.attentionByHour = habit.attentionByHour.map((value) => clamp01(value * retention));
+    const routineRetention = 2 ** (-elapsed / ROUTINE_HALF_LIFE_SECONDS);
+    habit.activityByPeriod = habit.activityByPeriod.map(
+      (period) => Object.fromEntries(ROUTINE_ACTIONS.map((action) => [
+        action,
+        clamp01(period[action] * routineRetention)
+      ]))
+    );
   }
   habit.lastUpdatedAt = timestamp;
   return habit;
@@ -459,6 +495,33 @@ function timeHabitForScoring(habit, localTime, timestamp) {
   assertLocalTime(localTime);
   decayHabit(habit, timestamp);
   return habit.attentionByHour[Math.floor(localTime)] * TIME_HABIT_UTILITY_WEIGHT;
+}
+function coarseActivityPeriod(localTime) {
+  assertLocalTime(localTime);
+  return Math.floor(localTime / 6);
+}
+function reinforceActivityRoutine(habit, action, period, timestamp) {
+  if (!ROUTINE_ACTIONS.includes(action)) return 0;
+  if (!Number.isInteger(period) || period < 0 || period >= ROUTINE_PERIODS) {
+    throw new RangeError(`Routine period must be an integer in the range 0 <= period < ${ROUTINE_PERIODS}.`);
+  }
+  decayHabit(habit, timestamp);
+  const current = habit.activityByPeriod[period][action];
+  habit.activityByPeriod[period][action] = clamp01(
+    current + ROUTINE_LEARNING_RATE * (1 - current)
+  );
+  return habit.activityByPeriod[period][action];
+}
+function routineBiasesForScoring(habit, localTime, timestamp) {
+  const period = coarseActivityPeriod(localTime);
+  decayHabit(habit, timestamp);
+  return Object.fromEntries(ROUTINE_ACTIONS.map((action) => [
+    action,
+    habit.activityByPeriod[period][action] * ROUTINE_UTILITY_WEIGHT
+  ]));
+}
+function migrateHabit(value, timestamp = 0) {
+  return validateHabit(value, timestamp);
 }
 function assertLocalTime(localTime) {
   if (!Number.isFinite(localTime) || localTime < 0 || localTime >= 24) {
@@ -565,7 +628,7 @@ function learnedPlayPreferenceForScoring(preference, timestamp) {
 }
 
 // integrations/openpets/plugin/core/persistence.js
-var SNAPSHOT_SCHEMA_VERSION = 7;
+var SNAPSHOT_SCHEMA_VERSION = 8;
 function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
 }
@@ -617,6 +680,7 @@ function deserializeSnapshot(serialized) {
     return {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      habit: migrateHabit(snapshot.habit, snapshot.simulationTimestamp ?? 0),
       socializationImprint: 0,
       behaviorCooldowns: createInitialBehaviorCooldowns()
     };
@@ -625,7 +689,15 @@ function deserializeSnapshot(serialized) {
     return {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      habit: migrateHabit(snapshot.habit, snapshot.simulationTimestamp ?? 0),
       behaviorCooldowns: createInitialBehaviorCooldowns()
+    };
+  }
+  if (snapshot?.schemaVersion === 7) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      habit: migrateHabit(snapshot.habit, snapshot.simulationTimestamp ?? 0)
     };
   }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {
@@ -843,7 +915,9 @@ var CreatureCore = class _CreatureCore {
         if (collectIntents && intent) events.push(intent);
       }
       if (this.currentBehavior && this.clock.now() >= this.currentBehavior.endsAt - 1e-9) {
-        this.startBehaviorCooldown(this.currentBehavior.action, this.clock.now());
+        const completedBehavior = this.currentBehavior;
+        this.recordRoutineCompletion(completedBehavior);
+        this.startBehaviorCooldown(completedBehavior.action, this.clock.now());
         this.currentBehavior = null;
         if (remaining > 0) {
           const nextEnvironment = resolveEnvironment(environmentInput, this.clock.now());
@@ -989,6 +1063,7 @@ var CreatureCore = class _CreatureCore {
       duration,
       interruptible: definition.interruptible,
       cooldown: definition.cooldown,
+      routinePeriodAtStart: coarseActivityPeriod(environment.localTime),
       reason: summarizeReason(resolvedSelection.selected.contributors),
       score: resolvedSelection.selected.score,
       scoreBreakdown: {
@@ -1048,6 +1123,15 @@ var CreatureCore = class _CreatureCore {
     const definition = BEHAVIOR_DEFINITIONS[action];
     if (!definition) throw new RangeError(`Unknown behavior action: ${action}`);
     this.behaviorCooldowns[action] = exitSimulationTime + definition.cooldown;
+  }
+  recordRoutineCompletion(behavior) {
+    if (!Number.isInteger(behavior?.routinePeriodAtStart)) return 0;
+    return reinforceActivityRoutine(
+      this.habit,
+      behavior.action,
+      behavior.routinePeriodAtStart,
+      this.clock.now()
+    );
   }
   recordInteraction(event, environmentInput = this.lastEnvironment) {
     this.decayRelationship();
@@ -1167,7 +1251,8 @@ var CreatureCore = class _CreatureCore {
   }
   habitForScoring(environment = this.lastEnvironment) {
     return {
-      timeHabit: timeHabitForScoring(this.habit, environment.localTime, this.clock.now())
+      timeHabit: timeHabitForScoring(this.habit, environment.localTime, this.clock.now()),
+      routineByAction: routineBiasesForScoring(this.habit, environment.localTime, this.clock.now())
     };
   }
   learnedPlayPreferenceForScoring() {
@@ -1184,10 +1269,14 @@ var CreatureCore = class _CreatureCore {
     return {
       schemaVersion: this.habit.schemaVersion,
       attentionByHour: clone(this.habit.attentionByHour),
+      activityByPeriod: clone(this.habit.activityByPeriod),
       lastUpdatedAt: this.habit.lastUpdatedAt,
+      currentPeriod: coarseActivityPeriod(environment.localTime),
       currentHour: Math.floor(environment.localTime),
       habitStrength: this.habit.attentionByHour[Math.floor(environment.localTime)],
-      timeHabit: this.habitForScoring(environment).timeHabit
+      timeHabit: this.habitForScoring(environment).timeHabit,
+      currentPeriodAffinities: clone(this.habit.activityByPeriod[coarseActivityPeriod(environment.localTime)]),
+      routineByAction: this.habitForScoring(environment).routineByAction
     };
   }
   habitStateSnapshot() {
@@ -1195,6 +1284,7 @@ var CreatureCore = class _CreatureCore {
     return {
       schemaVersion: this.habit.schemaVersion,
       attentionByHour: clone(this.habit.attentionByHour),
+      activityByPeriod: clone(this.habit.activityByPeriod),
       lastUpdatedAt: this.habit.lastUpdatedAt
     };
   }

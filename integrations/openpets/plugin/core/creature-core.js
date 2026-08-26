@@ -15,7 +15,10 @@ import { BehaviorIntent, InteractionResponseIntent, ReunionResponseIntent } from
 import { normalizeInteractionEvent } from "./interaction.js";
 import {
   decayHabit as decayTimeHabit,
+  coarseActivityPeriod,
   reinforceAttentionHabit,
+  reinforceActivityRoutine,
+  routineBiasesForScoring,
   timeHabitForScoring,
   validateHabit,
 } from "./habit.js";
@@ -143,7 +146,9 @@ export class CreatureCore {
       }
 
       if (this.currentBehavior && this.clock.now() >= this.currentBehavior.endsAt - 1e-9) {
-        this.startBehaviorCooldown(this.currentBehavior.action, this.clock.now());
+        const completedBehavior = this.currentBehavior;
+        this.recordRoutineCompletion(completedBehavior);
+        this.startBehaviorCooldown(completedBehavior.action, this.clock.now());
         this.currentBehavior = null;
         if (remaining > 0) {
           const nextEnvironment = resolveEnvironment(environmentInput, this.clock.now());
@@ -304,6 +309,7 @@ export class CreatureCore {
       duration,
       interruptible: definition.interruptible,
       cooldown: definition.cooldown,
+      routinePeriodAtStart: coarseActivityPeriod(environment.localTime),
       reason: summarizeReason(resolvedSelection.selected.contributors),
       score: resolvedSelection.selected.score,
       scoreBreakdown: {
@@ -376,6 +382,16 @@ export class CreatureCore {
     const definition = BEHAVIOR_DEFINITIONS[action];
     if (!definition) throw new RangeError(`Unknown behavior action: ${action}`);
     this.behaviorCooldowns[action] = exitSimulationTime + definition.cooldown;
+  }
+
+  recordRoutineCompletion(behavior) {
+    if (!Number.isInteger(behavior?.routinePeriodAtStart)) return 0;
+    return reinforceActivityRoutine(
+      this.habit,
+      behavior.action,
+      behavior.routinePeriodAtStart,
+      this.clock.now(),
+    );
   }
 
   recordInteraction(event, environmentInput = this.lastEnvironment) {
@@ -521,6 +537,7 @@ export class CreatureCore {
   habitForScoring(environment = this.lastEnvironment) {
     return {
       timeHabit: timeHabitForScoring(this.habit, environment.localTime, this.clock.now()),
+      routineByAction: routineBiasesForScoring(this.habit, environment.localTime, this.clock.now()),
     };
   }
 
@@ -540,10 +557,14 @@ export class CreatureCore {
     return {
       schemaVersion: this.habit.schemaVersion,
       attentionByHour: clone(this.habit.attentionByHour),
+      activityByPeriod: clone(this.habit.activityByPeriod),
       lastUpdatedAt: this.habit.lastUpdatedAt,
+      currentPeriod: coarseActivityPeriod(environment.localTime),
       currentHour: Math.floor(environment.localTime),
       habitStrength: this.habit.attentionByHour[Math.floor(environment.localTime)],
       timeHabit: this.habitForScoring(environment).timeHabit,
+      currentPeriodAffinities: clone(this.habit.activityByPeriod[coarseActivityPeriod(environment.localTime)]),
+      routineByAction: this.habitForScoring(environment).routineByAction,
     };
   }
 
@@ -552,6 +573,7 @@ export class CreatureCore {
     return {
       schemaVersion: this.habit.schemaVersion,
       attentionByHour: clone(this.habit.attentionByHour),
+      activityByPeriod: clone(this.habit.activityByPeriod),
       lastUpdatedAt: this.habit.lastUpdatedAt,
     };
   }

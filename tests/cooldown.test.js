@@ -94,7 +94,7 @@ test("cooldowns survive save/reload with deterministic eligibility", () => {
 
   assert.deepEqual(restored.behaviorCooldowns, core.behaviorCooldowns);
   assert.deepEqual(restored.evaluate(ACTIVE).candidates, core.evaluate(ACTIVE).candidates);
-  assert.equal(restored.toSnapshot().schemaVersion, 7);
+  assert.equal(restored.toSnapshot().schemaVersion, 8);
 });
 
 test("offline reconciliation expires cooldowns using simulation time and emits no intents", () => {
@@ -157,13 +157,13 @@ test("IDLE remains the all-action fallback when every other action is cooling", 
   assert.equal(candidate(core, "IDLE", ACTIVE).eligible, true);
 });
 
-test("schema 6 migrates to schema 7 with no invented cooldown history", () => {
+test("schema 6 migrates to schema 8 with no invented cooldown history", () => {
   const core = CreatureCore.create({ seed: 1513 });
   const schema6 = { ...core.toSnapshot(), schemaVersion: 6 };
   delete schema6.behaviorCooldowns;
   const migrated = CreatureCore.fromSnapshot(schema6);
 
-  assert.equal(migrated.toSnapshot().schemaVersion, 7);
+  assert.equal(migrated.toSnapshot().schemaVersion, 8);
   assert.deepEqual(migrated.behaviorCooldowns, {});
 });
 

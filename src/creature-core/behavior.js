@@ -128,7 +128,10 @@ export class BehaviorScorer {
       throw new RangeError(`Unknown behavior action: ${action}`);
     }
 
-    const contributors = scores[action];
+    const contributors = {
+      ...scores[action],
+      routine: habit.routineByAction?.[action] ?? 0,
+    };
     const score = Object.values(contributors).reduce((sum, value) => sum + value, 0);
     const baseEligible = action !== "FOLLOW_CURSOR" || activeUser === 1;
     const cooldownUntil = behaviorCooldowns[action] ?? 0;

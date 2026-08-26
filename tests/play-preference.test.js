@@ -92,12 +92,12 @@ test("play preference persists and schema-4 creatures migrate with zero preferen
   const snapshot = core.toSnapshot();
   const reloaded = CreatureCore.fromSnapshot(JSON.parse(core.serialize()));
   assert.deepEqual(reloaded.toSnapshot(), snapshot);
-  assert.equal(reloaded.toSnapshot().schemaVersion, 7);
+  assert.equal(reloaded.toSnapshot().schemaVersion, 8);
 
   const schema4 = { ...snapshot, schemaVersion: 4 };
   delete schema4.playPreference;
   const migrated = CreatureCore.fromSnapshot(schema4);
-  assert.equal(migrated.toSnapshot().schemaVersion, 7);
+  assert.equal(migrated.toSnapshot().schemaVersion, 8);
   assert.equal(migrated.playPreference.playPreference, 0);
   assert.deepEqual(migrated.relationship, core.relationship);
   assert.deepEqual(migrated.habit, core.habit);

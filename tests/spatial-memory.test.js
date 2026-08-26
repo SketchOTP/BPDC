@@ -68,7 +68,7 @@ test("spatial preference persists and schema-3 snapshots migrate without geometr
   const schema3 = { ...core.toSnapshot(), schemaVersion: 3 };
   delete schema3.spatial;
   const migrated = CreatureCore.fromSnapshot(schema3);
-  assert.equal(migrated.toSnapshot().schemaVersion, 7);
+  assert.equal(migrated.toSnapshot().schemaVersion, 8);
   assert.equal(migrated.spatialSnapshot().restSiteAffinity, 0);
 });
 

@@ -8,6 +8,7 @@ import {
   createEnvironment,
   developmentSnapshot,
 } from "../creature-core/index.js";
+import { runP16Experiments } from "./p16-experiments.js";
 import { PresenceTracker } from "../../integrations/openpets/presence-tracker.js";
 import { RestSiteTracker, distanceBetween } from "../../integrations/openpets/rest-site-tracker.js";
 import { offlineEnvironmentAt, restoreAndReconcile } from "../../integrations/openpets/elapsed-reconciliation.js";
@@ -111,6 +112,7 @@ const cooldownOffline = runCooldownOfflineExperiment();
 const cooldownRng = runCooldownRngExperiment();
 const cooldownProtective = runCooldownProtectiveExperiment();
 const cooldownIdleFallback = runCooldownIdleFallbackExperiment();
+const p16 = runP16Experiments();
 
 const p15Experiments = [
   cooldownImmediate, cooldownExpiry, cooldownOverlap, cooldownAbandonment,
@@ -119,8 +121,8 @@ const p15Experiments = [
 ];
 
 console.log(JSON.stringify({
-  directive: "BPDC-P15-002",
-  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence, followCursorActive, followCursorState, followCursorNonDomination, followCursorTransition, followCursorTransient, followCursorOffline, followCursorPersistence, followCursorRestSite, followCursorShutdown, midpointStable, midpointSwitch, midpointEligibility, midpointHysteresis, midpointNonInterruptible, midpointPartition, midpointPersistence, midpointOffline, midpointTransient, ...p15Experiments]
+  directive: "BPDC-P16-001",
+  status: [replay, personality, causality, persistence, relationship, relationshipPersistence, forgetting, saturation, habitConcentration, habitPersistence, habitDecay, habitNonDomination, presenceTransitions, presenceUtility, presenceDriveEvolution, quietNormal, absence, decayContinuity, midnight, idempotentRestart, backwardClock, legacyMigration, longAbsence, integrationHarness, responseState, responsePreservation, responseLearning, responseOffline, spatialConcentration, spatialSaturation, spatialDecayRelocation, spatialPersistence, spatialUtility, playPreferenceLearning, playPreferenceUtility, playPreferenceNoSelfReinforcement, playPreferenceNonDomination, playPreferenceDecay, playPreferencePersistence, playPreferenceOffline, playPreferenceResponse, developmentCurve, developmentNonInterference, developmentOffline, developmentPersistence, developmentAdapter, developmentCallBoundedness, juvenilePlasticity, socializationSaturation, socializationNoContact, socializationBondIndependence, socializationUtility, socializationNonDomination, socializationPersistence, socializationOffline, socializationAdultContact, reunionDuration, reunionState, reunionPreservation, reunionSleep, reunionStartup, reunionDedup, reunionArbitration, reunionPresence, followCursorActive, followCursorState, followCursorNonDomination, followCursorTransition, followCursorTransient, followCursorOffline, followCursorPersistence, followCursorRestSite, followCursorShutdown, midpointStable, midpointSwitch, midpointEligibility, midpointHysteresis, midpointNonInterruptible, midpointPartition, midpointPersistence, midpointOffline, midpointTransient, ...p15Experiments, p16]
     .every((result) => result.status === "PASS")
     ? "PASS"
     : "FAIL",
@@ -151,6 +153,7 @@ console.log(JSON.stringify({
     cooldownImmediate, cooldownExpiry, cooldownOverlap, cooldownAbandonment,
     cooldownStableMidpoint, cooldownTransient, cooldownPersistence, cooldownOffline,
     cooldownRng, cooldownProtective, cooldownIdleFallback,
+    p16,
   },
   trace24h,
 }, null, 2));
@@ -795,7 +798,7 @@ function runPlayPreferencePersistenceExperiment() {
   const migrated = CreatureCore.fromSnapshot(schema4);
   return {
     status: JSON.stringify(restored.toSnapshot()) === JSON.stringify(core.toSnapshot())
-      && migrated.toSnapshot().schemaVersion === 7
+      && migrated.toSnapshot().schemaVersion === 8
       && migrated.playPreference.playPreference === 0 ? "PASS" : "FAIL",
     schema: restored.toSnapshot().schemaVersion,
     migratedPreference: migrated.playPreference.playPreference,
@@ -919,7 +922,7 @@ function runDevelopmentPersistenceExperiment() {
   const snapshot = JSON.parse(core.serialize());
   const restored = CreatureCore.fromSnapshot(core.serialize());
   return {
-    status: snapshot.schemaVersion === 7
+    status: snapshot.schemaVersion === 8
       && !Object.hasOwn(snapshot, "development")
       && JSON.stringify(before) === JSON.stringify(restored.developmentSnapshot()) ? "PASS" : "FAIL",
     schema: snapshot.schemaVersion,
@@ -1051,7 +1054,7 @@ function runSocializationPersistenceExperiment() {
   delete schema5.socializationImprint;
   const migrated = CreatureCore.fromSnapshot(schema5);
   return {
-    status: snapshot.schemaVersion === 7
+    status: snapshot.schemaVersion === 8
       && restored.socializationImprint === core.socializationImprint
       && migrated.socializationImprint === 0
       ? "PASS" : "FAIL",
@@ -1346,7 +1349,7 @@ function runFollowCursorPersistenceExperiment() {
   const restored = CreatureCore.fromSnapshot(core.serialize());
   return {
     status: restored.currentBehavior?.action === "FOLLOW_CURSOR"
-      && restored.toSnapshot().schemaVersion === 7
+      && restored.toSnapshot().schemaVersion === 8
       && !Object.hasOwn(restored.toSnapshot(), "cursor")
       ? "PASS" : "FAIL",
     action: restored.currentBehavior?.action ?? null,
@@ -1660,7 +1663,7 @@ function runCooldownPersistenceExperiment() {
   core.startBehaviorCooldown("OBSERVE", 20);
   const restored = CreatureCore.fromSnapshot(JSON.parse(core.serialize()));
   return {
-    status: restored.toSnapshot().schemaVersion === 7
+    status: restored.toSnapshot().schemaVersion === 8
       && JSON.stringify(restored.behaviorCooldowns) === JSON.stringify(core.behaviorCooldowns)
       && JSON.stringify(restored.evaluate(activeFollowEnvironment())) === JSON.stringify(core.evaluate(activeFollowEnvironment())) ? "PASS" : "FAIL",
     schema: restored.toSnapshot().schemaVersion,

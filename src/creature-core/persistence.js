@@ -1,10 +1,10 @@
 import { createInitialRelationship } from "./relationship.js";
-import { createInitialHabit } from "./habit.js";
+import { createInitialHabit, migrateHabit } from "./habit.js";
 import { createInitialSpatial } from "./spatial.js";
 import { createInitialPlayPreference } from "./play-preference.js";
 import { createInitialBehaviorCooldowns } from "./cooldown.js";
 
-export const SNAPSHOT_SCHEMA_VERSION = 7;
+export const SNAPSHOT_SCHEMA_VERSION = 8;
 
 export function serializeSnapshot(snapshot) {
   return JSON.stringify(snapshot, null, 2);
@@ -58,6 +58,7 @@ export function deserializeSnapshot(serialized) {
     return {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      habit: migrateHabit(snapshot.habit, snapshot.simulationTimestamp ?? 0),
       socializationImprint: 0,
       behaviorCooldowns: createInitialBehaviorCooldowns(),
     };
@@ -66,7 +67,15 @@ export function deserializeSnapshot(serialized) {
     return {
       ...snapshot,
       schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      habit: migrateHabit(snapshot.habit, snapshot.simulationTimestamp ?? 0),
       behaviorCooldowns: createInitialBehaviorCooldowns(),
+    };
+  }
+  if (snapshot?.schemaVersion === 7) {
+    return {
+      ...snapshot,
+      schemaVersion: SNAPSHOT_SCHEMA_VERSION,
+      habit: migrateHabit(snapshot.habit, snapshot.simulationTimestamp ?? 0),
     };
   }
   if (snapshot?.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {
